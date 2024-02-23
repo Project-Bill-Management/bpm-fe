@@ -29,10 +29,13 @@ function SignUp() {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [passwordConfirmationError, setPasswordConfirmationError] = useState('');
+  const [referralCode, setReferralCode] = useState('');
+  const [referralCodeError, setReferralCodeError] = useState('');
 
   const usernameValidator = /^[a-zA-Z0-9_]{3,30}$/;
   const emailValidator = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   const passwordValidator = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
+  const referralCodeValidator = /^[a-zA-Z0-9]{6}$/;
 
   const validateUsername = () => {
     let error = '';
@@ -74,6 +77,16 @@ function SignUp() {
     return error;
   };
 
+  const validateReferralCode = () => {
+    let error = '';
+    if (referralCode.trim() === '') {
+      error = '*referral code is required';
+    } else if (!referralCodeValidator.test(referralCode)) {
+      error = '*referral code must be 6 characters long and alphanumeric';
+    }
+    return error;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     switch (name) {
@@ -93,6 +106,10 @@ function SignUp() {
         setPasswordConfirmation(value);
         setPasswordConfirmationError(''); // Reset error
         break;
+        case 'referralCode':
+          setReferralCode(value);
+          setReferralCodeError(''); // Reset error
+          break;
       default:
         break;
     }
@@ -106,14 +123,15 @@ function SignUp() {
     const newEmailError = validateEmail();
     const newPasswordError = validatePassword();
     const newPasswordConfirmationError = validatePasswordConfirmation();
-
+    const newReferralCodeError = validateReferralCode();
+    
     // Perbarui state error
     setUsernameError(newUsernameError);
     setEmailError(newEmailError);
     setPasswordError(newPasswordError);
     setPasswordConfirmationError(newPasswordConfirmationError);
-
-    const isFormValid = !newUsernameError && !newEmailError && !newPasswordError && !newPasswordConfirmationError;
+    setReferralCodeError(newReferralCodeError);
+    const isFormValid = !newUsernameError && !newEmailError && !newPasswordError && !newPasswordConfirmationError && !newReferralCodeError;
 
     if (isFormValid && agreement) {
       // Lakukan pengiriman formulir ke server
@@ -197,6 +215,20 @@ function SignUp() {
                  {passwordConfirmationError && (
                 <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
                   {passwordConfirmationError}
+                </div>
+              )}
+            </SoftBox>
+            <SoftBox mb={2}>
+              <SoftInput
+                type="referralCode"
+                placeholder="Referral Code"
+                name="referralCode"
+                value={referralCode}
+                onChange={handleChange}
+              />
+                 {referralCodeError && (
+                <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
+                  {referralCodeError}
                 </div>
               )}
             </SoftBox>
