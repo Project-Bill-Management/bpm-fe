@@ -11,8 +11,6 @@ import SoftInput from "components/SoftInput";
 import SoftButton from "components/SoftButton";
 import curved14 from "assets/images/curved-images/curved14.jpg";
 import { useNavigate } from 'react-router-dom';
-import SuiAlert from 'components/SuiAlert';
-// import { Alert, AlertTitle } from '@material-ui/lab';
 
 function SignUp() {
   const [state, setState] = useState({
@@ -39,9 +37,9 @@ function SignUp() {
   const validateUsername = () => {
     let error = '';
     if (username.trim() === '') {
-      error = 'Username is required';
+      error = '*username is required';
     } else if (!usernameValidator.test(username)) {
-      error = 'The username must have distinctive characteristics';
+      error = '*username must have distinctive characteristics';
     }
     return error;
   };
@@ -49,9 +47,9 @@ function SignUp() {
   const validateEmail = () => {
     let error = '';
     if (email.trim() === '') {
-      error = 'Email is required';
+      error = '*email is required';
     } else if (!emailValidator.test(email)) {
-      error = 'Email is not valid';
+      error = '*email is not valid';
     }
     return error;
   };
@@ -59,9 +57,9 @@ function SignUp() {
   const validatePassword = () => {
     let error = '';
     if (password.trim() === '') {
-      error = 'Password is required';
+      error = '*password is required';
     } else if (!passwordValidator.test(password)) {
-      error = 'Password must contain at least 8 characters, 1 number, 1 upper and 1 lowercase';
+      error = '*password must contain at least 8 characters, 1 number, 1 upper and 1 lowercase';
     }
     return error;
   };
@@ -69,9 +67,9 @@ function SignUp() {
   const validatePasswordConfirmation = () => {
     let error = '';
     if (passwordConfirmation.trim() === '') {
-      error = 'Password confirmation is required';
+      error = '*password confirmation is required';
     } else if (passwordConfirmation !== password) {
-      error = 'Password confirmation does not match password';
+      error = '*password confirmation does not match password';
     }
     return error;
   };
@@ -123,7 +121,7 @@ function SignUp() {
       navigate('/dashboard');
     } else {
       // Jika ada input yang tidak valid, tampilkan pesan error
-      setError('Please fill in all fields correctly');
+      setError('please fill in all fields correctly');
     }
   };
 
@@ -146,7 +144,7 @@ function SignUp() {
         <Separator />
         <SoftBox pt={2} pb={3} px={3}>
           <SoftBox component="form" role="form" onSubmit={handleSubmit}>
-            <SoftBox mb={2}>
+            <SoftBox mb={1}>
               <SoftInput
                 placeholder="Username"
                 name="username"
@@ -154,8 +152,13 @@ function SignUp() {
                 onChange={handleChange}
               />
             </SoftBox>
-            {usernameError && <div className="errorMsg">{usernameError}</div>}
-            <SoftBox mb={2}>
+            {usernameError && (
+              <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
+                {usernameError}
+              </div>
+            )}
+
+            <SoftBox mb={1}>
               <SoftInput
                 type="email"
                 placeholder="Email"
@@ -163,7 +166,11 @@ function SignUp() {
                 value={email}
                 onChange={handleChange}
               />
-              {emailError && <div className="errorMsg">{emailError}</div>}
+              {emailError && (
+                <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
+                  {emailError}
+                </div>
+              )}
             </SoftBox>
             <SoftBox mb={2}>
               <SoftInput
@@ -173,8 +180,12 @@ function SignUp() {
                 value={password}
                 onChange={handleChange}
               />
-              {passwordError && <SuiAlert severity="error" message={passwordError} />}
-            </SoftBox>
+              {passwordError && (
+                <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
+                  {passwordError}
+                </div>
+              )}
+              </SoftBox>
             <SoftBox mb={2}>
               <SoftInput
                 type="password"
@@ -183,9 +194,12 @@ function SignUp() {
                 value={passwordConfirmation}
                 onChange={handleChange}
               />
-              {passwordConfirmationError && <SuiAlert severity="error" message={passwordConfirmationError} />}
+                 {passwordConfirmationError && (
+                <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
+                  {passwordConfirmationError}
+                </div>
+              )}
             </SoftBox>
-
             <SoftBox display="flex" alignItems="center">
               <Checkbox
                 checked={agreement}
