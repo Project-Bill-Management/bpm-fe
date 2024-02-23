@@ -14,40 +14,39 @@ import { useNavigate } from 'react-router-dom';
 function SignIn() {
   const navigate = useNavigate();
   const [rememberMe, setRememberMe] = useState(true);
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [values, setValues] = useState ({
+    username: '',
+    password: ''
+  })
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (email === "" || password === "") {
-      alert("Field cannot be empty");
-      return;
-      //disamain sign up
-    }
-    if (!email.endsWith('@gmail.com')){
-      alert('Emails must end with @gmail.com');
+    if (username.trim() === '' || password.trim() === '') {
+      // Jika username atau password kosong, set error
+      setError('Username and password are required!');
       return;
     }
-    setIsSubmitted(true);
+    console.log('Submitting:', values);
     navigate('/dashboard');
-  };
+};
 
   return (
     <CoverLayout
       title="Welcome back"
       description="Enter your email and password to sign in"
-      image={curved9}
-    >
+      image={curved9}>
       <SoftBox component="form" role="form">
         <SoftBox mb={2}>
           <SoftBox mb={1} ml={0.5}>
             <SoftTypography component="label" variant="caption" fontWeight="bold">
-              Email
+              Username
             </SoftTypography>
           </SoftBox>
-          <SoftInput type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
+          <SoftInput type="username" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
         </SoftBox>
         <SoftBox mb={2}>
           <SoftBox mb={1} ml={0.5}>
@@ -55,8 +54,7 @@ function SignIn() {
               Password
             </SoftTypography>
           </SoftBox>
-          <SoftInput type="password" placeholder="Password" value={password}
-              onChange={(e) => setPassword(e.target.value)}/>
+          <SoftInput type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </SoftBox>
         <SoftBox display="flex" alignItems="center">
           <Switch checked={rememberMe} onChange={handleSetRememberMe} />
@@ -64,8 +62,7 @@ function SignIn() {
             variant="button"
             fontWeight="regular"
             onClick={handleSetRememberMe}
-            sx={{ cursor: "pointer", userSelect: "none" }}
-          >
+            sx={{ cursor: "pointer", userSelect: "none" }}>
             &nbsp;&nbsp;Remember me
           </SoftTypography>
         </SoftBox>
@@ -88,8 +85,7 @@ function SignIn() {
               variant="button"
               color="info"
               fontWeight="medium"
-              textGradient
-            >
+              textGradient>
               Sign up
             </SoftTypography>
           </SoftTypography>

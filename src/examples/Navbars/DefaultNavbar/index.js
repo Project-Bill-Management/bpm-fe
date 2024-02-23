@@ -84,20 +84,20 @@ function DefaultNavbar({ transparent, light, action }) {
           </SoftTypography>
         </SoftBox>
         <SoftBox color="inherit" display={{ xs: "none", lg: "flex" }} m={0} p={0}>
-          <DefaultNavbarLink icon="donut_large" name="dashboard" route="/dashboard" light={light} />
-          <DefaultNavbarLink icon="person" name="profile" route="/profile" light={light} />
-          <DefaultNavbarLink
+          {/* <DefaultNavbarLink icon="donut_large" name="dashboard" route="/dashboard" light={light} /> */}
+          {/* <DefaultNavbarLink icon="person" name="profile" route="/profile" light={light} /> */}
+          {/* <DefaultNavbarLink
             icon="account_circle"
             name="sign up"
             route="/authentication/sign-up"
             light={light}
-          />
-          <DefaultNavbarLink
+          /> */}
+          {/* <DefaultNavbarLink
             icon="key"
             name="sign in"
             route="/authentication/sign-in"
             light={light}
-          />
+          /> */}
         </SoftBox>
         {action &&
           (action.type === "internal" ? (
