@@ -16,6 +16,7 @@ function SignUp() {
   const [state, setState] = useState({
     // inisialisasi state di sini
   });
+  
   const navigate = useNavigate();
   const [usernameError, setUsernameError] = useState(null);
   const [username, setUsername] = useState('');
