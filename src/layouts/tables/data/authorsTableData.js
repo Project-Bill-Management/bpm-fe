@@ -4,7 +4,10 @@ import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftAvatar from "components/SoftAvatar";
 import SoftBadge from "components/SoftBadge";
-
+import { Button } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import React from 'react';
 // Images
 import team2 from "assets/images/team-2.jpg";
 import team3 from "assets/images/team-3.jpg";
@@ -46,7 +49,7 @@ const authorsTableData = {
     { name: "author", align: "left" },
     { name: "function", align: "left" },
     { name: "status", align: "center" },
-    { name: "employed", align: "center" },
+    { name: "created", align: "center" },
     { name: "action", align: "center" },
   ],
 
@@ -57,7 +60,7 @@ const authorsTableData = {
       status: (
         <SoftBadge variant="gradient" badgeContent="online" color="success" size="xs" container />
       ),
-      employed: (
+      created: (
         <SoftTypography variant="caption" color="secondary" fontWeight="medium">
           23/04/18
         </SoftTypography>
@@ -80,7 +83,7 @@ const authorsTableData = {
       status: (
         <SoftBadge variant="gradient" badgeContent="offline" color="secondary" size="xs" container />
       ),
-      employed: (
+      created: (
         <SoftTypography variant="caption" color="secondary" fontWeight="medium">
           11/01/19
         </SoftTypography>
@@ -103,7 +106,7 @@ const authorsTableData = {
       status: (
         <SoftBadge variant="gradient" badgeContent="online" color="success" size="xs" container />
       ),
-      employed: (
+      created: (
         <SoftTypography variant="caption" color="secondary" fontWeight="medium">
           19/09/17
         </SoftTypography>
@@ -126,7 +129,7 @@ const authorsTableData = {
       status: (
         <SoftBadge variant="gradient" badgeContent="online" color="success" size="xs" container />
       ),
-      employed: (
+      created: (
         <SoftTypography variant="caption" color="secondary" fontWeight="medium">
           24/12/08
         </SoftTypography>
@@ -149,7 +152,7 @@ const authorsTableData = {
       status: (
         <SoftBadge variant="gradient" badgeContent="offline" color="secondary" size="xs" container />
       ),
-      employed: (
+      created: (
         <SoftTypography variant="caption" color="secondary" fontWeight="medium">
           04/10/21
         </SoftTypography>
@@ -172,22 +175,34 @@ const authorsTableData = {
       status: (
         <SoftBadge variant="gradient" badgeContent="offline" color="secondary" size="xs" container />
       ),
-      employed: (
+      created: (
         <SoftTypography variant="caption" color="secondary" fontWeight="medium">
           14/09/20
         </SoftTypography>
       ),
       action: (
-        <SoftTypography
-          component="a"
-          href="#"
-          variant="caption"
-          color="secondary"
-          fontWeight="medium"
-        >
-          Edit
-        </SoftTypography>
+        <React.Fragment>
+          <SoftTypography
+            href="#"
+            variant="text"
+            color="secondary"
+            startIcon={<EditIcon />}
+            onClick={() => handleEdit(id)}
+          >
+            Edit
+          </SoftTypography>
+          <Button
+            variant="text"
+            color="secondary"
+            size="small"
+            startIcon={<DeleteIcon />}
+            onClick={() => handleDelete(id)}
+          >
+            Delete
+          </Button>
+        </React.Fragment>
       ),
+
     },
   ],
 };

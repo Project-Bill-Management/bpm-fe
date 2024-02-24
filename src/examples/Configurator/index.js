@@ -236,7 +236,7 @@ function Configurator() {
             Star
           </a>
         </SoftBox> */}
-        <SoftBox mt={5} textAlign="center">
+        {/* <SoftBox mt={5} textAlign="center">
           <SoftBox mb={0.5}>
             <SoftTypography variant="h6">Get other interesting information!</SoftTypography>
           </SoftBox>
@@ -265,7 +265,7 @@ function Configurator() {
               &nbsp; Facebook
             </SoftButton>
           </SoftBox>
-        </SoftBox>
+        </SoftBox> */}
       </SoftBox>
     </ConfiguratorRoot>
   );
