@@ -88,7 +88,7 @@ function SignUp() {
     return error;
   };
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value } = e.target;
     switch (name) {
       case 'username':
@@ -107,15 +107,34 @@ function SignUp() {
         setPasswordConfirmation(value);
         setPasswordConfirmationError(''); // Reset error
         break;
-        case 'referralCode':
-          setReferralCode(value);
-          setReferralCodeError(''); // Reset error
-          break;
+      case 'referralCode':
+        setReferralCode(value);
+        setReferralCodeError(''); // Reset error
+        break;
       default:
         break;
     }
+  
+    e.preventDefault();
+    if (username === "" || email === "" || password === "" || passwordConfirmation === "" || referralCode === "") {
+      alert("Data Gagal ditambahkan, field tidak boleh ada yang kosong");
+    } else {
+      try {
+        await axios.post('', {
+          username: username,
+          email : email,
+          password: password,
+          passwordConfirmation : passwordConfirmation,
+          referralCode: referralCode,
+        });
+        window.location.href = '/dashboard';
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        // Handle errors as needed
+      }
+    }
   };
-
+  
   // Di dalam handleSubmit, Anda perlu menetapkan error untuk masing-masing input
   const handleSubmit = (e) => {
     e.preventDefault();

@@ -101,10 +101,10 @@ function Footer({ company, links }) {
 Footer.defaultProps = {
   company: { href: "#", name: "Tim Developer" },
   links: [
-    { href: "#", name: "Tim Developer" },
-    { href: "#", name: "About Us" },
-    { href: "#", name: "Blog" },
-    { href: "#", name: "License" },
+    { href: "#", name: "" },
+    { href: "#", name: "" },
+    { href: "#", name: "" },
+    { href: "#", name: "" },
   ],
 };
 

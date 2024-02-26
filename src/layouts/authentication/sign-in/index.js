@@ -9,6 +9,8 @@ import SoftButton from "components/SoftButton";
 import CoverLayout from "layouts/authentication/components/CoverLayout";
 import curved9 from "assets/images/curved-images/curved-6.jpg";
 import { useNavigate } from 'react-router-dom';
+import jwt_decode from 'jwt-decode';
+import axios from 'axios';
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -17,13 +19,15 @@ const SignIn = () => {
   const [usernameError, setUsernameError] = useState(null);
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState('');
-  const [error, setError] = useState(''); // State untuk pesan kesalahan umum
-
+  const [error, setError] = useState('');
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isValid, setIsValid] = useState(false);
+
   const usernameValidator = /^[a-zA-Z0-9_]{3,30}$/;
   const passwordValidator = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [token, setToken] = useState('');
 
   const validateUsername = () => {
     let error = '';
@@ -61,30 +65,49 @@ const SignIn = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newUsernameError = validateUsername();
     const newPasswordError = validatePassword();
-
     setUsernameError(newUsernameError);
     setPasswordError(newPasswordError);
     const isFormValid = !newUsernameError && !newPasswordError;
-
     if (isFormValid && rememberMe) {
-      setIsSubmitted(true);
-      navigate('/dashboard');
+      try {
+        const response = await axios.post('', {
+          username: username,
+          password: password,
+        });
+        const token = response.data.token;
+        setToken(token);
+        const decodedToken = jwtDecode(token);
+        setIsLoggedIn(true);
+        setIsSubmitted(true);
+        navigate('/dashboard');
+        
+        // Set interceptor setelah token diperoleh
+        axios.interceptors.request.use(
+          config => {
+            config.headers.Authorization = `Bearer ${token}`;
+            return config;
+          },
+          error => {
+            return Promise.reject(error);
+          }
+        );
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        setError('Incorrect username or password');
+      }
     } else {
       setError('Please fill in all fields correctly');
     }
-  };
+  };  
 
-
-  //const handleSetRememberMe = () => setRememberMe(prev => !prev);
-    
   return (
     <CoverLayout
-      title="Welcome back"
-      description="Enter your email and password to sign in"
+      title="Welcome back!"
+      description="Enter username and password to sign in"
       image={curved9}>
       <SoftBox component="form" role="form">
         <SoftBox mb={2}>

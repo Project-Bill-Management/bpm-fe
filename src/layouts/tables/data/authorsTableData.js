@@ -7,11 +7,21 @@ import SoftBadge from "components/SoftBadge";
 import { Button } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
-import React from 'react';
+import React, { useState } from 'react';
 // Images
 import team2 from "assets/images/team-2.jpg";
 import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
+
+function Circle(){
+  const [namaCircle, setNamaCircle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [createCircle, setCreateCircle] = useState("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (namaCircle === "" || author === "" || createCircle === "")
+    {}
+  }
 
 function Author({ image, name, email }) {
   return (
@@ -206,5 +216,5 @@ const authorsTableData = {
     },
   ],
 };
-
-export default authorsTableData;
+}
+export default Circle;
