@@ -14,13 +14,13 @@ import ivancik from "assets/images/ivancik.jpg";
 function WorkWithTheRockets() {
   return (
     <Card sx={{ height: "100%" }}>
-      <SoftBox position="relative" height="100%" p={2}>
+      <SoftBox position="relative" height="100%" p={3}>
         <SoftBox
           display="flex"
           flexDirection="column"
           height="100%"
-          py={2}
-          px={2}
+          py={3}
+          px={3}
           borderRadius="lg"
           sx={{
             backgroundImage: ({ functions: { linearGradient, rgba }, palette: { gradients } }) =>
@@ -31,12 +31,12 @@ function WorkWithTheRockets() {
             backgroundSize: "cover",
           }}
         >
-          <SoftBox mb={3} pt={1}>
+          <SoftBox mb={3} pt={3}>
             <SoftTypography variant="h5" color="white" fontWeight="bold">
             Create and approve
             </SoftTypography>
           </SoftBox>
-          <SoftBox mb={2}>
+          <SoftBox mb={10}>
             <SoftTypography variant="body2" color="white">
             Create a new circle and organize anyone who you think can enter the cricle or event.
             </SoftTypography>

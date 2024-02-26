@@ -15,11 +15,11 @@ import rocketWhite from "assets/images/illustrations/rocket-white.png";
 function BuildByDevelopers() {
   return (
     <Card>
-      <SoftBox p={2}>
+      <SoftBox p={5}>
         <Grid container spacing={3}>
-          <Grid item xs={12} lg={6}>
+          <Grid item xs={13} lg={7}>
             <SoftBox display="flex" flexDirection="column" height="100%">
-              <SoftBox pt={1} mb={0.5}>
+              <SoftBox pt={2} mb={2}>
                 <SoftTypography variant="body2" color="text" fontWeight="medium">
                   Build by developers
                 </SoftTypography>
@@ -27,7 +27,7 @@ function BuildByDevelopers() {
               <SoftTypography variant="h5" fontWeight="bold" gutterBottom>
               Bill Management
               </SoftTypography>
-              <SoftBox mb={6}>
+              <SoftBox mb={10}>
                 <SoftTypography variant="body2" color="text">
                 Schedule your events and invite members as flexibly as possible to facilitate your circle agenda.
                 </SoftTypography>
