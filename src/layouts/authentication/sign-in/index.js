@@ -14,41 +14,60 @@ import axios from 'axios';
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const [rememberMe, setRememberMe] = useState(true);
   const [username, setUsername] = useState("");
   const [usernameError, setUsernameError] = useState(null);
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState('');
   const [error, setError] = useState('');
-  const handleSetRememberMe = () => setRememberMe(!rememberMe);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isValid, setIsValid] = useState(false);
-
-  const usernameValidator = /^[a-zA-Z0-9_]{3,30}$/;
-  const passwordValidator = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [token, setToken] = useState('');
 
-  const validateUsername = () => {
+  const validateUsername = async () => {
     let error = '';
     if (username.trim() === '') {
-      error = '*username is required';
-    } else if (!usernameValidator.test(username)) {
-      error = '*username must have distinctive characteristics';
+      error = '*Username is required';
+    } else {
+      try {
+        const response = await axios.post('#', {
+          username: username,
+        });
+        const isUsernameValid = response.data.isValid;
+        if (!isUsernameValid) {
+          error = '*Username not found';
+        }
+      } catch (error) {
+        console.error('Error checking username:', error);
+        error = '*An error occurred while checking username';
+      }
     }
     return error;
   };
-
-  const validatePassword = () => {
+  
+  
+  const validatePassword = async () => {
     let error = '';
     if (password.trim() === '') {
-      error = '*password is required';
-    } else if (!passwordValidator.test(password)) {
-      error = '*password must contain at least 8 characters, 1 number, 1 upper and 1 lowercase';
+      error = '*Password is required';
+    } else {
+      try {
+        const response = await axios.post('#', {
+          username: username,
+          password: password,
+        });
+        const isPasswordValid = response.data.isValid;
+        if (!isPasswordValid) {
+          error = '*Password is incorrect';
+        }
+      } catch (error) {
+        console.error('Error checking password:', error);
+        error = '*An error occurred while checking password';
+      }
     }
     return error;
   };
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     switch (name) {
@@ -67,14 +86,16 @@ const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newUsernameError = validateUsername();
-    const newPasswordError = validatePassword();
+    const newUsernameErrorPromise = validateUsername();
+    const newPasswordErrorPromise = validatePassword();
+    const newUsernameError = await newUsernameErrorPromise;
+    const newPasswordError = await newPasswordErrorPromise;
     setUsernameError(newUsernameError);
     setPasswordError(newPasswordError);
     const isFormValid = !newUsernameError && !newPasswordError;
-    if (isFormValid && rememberMe) {
+    if (isFormValid) {
       try {
-        const response = await axios.post('', {
+        const response = await axios.post('#', {
           username: username,
           password: password,
         });
@@ -84,7 +105,6 @@ const SignIn = () => {
         setIsLoggedIn(true);
         setIsSubmitted(true);
         navigate('/dashboard');
-        
         // Set interceptor setelah token diperoleh
         axios.interceptors.request.use(
           config => {
@@ -116,7 +136,7 @@ const SignIn = () => {
               Username
             </SoftTypography>
           </SoftBox>
-          <SoftInput type="username" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
+          <SoftInput type="username" placeholder="username" value={username} onChange={(e) => setUsername(e.target.value)} />
           {usernameError && (
               <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
                 {usernameError}
@@ -129,7 +149,7 @@ const SignIn = () => {
               Password
             </SoftTypography>
           </SoftBox>
-          <SoftInput type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <SoftInput type="password" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} />
           {passwordError && (
                 <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
                   {passwordError}
@@ -137,14 +157,6 @@ const SignIn = () => {
               )}
         </SoftBox>
         <SoftBox display="flex" alignItems="center">
-          <Switch checked={rememberMe} onChange={handleSetRememberMe} />
-          <SoftTypography
-            variant="button"
-            fontWeight="regular"
-            onClick={handleSetRememberMe}
-            sx={{ cursor: "pointer", userSelect: "none" }}>
-            &nbsp;&nbsp;Remember me
-          </SoftTypography>
         </SoftBox>
         <SoftBox mt={4} mb={1}>
         <SoftButton

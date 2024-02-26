@@ -20,21 +20,18 @@ function SignUp() {
   const navigate = useNavigate();
   const [usernameError, setUsernameError] = useState(null);
   const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [error, setError] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [agreement, setAgreement] = useState(true);
   const [isValid, setIsValid] = useState(false);
-  const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [passwordConfirmationError, setPasswordConfirmationError] = useState('');
   const [referralCode, setReferralCode] = useState('');
   const [referralCodeError, setReferralCodeError] = useState('');
 
   const usernameValidator = /^[a-zA-Z0-9_]{3,30}$/;
-  const emailValidator = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   const passwordValidator = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
   const referralCodeValidator = /^[a-zA-Z0-9]{6}$/;
 
@@ -44,16 +41,6 @@ function SignUp() {
       error = '*username is required';
     } else if (!usernameValidator.test(username)) {
       error = '*username must have distinctive characteristics';
-    }
-    return error;
-  };
-
-  const validateEmail = () => {
-    let error = '';
-    if (email.trim() === '') {
-      error = '*email is required';
-    } else if (!emailValidator.test(email)) {
-      error = '*email is not valid';
     }
     return error;
   };
@@ -95,34 +82,28 @@ function SignUp() {
         setUsername(value);
         setUsernameError(''); // Reset error
         break;
-      case 'email':
-        setEmail(value);
-        setEmailError(''); // Reset error
-        break;
       case 'password':
         setPassword(value);
-        setPasswordError(''); // Reset error
+        setPasswordError('');
         break;
       case 'passwordConfirmation':
         setPasswordConfirmation(value);
-        setPasswordConfirmationError(''); // Reset error
+        setPasswordConfirmationError('');
         break;
       case 'referralCode':
         setReferralCode(value);
-        setReferralCodeError(''); // Reset error
-        break;
+        setReferralCodeError('');
       default:
         break;
     }
   
     e.preventDefault();
-    if (username === "" || email === "" || password === "" || passwordConfirmation === "" || referralCode === "") {
-      alert("Data Gagal ditambahkan, field tidak boleh ada yang kosong");
+    if (username === "" || password === "" || passwordConfirmation === "" || referralCode === "") {
+      // alert("Data Gagal ditambahkan, field tidak boleh ada yang kosong");
     } else {
       try {
         await axios.post('', {
           username: username,
-          email : email,
           password: password,
           passwordConfirmation : passwordConfirmation,
           referralCode: referralCode,
@@ -130,7 +111,6 @@ function SignUp() {
         window.location.href = '/dashboard';
       } catch (error) {
         console.error("Error submitting form:", error);
-        // Handle errors as needed
       }
     }
   };
@@ -138,20 +118,17 @@ function SignUp() {
   // Di dalam handleSubmit, Anda perlu menetapkan error untuk masing-masing input
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Lakukan validasi input
     const newUsernameError = validateUsername();
-    const newEmailError = validateEmail();
     const newPasswordError = validatePassword();
     const newPasswordConfirmationError = validatePasswordConfirmation();
     const newReferralCodeError = validateReferralCode();
     
     // Perbarui state error
     setUsernameError(newUsernameError);
-    setEmailError(newEmailError);
     setPasswordError(newPasswordError);
     setPasswordConfirmationError(newPasswordConfirmationError);
     setReferralCodeError(newReferralCodeError);
-    const isFormValid = !newUsernameError && !newEmailError && !newPasswordError && !newPasswordConfirmationError && !newReferralCodeError;
+    const isFormValid = !newUsernameError && !newPasswordError && !newPasswordConfirmationError && !newReferralCodeError;
 
     if (isFormValid && agreement) {
       // Lakukan pengiriman formulir ke server
@@ -184,7 +161,7 @@ function SignUp() {
           <SoftBox component="form" role="form" onSubmit={handleSubmit}>
             <SoftBox mb={1}>
               <SoftInput
-                placeholder="Username"
+                placeholder="username must have distinctive characteristics"
                 name="username"
                 value={username}
                 onChange={handleChange}
@@ -195,25 +172,10 @@ function SignUp() {
                 {usernameError}
               </div>
             )}
-
-            <SoftBox mb={1}>
-              <SoftInput
-                type="email"
-                placeholder="Email"
-                name="email"
-                value={email}
-                onChange={handleChange}
-              />
-              {emailError && (
-                <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
-                  {emailError}
-                </div>
-              )}
-            </SoftBox>
             <SoftBox mb={2}>
               <SoftInput
                 type="password"
-                placeholder="Password"
+                placeholder="password must contain at least 8 characters, 1 number, 1 upper and 1 lowercase"
                 name="password"
                 value={password}
                 onChange={handleChange}
@@ -227,7 +189,7 @@ function SignUp() {
             <SoftBox mb={2}>
               <SoftInput
                 type="password"
-                placeholder="Confirm Password"
+                placeholder="password confirmation must match the password"
                 name="passwordConfirmation"
                 value={passwordConfirmation}
                 onChange={handleChange}
@@ -252,26 +214,26 @@ function SignUp() {
                 </div>
               )}
             </SoftBox>
-            <SoftBox display="flex" alignItems="center">
-              <Checkbox
+            {/* <SoftBox display="flex" alignItems="center"> */}
+              {/* <Checkbox
                 checked={agreement}
-                onChange={handleSetAgreement} />
-              <SoftTypography
+                onChange={handleSetAgreement} /> */}
+              {/* <SoftTypography
                 variant="button"
                 fontWeight="regular"
                 onClick={handleSetAgreement}
                 sx={{ cursor: "pointer", userSelect: "none" }}>
                 &nbsp;&nbsp;I agree the&nbsp;
-              </SoftTypography>
-              <SoftTypography
+              </SoftTypography> */}
+              {/* <SoftTypography
                 component="a"
                 href="#"
                 variant="button"
                 fontWeight="bold"
                 textGradient>
                 Terms and Conditions
-              </SoftTypography>
-            </SoftBox>
+              </SoftTypography> */}
+            {/* </SoftBox> */}
             <SoftBox mt={4} mb={1}>
               <SoftButton
                 type="submit"
