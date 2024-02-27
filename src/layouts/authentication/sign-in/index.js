@@ -45,7 +45,6 @@ const SignIn = () => {
     return error;
   };
   
-  
   const validatePassword = async () => {
     let error = '';
     if (password.trim() === '') {
@@ -92,6 +91,11 @@ const SignIn = () => {
     const newPasswordError = await newPasswordErrorPromise;
     setUsernameError(newUsernameError);
     setPasswordError(newPasswordError);
+
+    if (newUsernameError && newPasswordError) {
+      setError('Username and password not registered');
+      return;
+  }
     const isFormValid = !newUsernameError && !newPasswordError;
     if (isFormValid) {
       try {

@@ -24,7 +24,6 @@ function SignUp() {
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [error, setError] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [agreement, setAgreement] = useState(true);
   const [isValid, setIsValid] = useState(false);
   const [passwordError, setPasswordError] = useState('');
   const [passwordConfirmationError, setPasswordConfirmationError] = useState('');
@@ -35,25 +34,28 @@ function SignUp() {
   const passwordValidator = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
   const referralCodeValidator = /^[a-zA-Z0-9]{6}$/;
 
-  const validateUsername = () => {
+  const validateUsername = async () => {
     let error = '';
     if (username.trim() === '') {
       error = '*username is required';
     } else if (!usernameValidator.test(username)) {
       error = '*username must have distinctive characteristics';
+    } else {
+      try {
+        const response = await axios.post('', {
+          username: username,
+        });
+        const isUsernameExists = response.data.exists;
+        if (isUsernameExists) {
+          error = '*username already exists';
+        }
+      } catch (error) {
+        console.error('Error checking username:', error);
+        error = '*An error occurred while checking username';
+      }
     }
     return error;
-  };
-
-  const validatePassword = () => {
-    let error = '';
-    if (password.trim() === '') {
-      error = '*password is required';
-    } else if (!passwordValidator.test(password)) {
-      error = '*password must contain at least 8 characters, 1 number, 1 upper and 1 lowercase';
-    }
-    return error;
-  };
+};
 
   const validatePasswordConfirmation = () => {
     let error = '';
@@ -65,15 +67,31 @@ function SignUp() {
     return error;
   };
 
-  const validateReferralCode = () => {
+  const validateReferralCode = async () => {
     let error = '';
     if (referralCode.trim() === '') {
       error = '*referral code is required';
     } else if (!referralCodeValidator.test(referralCode)) {
       error = '*referral code must be 6 characters long and alphanumeric';
+    } else {
+      try {
+        const response = await axios.post('/check-referral-code', {
+          referralCode: referralCode,
+        });
+        const isReferralCodeUsed = response.data.used;
+        const isReferralCodeExpired = response.data.expired;
+        if (isReferralCodeUsed) {
+          error = '*referral code is already used by another user';
+        } else if (isReferralCodeExpired) {
+          error = '*referral code has expired';
+        }
+      } catch (error) {
+        console.error('Error checking referral code:', error);
+        error = '*An error occurred while checking referral code';
+      }
     }
     return error;
-  };
+};
 
   const handleChange = async (e) => {
     const { name, value } = e.target;
@@ -99,7 +117,6 @@ function SignUp() {
   
     e.preventDefault();
     if (username === "" || password === "" || passwordConfirmation === "" || referralCode === "") {
-      // alert("Data Gagal ditambahkan, field tidak boleh ada yang kosong");
     } else {
       try {
         await axios.post('', {
@@ -115,22 +132,19 @@ function SignUp() {
     }
   };
   
-  // Di dalam handleSubmit, Anda perlu menetapkan error untuk masing-masing input
   const handleSubmit = (e) => {
     e.preventDefault();
     const newUsernameError = validateUsername();
     const newPasswordError = validatePassword();
     const newPasswordConfirmationError = validatePasswordConfirmation();
     const newReferralCodeError = validateReferralCode();
-    
     // Perbarui state error
     setUsernameError(newUsernameError);
     setPasswordError(newPasswordError);
     setPasswordConfirmationError(newPasswordConfirmationError);
     setReferralCodeError(newReferralCodeError);
     const isFormValid = !newUsernameError && !newPasswordError && !newPasswordConfirmationError && !newReferralCodeError;
-
-    if (isFormValid && agreement) {
+    if (isFormValid) {
       // Lakukan pengiriman formulir ke server
       setIsSubmitted(true);
       navigate('/dashboard');
@@ -139,8 +153,6 @@ function SignUp() {
       setError('please fill in all fields correctly');
     }
   };
-
-  const handleSetAgreement = () => setAgreement(!agreement);
 
   return (
     <BasicLayout
