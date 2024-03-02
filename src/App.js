@@ -14,7 +14,6 @@ import createCache from "@emotion/cache";
 import routes from "routes";
 import { useSoftUIController, setMiniSidenav, setOpenConfigurator } from "context";
 import brand from "assets/images/logo-ct.png";
-// import SuiAlert from './layouts/authentication/components/SuiAlert/SuiAlert';
 
 export default function App() {
   const [controller, dispatch] = useSoftUIController();

@@ -37,6 +37,7 @@ function DashboardLayout({ children }) {
   }, [pathname]);
 
   return (
+    <div>
     <SoftBox
       sx={({ breakpoints, transitions, functions: { pxToRem } }) => ({
         p: 3,
@@ -52,7 +53,15 @@ function DashboardLayout({ children }) {
       })}
     >
       {children}
+      
     </SoftBox>
+    {/* <style jsx>{`
+        .container {
+          opacity: ${showModal ? '0.5' : '1'};
+          pointer-events: ${showModal ? 'none' : 'auto'};
+        }
+      `}</style> */}
+    </div>
   );
 }
 

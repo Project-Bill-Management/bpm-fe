@@ -30,7 +30,7 @@ const SignIn = () => {
       error = '*Username is required';
     } else {
       try {
-        const response = await axios.post('#', {
+        const response = await axios.post('http://127.0.0.1:8000/api/auth/login', {
           username: username,
         });
         const isUsernameValid = response.data.isValid;
@@ -51,7 +51,7 @@ const SignIn = () => {
       error = '*Password is required';
     } else {
       try {
-        const response = await axios.post('#', {
+        const response = await axios.post('http://127.0.0.1:8000/api/auth/login', {
           username: username,
           password: password,
         });
@@ -85,49 +85,48 @@ const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newUsernameErrorPromise = validateUsername();
-    const newPasswordErrorPromise = validatePassword();
-    const newUsernameError = await newUsernameErrorPromise;
-    const newPasswordError = await newPasswordErrorPromise;
+    const newUsernameError = await validateUsername();
+    const newPasswordError = await validatePassword();
     setUsernameError(newUsernameError);
     setPasswordError(newPasswordError);
-
-    if (newUsernameError && newPasswordError) {
+  
+    if (newUsernameError || newPasswordError) {
       setError('Username and password not registered');
       return;
-  }
-    const isFormValid = !newUsernameError && !newPasswordError;
-    if (isFormValid) {
-      try {
-        const response = await axios.post('#', {
-          username: username,
-          password: password,
-        });
-        const token = response.data.token;
-        setToken(token);
-        const decodedToken = jwtDecode(token);
-        setIsLoggedIn(true);
-        setIsSubmitted(true);
-        navigate('/dashboard');
-        // Set interceptor setelah token diperoleh
-        axios.interceptors.request.use(
-          config => {
-            config.headers.Authorization = `Bearer ${token}`;
-            return config;
-          },
-          error => {
-            return Promise.reject(error);
-          }
-        );
-      } catch (error) {
-        console.error("Error submitting form:", error);
-        setError('Incorrect username or password');
-      }
-    } else {
-      setError('Please fill in all fields correctly');
     }
-  };  
-
+  
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/auth/login', {
+        username: username,
+        password: password,
+      });
+      const token = response.data.token;
+      // Simpan token di localStorage
+      localStorage.setItem('jwtToken', token);
+      setToken(token);
+      const decodedToken = jwtDecode(token);
+      setIsLoggedIn(true);
+      setIsSubmitted(true);
+      navigate('/dashboard');
+      // Set interceptor setelah token diperoleh
+      axios.interceptors.request.use(
+        config => {
+          const token = localStorage.getItem('jwtToken');
+          if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+          }
+          return config;
+        },
+        error => {
+          return Promise.reject(error);
+        }
+      );
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setError('Incorrect username or password');
+    }
+  }  
+  
   return (
     <CoverLayout
       title="Welcome back!"

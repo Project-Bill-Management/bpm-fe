@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Card from "@mui/material/Card";
+import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
+import { Modal, Form } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Table from "examples/Tables/Table";
 import authorsTableData from "layouts/tables/data/authorsTableData";
-import Button from "@mui/material/Button";
-import AddIcon from "@mui/icons-material/Add";
-import { Modal, Form } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 function Tables() {
+  const [state, setState] = useState({
+  });
+
   const [NewCircleName, setNewCircleName] = useState("");
   const [id, setId] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -22,17 +24,19 @@ function Tables() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isValid, setIsValid] = useState(false);
 
+  const handleCloseModal = () => {
+    setShowModal(false);
+    document.body.classList.remove("modal-open");
+  };
+
   const handleShowModal = () => {
+    console.log("Show modal clicked");
     setNewCircleName("");
     setShowModal(true);
+    document.body.classList.add("modal-open");
   };
 
-  const handleCloseModal = () => {
-    setNewCircleName("");
-    setShowModal(false);
-  };
-
-  const handleChange = async (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     switch (name) {
       case 'NewCircleName':
@@ -66,34 +70,34 @@ function Tables() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (NewCircleName === "") {
+      setNewCircleNameError('   Circle name is required');
       return;
     } else {
-      try {
-        await axios.post('', {
-          NewCircleName: NewCircleName,
-        });
-        window.location.href = '/tables'; // Ganti ini dengan navigasi ke halaman yang benar
-      } catch (error) {
-        console.error("Error submitting form:", error);
-        // Handle errors as needed
+      const newCircleNameError = await validateNewCircleName();
+      setNewCircleNameError(newCircleNameError);
+      const isFormValid = newCircleNameError === '';
+      if (isFormValid) {
+        try {
+          await axios.post('', {
+            NewCircleName: NewCircleName,
+          });
+          window.location.href = '/tables'; // Ganti ini dengan navigasi ke halaman yang benar
+        } catch (error) {
+          console.error("Error submitting form:", error);
+          // Handle errors as needed
+          setError('An error occurred while submitting the form');
+        }
+      } else {
+        // Jika ada input yang tidak valid, tampilkan pesan error
+        setError('Please fill in all fields correctly');
+        return; // Kembalikan agar formulir tidak terkirim
       }
-    }
-
-    const newCircleNameError = await validateNewCircleName();
-    setNewCircleNameError(newCircleNameError);
-    const isFormValid = !newCircleNameError;
-    if (isFormValid) {
-      // Lakukan pengiriman formulir ke server
-      setIsSubmitted(true);
-    } else {
-      // Jika ada input yang tidak valid, tampilkan pesan error
-      setError('Please fill in all fields correctly');
     }
   };
 
   return (
     <DashboardLayout>
-      <DashboardNavbar />
+      {/* <DashboardNavbar /> */}
       <SoftBox py={3}>
         <SoftBox mb={3}>
           <Card>
@@ -116,44 +120,47 @@ function Tables() {
             </SoftBox>
           </Card>
         </SoftBox>
-        <div className='body-flex'>
-          <div className="flex">
-            <div className='col-12 p-4'>
-              <Modal show={showModal} onHide={handleCloseModal}>
-                <Modal.Header closeButton>
-                  <Modal.Title>Create Circle</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <Form onSubmit={handleSubmit}>
-                    <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
-                      <Form.Control
-                        type="text"
-                        placeholder='Enter Circle Name'
-                        autoFocus
-                        onChange={(e) => setNewCircleName(e.target.value)}
-                        value={NewCircleName}
-                      />
-                    </Form.Group>
+      </SoftBox>
+      <div className='body-flex'>
+        <div className="overlay" />
+        <div className="flex">
+          <div className="col-15 p-5">
+            <Modal show={showModal} onHide={handleCloseModal} style={{ maxWidth: '1500px', width: '100%' }}>
+              <div className="overlay-icons" />
+              <Modal.Header closeButton>
+                <Modal.Title>Create Circle</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form>
+                  <Form.Group className='mb-5' controlId='exampleForm.ControlInput1'>
+                    <Form.Control
+                      type="text"
+                      placeholder='Enter Circle Name'
+                      name='NewCircleName'
+                      autoFocus
+                      onChange={handleChange}
+                      value={NewCircleName}
+                    />
                     {NewCircleNameError && (
                       <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
                         {NewCircleNameError}
                       </div>
                     )}
-                    <Button variant="contained" type='submit' onClick={handleSubmit}>
-                      Save
-                    </Button>
-                  </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                  <Button variant="secondary" onClick={handleCloseModal}>
-                    Close
+                  </Form.Group>
+                  <Button variant="contained" type='submit' onClick={handleSubmit}>
+                    Save
                   </Button>
-                </Modal.Footer>
-              </Modal>
-            </div>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={handleCloseModal}>
+                  Close
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </div>
         </div>
-      </SoftBox>
+      </div>
     </DashboardLayout>
   );
 }

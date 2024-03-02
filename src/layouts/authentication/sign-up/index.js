@@ -11,10 +11,10 @@ import SoftInput from "components/SoftInput";
 import SoftButton from "components/SoftButton";
 import curved14 from "assets/images/curved-images/curved14.jpg";
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function SignUp() {
   const [state, setState] = useState({
-    // inisialisasi state di sini
   });
   
   const navigate = useNavigate();
@@ -55,6 +55,15 @@ function SignUp() {
       }
     }
     return error;
+};
+const validatePassword = () => {
+  let error = '';
+  if (password.trim() === '') {
+    error = '*password is required';
+  } else if (!passwordValidator.test(password)) {
+    error = '*password must contain at least 8 characters, 1 number, 1 uppercase, and 1 lowercase';
+  }
+  return error;
 };
 
   const validatePasswordConfirmation = () => {
@@ -132,27 +141,26 @@ function SignUp() {
     }
   };
   
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newUsernameError = validateUsername();
-    const newPasswordError = validatePassword();
+    const newUsernameError = await validateUsername();
+    const newPasswordError = await validatePassword();
     const newPasswordConfirmationError = validatePasswordConfirmation();
-    const newReferralCodeError = validateReferralCode();
-    // Perbarui state error
+    const newReferralCodeError = await validateReferralCode();
+  
     setUsernameError(newUsernameError);
     setPasswordError(newPasswordError);
     setPasswordConfirmationError(newPasswordConfirmationError);
     setReferralCodeError(newReferralCodeError);
+  
     const isFormValid = !newUsernameError && !newPasswordError && !newPasswordConfirmationError && !newReferralCodeError;
     if (isFormValid) {
-      // Lakukan pengiriman formulir ke server
       setIsSubmitted(true);
       navigate('/dashboard');
     } else {
-      // Jika ada input yang tidak valid, tampilkan pesan error
-      setError('please fill in all fields correctly');
+      setError('Please fill in all fields correctly');
     }
-  };
+  };  
 
   return (
     <BasicLayout
@@ -214,7 +222,7 @@ function SignUp() {
             </SoftBox>
             <SoftBox mb={2}>
               <SoftInput
-                type="referralCode"
+                type="text"
                 placeholder="Referral Code"
                 name="referralCode"
                 value={referralCode}
@@ -226,26 +234,6 @@ function SignUp() {
                 </div>
               )}
             </SoftBox>
-            {/* <SoftBox display="flex" alignItems="center"> */}
-              {/* <Checkbox
-                checked={agreement}
-                onChange={handleSetAgreement} /> */}
-              {/* <SoftTypography
-                variant="button"
-                fontWeight="regular"
-                onClick={handleSetAgreement}
-                sx={{ cursor: "pointer", userSelect: "none" }}>
-                &nbsp;&nbsp;I agree the&nbsp;
-              </SoftTypography> */}
-              {/* <SoftTypography
-                component="a"
-                href="#"
-                variant="button"
-                fontWeight="bold"
-                textGradient>
-                Terms and Conditions
-              </SoftTypography> */}
-            {/* </SoftBox> */}
             <SoftBox mt={4} mb={1}>
               <SoftButton
                 type="submit"
