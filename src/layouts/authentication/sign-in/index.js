@@ -9,7 +9,7 @@ import SoftButton from "components/SoftButton";
 import CoverLayout from "layouts/authentication/components/CoverLayout";
 import curved9 from "assets/images/curved-images/curved-6.jpg";
 import { useNavigate } from 'react-router-dom';
-import jwt_decode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 
 const SignIn = () => {
@@ -22,7 +22,7 @@ const SignIn = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [token, setToken] = useState('');
+  // const [token, setToken] = useState('');
 
   const validateUsername = async () => {
     let error = '';
@@ -30,7 +30,7 @@ const SignIn = () => {
       error = '*Username is required';
     } else {
       try {
-        const response = await axios.post('http://127.0.0.1:8000/api/auth/login', {
+        const response = await axios.post('http://152.42.188.210:8080/index.php/api/auth/login', {
           username: username,
         });
         const isUsernameValid = response.data.isValid;
@@ -51,7 +51,7 @@ const SignIn = () => {
       error = '*Password is required';
     } else {
       try {
-        const response = await axios.post('http://127.0.0.1:8000/api/auth/login', {
+        const response = await axios.post('http://152.42.188.210:8080/index.php/api/auth/login', {
           username: username,
           password: password,
         });
@@ -96,15 +96,15 @@ const SignIn = () => {
     }
   
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/auth/login', {
+      const response = await axios.post('http://152.42.188.210:8080/index.php/api/auth/login', {
         username: username,
         password: password,
       });
       const token = response.data.token;
       // Simpan token di localStorage
       localStorage.setItem('jwtToken', token);
-      setToken(token);
-      const decodedToken = jwtDecode(token);
+      // setToken(token);
+      // const decodedToken = jwtDecode(token); //digunakan kecuali butuh get data dan parameter
       setIsLoggedIn(true);
       setIsSubmitted(true);
       navigate('/dashboard');
