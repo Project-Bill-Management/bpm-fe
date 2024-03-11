@@ -22,7 +22,7 @@ function SidenavCard() {
 
   return (
     <Card sx={(theme) => card(theme, { miniSidenav })}>
-      {/* <CardContent sx={(theme) => cardContent(theme, { sidenavColor })}>
+      <CardContent sx={(theme) => cardContent(theme, { sidenavColor })}>
         <SoftBox
           bgColor="white"
           width="2rem"
@@ -57,7 +57,7 @@ function SidenavCard() {
             documentation
           </SoftButton>
         </SoftBox>
-      </CardContent> */}
+      </CardContent>
     </Card>
   );
 }

@@ -8,9 +8,10 @@ import CoverLayout from "layouts/authentication/components/CoverLayout";
 import curved9 from "assets/images/curved-images/curved-6.jpg";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
 
 const SignIn = () => {
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [usernameError, setUsernameError] = useState(null);
@@ -36,7 +37,6 @@ const SignIn = () => {
       passwordError = '*Password is required';
       isValid = false;
     }
-  
     // Jika input username dan password tidak kosong, lakukan validasi server
     if (isValid) {
       try {
@@ -46,9 +46,13 @@ const SignIn = () => {
         });
         const token = response.data.token;
         localStorage.setItem('jwtToken', token);
+        // localStorage.setItem('username', username);
         axios.interceptors.request.use(
           config => {
             const token = localStorage.getItem('jwtToken');
+            setIsLoggedIn(true);
+            // setUsername(username);
+            console.log(token);
             if (token) {
               config.headers.Authorization = `Bearer ${token}`;
             }
@@ -158,8 +162,6 @@ const SignIn = () => {
             {error}
           </div>
         )}
-
-
         <SoftBox mt={4} mb={1}>
           <SoftButton
             type="submit"
@@ -187,7 +189,6 @@ const SignIn = () => {
       </SoftBox>
     </CoverLayout>
   );
-
 };
 
 
