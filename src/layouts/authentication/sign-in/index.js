@@ -11,7 +11,7 @@ import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 
 const SignIn = () => {
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  // const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [usernameError, setUsernameError] = useState(null);
@@ -20,7 +20,7 @@ const SignIn = () => {
   const [error, setError] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showError, setShowError] = useState(false); // State untuk menampilkan pesan error
-
+  
   const validateUsernameAndPassword = async () => {
     let usernameError = '';
     let passwordError = '';
@@ -45,8 +45,8 @@ const SignIn = () => {
           password: password,
         });
         const token = response.data.token;
-        localStorage.setItem('jwtToken', token);
-        // localStorage.setItem('username', username);
+        localStorage.setItem('username', username);
+        // localStorage.setItem('jwtToken', token);
         axios.interceptors.request.use(
           config => {
             const token = localStorage.getItem('jwtToken');
@@ -85,7 +85,6 @@ const SignIn = () => {
     return isValid;
   };
   
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     switch (name) {

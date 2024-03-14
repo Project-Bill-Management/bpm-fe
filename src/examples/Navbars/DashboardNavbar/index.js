@@ -36,7 +36,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const navigate = useNavigate();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");
+  // const [username, setUsername] = useState("");
 
   useEffect(() => {
     if (fixedNavbar) {
@@ -52,8 +52,26 @@ function DashboardNavbar({ absolute, light, isMini }) {
     window.addEventListener("scroll", handleTransparentNavbar);
     handleTransparentNavbar();
 
+    // Pengecekan status login
+const checkLoginStatus = async () => {
+  // Lakukan pengambilan status login (misalnya dari localStorage, state, atau API)
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; // Ambil status login dari localStorage
+  localStorage.setItem('isLoggedIn', 'true');
+  setIsLoggedIn(true);
+  // Jika pengguna sudah login, langsung arahkan ke halaman profil
+  // if (isLoggedIn) {
+  //   navigate('/profile'); // Mengarahkan ke halaman profil jika sudah login
+  // } else {
+  //   navigate('/authentication/sign-in');
+  // }
+};
+checkLoginStatus();
+
+
     return () => window.removeEventListener("scroll", handleTransparentNavbar);
   }, [dispatch, fixedNavbar]);
+
+  console.log('isLoggedIn:', isLoggedIn);
 
   const handleMiniSidenav = () => setMiniSidenav(dispatch, !miniSidenav);
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
@@ -62,11 +80,11 @@ function DashboardNavbar({ absolute, light, isMini }) {
 
   const handleAccountClick = () => {
     if (isLoggedIn) {
-      navigate('/profile');
+      navigate('/profile'); // Mengarahkan ke halaman profil jika sudah login
     } else {
       navigate('/authentication/sign-in');
     }
-  };
+  };  
 
   const renderMenu = () => (
     <Menu
@@ -120,8 +138,8 @@ function DashboardNavbar({ absolute, light, isMini }) {
         {isMini ? (
           <SoftBox sx={(theme) => navbarRow(theme, { isMini })}>
             <SoftBox color={light ? "white" : "inherit"}>
-              {isLoggedIn ? (
-                <IconButton sx={navbarIconButton} size="small" onClick={handleAccountClick}>
+              <Link to="/authentication/sign-in" style={{ textDecoration: 'none' }}>
+                <IconButton sx={navbarIconButton} size="small">
                   <Icon
                     sx={({ palette: { dark, white } }) => ({
                       color: light ? white.main : dark.main,
@@ -134,33 +152,36 @@ function DashboardNavbar({ absolute, light, isMini }) {
                     fontWeight="medium"
                     color={light ? "white" : "dark"}
                   >
-                    Account
+                    Sign In
                   </SoftTypography>
                 </IconButton>
-              ) : (
-                <Link to="/authentication/sign-in" style={{ textDecoration: 'none' }}>
-                  <IconButton sx={navbarIconButton} size="small" onClick={handleAccountClick}>
-                    <Icon
-                      sx={({ palette: { dark, white } }) => ({
-                        color: light ? white.main : dark.main,
-                      })}
-                    >
-                      account_circle
-                    </Icon>
-                    <SoftTypography
-                      variant="button"
-                      fontWeight="medium"
-                      color={light ? "white" : "dark"}
-                    >
-                      Sign In
-                    </SoftTypography>
-                  </IconButton>
-                </Link>
-              )}
+              </Link>
               {renderMenu()}
             </SoftBox>
           </SoftBox>
-        ) : null}
+        ) : (
+          <SoftBox sx={(theme) => navbarRow(theme, { isMini })}>
+            <SoftBox color={light ? "white" : "inherit"}>
+              <IconButton sx={navbarIconButton} size="small" onClick={handleAccountClick}>
+                <Icon
+                  sx={({ palette: { dark, white } }) => ({
+                    color: light ? white.main : dark.main,
+                  })}
+                >
+                  account_circle
+                </Icon>
+                <SoftTypography
+                  variant="button"
+                  fontWeight="medium"
+                  color={light ? "white" : "dark"}
+                >
+                  Account
+                </SoftTypography>
+              </IconButton>
+              {renderMenu()}
+            </SoftBox>
+          </SoftBox>
+        )}
 
       </Toolbar>
     </AppBar>

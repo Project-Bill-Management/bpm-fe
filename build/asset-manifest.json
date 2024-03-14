@@ -1,25 +1,16 @@
 {
   "files": {
     "main.css": "/static/css/main.684f9bee.css",
-    "main.js": "/static/js/main.37d09255.js",
-    "static/media/home-decor-3.jpg": "/static/media/home-decor-3.74d13fcbd3c631fc7908.jpg",
-    "static/media/home-decor-2.jpg": "/static/media/home-decor-2.b4e5397c9846645ba275.jpg",
-    "static/media/home-decor-1.jpg": "/static/media/home-decor-1.05e218fd495ccc65c99d.jpg",
+    "main.js": "/static/js/main.049e3996.js",
     "static/media/curved0.jpg": "/static/media/curved0.d146ec6e9401aa9d52c5.jpg",
     "static/media/curved14.jpg": "/static/media/curved14.12c9ea54425c4f1bc1d7.jpg",
     "static/media/waves-white.svg": "/static/media/waves-white.eac3c8078f7e1e28ef33f010c9782f40.svg",
-    "static/media/marie.jpg": "/static/media/marie.1c6828424a074f143c2d.jpg",
     "static/media/rocket-white.png": "/static/media/rocket-white.de5786399f850a27a362.png",
     "static/media/curved-6.jpg": "/static/media/curved-6.71ee1d1cc8196ed2126b.jpg",
     "static/media/ivancik.jpg": "/static/media/ivancik.442b474727c414bb3b85.jpg",
     "static/media/white-curved.jpeg": "/static/media/white-curved.a5b7db662b0b14ab5534.jpeg",
     "static/media/visa.png": "/static/media/visa.71c0d5e9e2aaee42e4c3.png",
     "static/media/mastercard.png": "/static/media/mastercard.27fca3e7637a9458fb64.png",
-    "static/media/team-1.jpg": "/static/media/team-1.c821a2730a9c8e3f68eb.jpg",
-    "static/media/kal-visuals-square.jpg": "/static/media/kal-visuals-square.22829a59e2c6afb94b7a.jpg",
-    "static/media/team-3.jpg": "/static/media/team-3.b75146da5bfdf9d8ae61.jpg",
-    "static/media/ivana-square.jpg": "/static/media/ivana-square.b04026bd1ae5cf0d8a68.jpg",
-    "static/media/team-4.jpg": "/static/media/team-4.a1e1c29f1b839ddae393.jpg",
     "static/media/bruce-mars.jpg": "/static/media/bruce-mars.45f6477957606abd2f24.jpg",
     "static/media/team-2.jpg": "/static/media/team-2.e725aef8c892cb21f262.jpg",
     "static/media/logo-spotify.svg": "/static/media/logo-spotify.3f055cde07c024fb2b73063b46416f1b.svg",
@@ -27,6 +18,6 @@
   },
   "entrypoints": [
     "static/css/main.684f9bee.css",
-    "static/js/main.37d09255.js"
+    "static/js/main.049e3996.js"
   ]
 }
