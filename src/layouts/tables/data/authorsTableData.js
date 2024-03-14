@@ -7,8 +7,8 @@ import SoftBadge from "components/SoftBadge";
 import { Button } from '@material-ui/core';
 import { Typography } from '@mui/material';
 // import * as React from '@mui/material';
-// import DeleteIcon from '@material-ui/icons/Delete';
-// import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
 import React from 'react';
 import { useState } from 'react';
 import axios from 'axios';
@@ -16,9 +16,6 @@ import { SomeComponent } from '@material-ui/core';
 
 function DataCircle() {
   const [dataNamaCircle, setdataNamaCircle] = useState([]);
-  // const [namaCircle, setNamaCircle] = useState("");
-  // const [id, setId] = useState(null);
-  // const [showModal, setShowModal] = useState(false);
 
   const GetDataNamaCircle = async () => {
     const getData = await axios.get(
@@ -30,77 +27,21 @@ function DataCircle() {
   useEffect(() => {
     GetDataNamaCircle();
   }, []);
-
-  // const handleShowModal = (namaCircle, id) => {
-  //   setNamaCircle(namaCircle);
-  //   setId(id);
-  //   setShowModal(true);
-  // };
-
-  // const handleCloseModal = () => {
-  //   setNamaCircle("");
-  //   setId(null);
-  //   setShowModal(false);
-  // };
-
-  // const handleSaveNamaCircle = async () => {
-  //   let error = "";
-  //   if (namaCircle.trim() === "") {
-  //     error = "The Circle name cannot be empty";
-  //     return;
-  //   }
-  //   try {
-  //     // Cek apakah nama circle sudah ada
-  //     const response = await axios.get(
-  //       `?namaCircle=${namaCircle}`
-  //     );
-  //     const isNamaCircleExists = response.data.exists;
   
-  //     if (isNamaCircleExists) {
-  //       error = "The name Circle is already in use";
-  //     } else {
-  //       // Simpan nama circle ke database
-  //       await axios.post(
-  //         '',
-  //         { namaCircle: namaCircle }
-  //       );
-  //       console.log("The Circle name has been successfully saved to the database");
-  //     }
-  //   } catch (error) {
-  //     console.log("Error menyimpan nama circle:", error);
-  //   }
-  // };
-  
-// function Author({ image, name, email }) {
-//   return (
-//     <SoftBox display="flex" alignItems="center" px={1} py={0.5}>
-//       {/* <SoftBox mr={2}>
-//         <SoftAvatar src={image} alt={name} size="sm" variant="rounded" />
-//       </SoftBox> */}
-//       <SoftBox display="flex" flexDirection="column">
-//         <SoftTypography variant="button" fontWeight="medium">
-//           {name}
-//         </SoftTypography>
-//         <SoftTypography variant="caption" color="secondary">
-//           {email}
-//         </SoftTypography>
-//       </SoftBox>
-//     </SoftBox>
-//   );
-// }
-
-// function Function({ job, org }) {
-//   return (
-//     <SoftBox display="flex" flexDirection="column">
-//       <SoftTypography variant="caption" fontWeight="medium" color="text">
-//         {job}
-//       </SoftTypography>
-//       <SoftTypography variant="caption" color="secondary">
-//         {org}
-//       </SoftTypography>
-//     </SoftBox>
-//   );
-// }
+function Author({ image, name, email }) {
+  return (
+    <SoftBox display="flex" alignItems="center" px={1} py={0.5}>
+      <SoftBox display="flex" flexDirection="column">
+        <SoftTypography variant="button" fontWeight="medium">
+          {username}
+        </SoftTypography>
+        {/* <SoftTypography variant="caption" color="secondary">
+          {email}
+        </SoftTypography> */}
+      </SoftBox>
+    </SoftBox>
+  );
+}
 
 const authorsTableData = {
   columns: [
@@ -113,7 +54,7 @@ const authorsTableData = {
     {
       circle: (
         <SoftTypography variant="button" fontWeight="medium">
-          {dataNamaCircle}
+          {namacircle}
         </SoftTypography>
       ),
       created: (

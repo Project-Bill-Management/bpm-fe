@@ -19,6 +19,7 @@ function Header() {
   const [tabValue, setTabValue] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+  const username = localStorage.getItem('username');
 
   useEffect(() => {
     function handleTabsOrientation() {
@@ -29,6 +30,13 @@ function Header() {
 
     window.addEventListener("resize", handleTabsOrientation);
     handleTabsOrientation();
+
+    // const checkLoginStatus = async () => {
+    //   const isLoggedIn = localStorage.getItem('jwtToken') === 'true';
+    //   setIsLoggedIn(isLoggedIn);
+    // };
+
+    // checkLoginStatus();
 
     return () => window.removeEventListener("resize", handleTabsOrientation);
   }, [tabsOrientation]);
@@ -86,15 +94,15 @@ function Header() {
           <Grid item>
             <SoftBox height="100%" mt={0.5} lineHeight={1}>
               <SoftTypography variant="h5" fontWeight="medium">
-                Username
+                {username}
               </SoftTypography>
-              <SoftTypography variant="button" color="text" fontWeight="medium">
-                Email
-              </SoftTypography>
+              {/* <SoftTypography variant="button" color="text" fontWeight="medium">
+                ......
+              </SoftTypography> */}
             </SoftBox>
           </Grid>
-          {isLoggedIn && (
-            <Grid item xs={12} md={6} lg={4} sx={{ ml: "auto" }}>
+          {/* {isLoggedIn ? ( */}
+            <Grid item xs={10} md={6} lg={2} sx={{ ml: "auto" }}>
               <AppBar position="static">
                 <Tabs
                   orientation={tabsOrientation}
@@ -102,8 +110,8 @@ function Header() {
                   onChange={handleSetTabValue}
                   sx={{ background: "transparent" }}
                 >
-                  <Tab label="Tab 1" />
-                  <Tab label="Tab 2" />
+                  {/* <Tab label="Tab 1" />
+                  <Tab label="Tab 2" /> */}
                   <Tab
                     label="Logout"
                     icon={<ExitToApp />}
@@ -112,8 +120,7 @@ function Header() {
                 </Tabs>
               </AppBar>
             </Grid>
-          )}
-
+          {/* ) : null} */}
         </Grid>
       </Card>
     </SoftBox>
