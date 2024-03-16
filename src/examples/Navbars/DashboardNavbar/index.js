@@ -53,19 +53,19 @@ function DashboardNavbar({ absolute, light, isMini }) {
     handleTransparentNavbar();
 
     // Pengecekan status login
-const checkLoginStatus = async () => {
-  // Lakukan pengambilan status login (misalnya dari localStorage, state, atau API)
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; // Ambil status login dari localStorage
-  localStorage.setItem('isLoggedIn', 'true');
-  setIsLoggedIn(true);
-  // Jika pengguna sudah login, langsung arahkan ke halaman profil
-  // if (isLoggedIn) {
-  //   navigate('/profile'); // Mengarahkan ke halaman profil jika sudah login
-  // } else {
-  //   navigate('/authentication/sign-in');
-  // }
-};
-checkLoginStatus();
+    const checkLoginStatus = async () => {
+      // Lakukan pengambilan status login (misalnya dari localStorage, state, atau API)
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; // Ambil status login dari localStorage
+      localStorage.setItem('isLoggedIn', 'true');
+      setIsLoggedIn(true);
+      // Jika pengguna sudah login, langsung arahkan ke halaman profil
+      // if (isLoggedIn) {
+      //   navigate('/profile'); // Mengarahkan ke halaman profil jika sudah login
+      // } else {
+      //   navigate('/authentication/sign-in');
+      // }
+    };
+    checkLoginStatus();
 
 
     return () => window.removeEventListener("scroll", handleTransparentNavbar);
@@ -84,7 +84,7 @@ checkLoginStatus();
     } else {
       navigate('/authentication/sign-in');
     }
-  };  
+  };
 
   const renderMenu = () => (
     <Menu
@@ -135,6 +135,7 @@ checkLoginStatus();
         <SoftBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
           <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
         </SoftBox>
+        
         {isMini ? (
           <SoftBox sx={(theme) => navbarRow(theme, { isMini })}>
             <SoftBox color={light ? "white" : "inherit"}>
@@ -181,8 +182,8 @@ checkLoginStatus();
               {renderMenu()}
             </SoftBox>
           </SoftBox>
+          
         )}
-
       </Toolbar>
     </AppBar>
   );

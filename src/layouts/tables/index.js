@@ -7,22 +7,21 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Table from "examples/Tables/Table";
-import authorsTableData from "layouts/tables/data/authorsTableData";
+// import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Tables() {
-  const [state, setState] = useState({
-  });
-
-  const [NewCircleName, setNewCircleName] = useState("");
-  const [id, setId] = useState(null);
+  const [circle_name, setcircle_name] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const { columns, rows } = authorsTableData;
-  const [NewCircleNameError, setNewCircleNameError] = useState(null);
+  const [circle_nameError, setcircle_nameError] = useState(null);
   const [error, setError] = useState('');
+  const [circles, setCircles] = useState([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isValid, setIsValid] = useState(false);
+  const [selectedCircleId, setSelectedCircleId] = useState(null); // State untuk menyimpan ID lingkaran yang dipilih
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -31,7 +30,7 @@ function Tables() {
 
   const handleShowModal = () => {
     console.log("Show modal clicked");
-    setNewCircleName("");
+    setcircle_name("");
     setShowModal(true);
     document.body.classList.add("modal-open");
   };
@@ -39,84 +38,94 @@ function Tables() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     switch (name) {
-      case 'NewCircleName':
-        setNewCircleName(value);
-        setNewCircleNameError('');
+      case 'circle_name':
+        setcircle_name(value);
+        setcircle_nameError('');
         break;
       default:
         break;
     }
   };
 
-  const validateNewCircleName = async () => {
-    let error = '';
-    if (NewCircleName.trim() === '') {
-      error = 'Circle name is required';
-    } else {
-      try {
-        const response = await axios.get(`?NewCircleName=${NewCircleName}`);
-        const isCircleExists = response.data.exists;
-        if (isCircleExists) {
-          error = 'Circle name is already in use';
-        }
-      } catch (error) {
-        console.error('Error checking circle name:', error);
-        error = 'An error occurred while checking circle name';
-      }
-    }
-    return error;
-  };
-
-  const handleSubmit = async (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    if (NewCircleName === "") {
-      setNewCircleNameError('   Circle name is required');
+    let error = '';
+    if (circle_name === "") {
+      error = 'Circle name is required';
+    } else if (circle_name.length < 3) {
+      error = 'Circle name must be at least 3 characters long';
+    }
+    if (error) {
+      setcircle_nameError(error);
       return;
-    } else {
-      const newCircleNameError = await validateNewCircleName();
-      setNewCircleNameError(newCircleNameError);
-      const isFormValid = newCircleNameError === '';
-      if (isFormValid) {
-        try {
-          await axios.post('', {
-            NewCircleName: NewCircleName,
-          });
-          window.location.href = '/tables'; // Ganti ini dengan navigasi ke halaman yang benar
-        } catch (error) {
-          console.error("Error submitting form:", error);
-          // Handle errors as needed
-          setError('An error occurred while submitting the form');
-        }
-      } else {
-        // Jika ada input yang tidak valid, tampilkan pesan error
-        setError('Please fill in all fields correctly');
-        return; // Kembalikan agar formulir tidak terkirim
-      }
+    }
+    const token = localStorage.getItem('jwtToken');
+    const headers = { 'Authorization': `Bearer ${token}` };
+    // axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;    
+    try {
+      await axios.post('http://152.42.188.210:8080/index.php/api/auth/create_circle', {
+        circle_name: circle_name,
+      }, { headers });
+      console.log(axios);
+      setCircles(); // Refresh data
+      handleCloseModal();
+      toast.success('Circle created successfully');
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setError('An error occurred while submitting the form');
     }
   };
 
+  // const getCircles = async () => {
+  //   const response = await axios.get('http://152.42.188.210:8080/index.php/api/auth/create_circle');
+  //   setCircles(response.data.data);
+  // };
+
+  // useEffect(() => {
+  //   getCircles();
+  // }, []);
+
+  // const handleAddUserToCircle = (circleId) => {
+  //   setSelectedCircleId(circleId);
+  // };
+
+  // const rows = circles.map((circle, index) => ({
+  //   no: index + 1,
+  //   circle_name: circle.circle_name,
+  //   created_at: new Date(circle.created_at).toLocaleDateString(),
+  //   created_by: getUserById(circle.created_by),
+  //   action: (
+  //     <Button
+  //       variant="contained"
+  //       onClick={() => history.push(`/detail_circle/${circle.id}`)} // Mengarahkan ke halaman detail_circle dengan ID lingkaran
+  //     >
+  //       View Circle
+  //     </Button>
+  //   ),    
+  // }));
+
+  // const columns = [
+  //   { name: "number", align: "left", width: "15%" },
+  //   { name: "circle name", align: "left", width: "25%" },
+  //   { name: "created at", align: "left", width: "25%" },
+  //   { name: "created by", align: "left", width: "25%" },
+  //   { name: "action", align: "left", width: "10%" }, // Menambahkan kolom action
+  // ];
+  
   return (
     <DashboardLayout>
-      {/* <DashboardNavbar /> */}
+      <ToastContainer />
       <SoftBox py={3}>
         <SoftBox mb={3}>
           <Card>
             <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
-              <SoftTypography variant="h6">Circle List</SoftTypography>
+              <SoftTypography variant="h3"></SoftTypography>
               <Button variant="contained" startIcon={<AddIcon />} onClick={handleShowModal}>
                 Create Circle
               </Button>
             </SoftBox>
-            <SoftBox
-              sx={{
-                "& .MuiTableRow-root:not(:last-child)": {
-                  "& td": {
-                    borderBottom: ({ borders: { borderWidth, borderColor } }) =>
-                      `${borderWidth[1]} solid ${borderColor}`,
-                  },
-                },
-              }}>
-              <Table columns={columns} rows={rows} />
+            <SoftBox>
+              {/* <Table columns={columns} rows={rows} /> */}
             </SoftBox>
           </Card>
         </SoftBox>
@@ -136,18 +145,18 @@ function Tables() {
                     <Form.Control
                       type="text"
                       placeholder='Enter Circle Name'
-                      name='NewCircleName'
+                      name='circle_name'
                       autoFocus
                       onChange={handleChange}
-                      value={NewCircleName}
+                      value={circle_name}
                     />
-                    {NewCircleNameError && (
+                    {circle_nameError && (
                       <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
-                        {NewCircleNameError}
+                        {circle_nameError}
                       </div>
                     )}
                   </Form.Group>
-                  <Button variant="contained" type='submit' onClick={handleSubmit}>
+                  <Button variant="contained" type='submit' onClick={handleFormSubmit}>
                     Save
                   </Button>
                 </Form>
