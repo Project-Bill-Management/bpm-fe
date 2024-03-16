@@ -14,6 +14,8 @@ import SpaceShip from "examples/Icons/SpaceShip";
 import CustomerSupport from "examples/Icons/CustomerSupport";
 import CreditCard from "examples/Icons/CreditCard";
 import Cube from "examples/Icons/Cube";
+import { Message } from "@mui/icons-material";
+import MessageLayout from "layouts/message";
 
 const routes = [
   {
@@ -36,6 +38,15 @@ const routes = [
   },
   {
     type: "collapse",
+    name: "Message Box",
+    key: "message",
+    route: "/message",
+    icon: <Message size="12px" />,
+    component: <MessageLayout />,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
     name: "Billing",
     key: "billing",
     route: "/billing",
@@ -52,19 +63,10 @@ const routes = [
   //   component: <VirtualReality />,
   //   noCollapse: true,
   // },
-  // {
-  //   type: "collapse",
-  //   name: "RTL",
-  //   key: "rtl",
-  //   route: "/rtl",
-  //   icon: <Settings size="12px" />,
-  //   component: <RTL />,
-  //   noCollapse: true,
-  // },
   // { type: "title", title: "Account Pages", key: "account-pages" },
   {
-    type: "collapse",
-    name: "Profile",
+    // type: "collapse",
+    // name: "Profile",
     key: "profile",
     route: "/profile",
     icon: <CustomerSupport size="12px" />,
@@ -72,22 +74,22 @@ const routes = [
     noCollapse: true,
   },
   {
-  //   type: "collapse",
-  //   name: "Sign In",
-  //   key: "sign-in",
-  route: "/authentication/sign-in",
-  //   icon: <Document size="12px" />,
-  component: <SignIn />,
-  //   noCollapse: true,
-   },
+    // type: "collapse",
+    // name: "Sign In",
+    key: "sign-in",
+    route: "/authentication/sign-in",
+    icon: <Document size="12px" />,
+    component: <SignIn />,
+    noCollapse: true,
+  },
   {
-  //   type: "collapse",
-  //   name: "Sign Up",
-  //   key: "sign-up",
-  route: "/authentication/sign-up",
-  //   icon: <SpaceShip size="12px" />,
-  component: <SignUp />,
-  //   noCollapse: true,
+    // type: "collapse",
+    // name: "Sign Up",
+    key: "sign-up",
+    route: "/authentication/sign-up",
+    icon: <SpaceShip size="12px" />,
+    component: <SignUp />,
+    noCollapse: true,
   },
 ];
 
