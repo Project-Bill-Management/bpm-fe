@@ -7,21 +7,22 @@ import SoftButton from "components/SoftButton";
 import CoverLayout from "layouts/authentication/components/CoverLayout";
 import curved9 from "assets/images/curved-images/curved-6.jpg";
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 
 const SignIn = () => {
-  // const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [usernameError, setUsernameError] = useState(null);
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState('');
   const [error, setError] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showError, setShowError] = useState(false); // State untuk menampilkan pesan error
-  
-  const validateUsernameAndPassword = async () => {
+  const isLoggedIn = localStorage.getItem('jwtToken');
+
+  const validateUsernameAndPassword = async () => { //sifat sign in
     let usernameError = '';
     let passwordError = '';
     let isValid = true;
@@ -53,7 +54,6 @@ const SignIn = () => {
           config => {
             const token = localStorage.getItem('jwtToken');
             setIsLoggedIn(true);
-            // setUsername(username);
             console.log(token);
             if (token) {
               config.headers.Authorization = `Bearer ${token}`;
@@ -105,14 +105,19 @@ const SignIn = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     const isValid = await validateUsernameAndPassword();
     if (isValid) {
-      setIsLoggedIn(true);
+      // setIsLoggedIn(true);
       navigate('/dashboard');
     }
   };
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/dashboard');
+    }
+  }, [isLoggedIn, navigate]);
 
   return (
     <CoverLayout

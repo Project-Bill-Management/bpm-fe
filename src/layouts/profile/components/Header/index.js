@@ -31,20 +31,15 @@ function Header() {
     window.addEventListener("resize", handleTabsOrientation);
     handleTabsOrientation();
 
-    // const checkLoginStatus = async () => {
-    //   const isLoggedIn = localStorage.getItem('jwtToken') === 'true';
-    //   setIsLoggedIn(isLoggedIn);
-    // };
-
-    // checkLoginStatus();
-
     return () => window.removeEventListener("resize", handleTabsOrientation);
   }, [tabsOrientation]);
 
   const handleSetTabValue = (event, newValue) => setTabValue(newValue);
 
   const handleLogout = () => {
+    window.history.replaceState(null, null, '/');
     localStorage.removeItem('jwtToken');
+    localStorage.removeItem('username');
     setIsLoggedIn(false);
     navigate('/authentication/sign-in');
   };
@@ -96,12 +91,8 @@ function Header() {
               <SoftTypography variant="h5" fontWeight="medium">
                 {username}
               </SoftTypography>
-              {/* <SoftTypography variant="button" color="text" fontWeight="medium">
-                ......
-              </SoftTypography> */}
             </SoftBox>
           </Grid>
-          {/* {isLoggedIn ? ( */}
             <Grid item xs={10} md={6} lg={2} sx={{ ml: "auto" }}>
               <AppBar position="static">
                 <Tabs
@@ -110,8 +101,6 @@ function Header() {
                   onChange={handleSetTabValue}
                   sx={{ background: "transparent" }}
                 >
-                  {/* <Tab label="Tab 1" />
-                  <Tab label="Tab 2" /> */}
                   <Tab
                     label="Logout"
                     icon={<ExitToApp />}
@@ -120,7 +109,6 @@ function Header() {
                 </Tabs>
               </AppBar>
             </Grid>
-          {/* ) : null} */}
         </Grid>
       </Card>
     </SoftBox>
