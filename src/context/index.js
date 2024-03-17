@@ -72,7 +72,7 @@ function SoftUIControllerProvider({ children }) {
     fixedNavbar: true,
     openConfigurator: false,
     direction: "ltr",
-    layout: "dashboard",
+    layout: "",
   };
 
   const [controller, dispatch] = useReducer(reducer, initialState);
