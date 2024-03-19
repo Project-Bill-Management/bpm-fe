@@ -10,8 +10,10 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
+import withSplashScreen from '../../../components/SplashScreen';
 
 const SignIn = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [usernameError, setUsernameError] = useState(null);
@@ -23,6 +25,7 @@ const SignIn = () => {
   const isLoggedIn = localStorage.getItem('jwtToken');
 
   const validateUsernameAndPassword = async () => { //sifat sign in
+    setIsLoading(true);
     let usernameError = '';
     let passwordError = '';
     let isValid = true;
@@ -84,9 +87,10 @@ const SignIn = () => {
     setUsernameError(usernameError);
     setPasswordError(passwordError);
     setShowError(true); // Menampilkan pesan error
+    setIsLoading(false); // Mengubah status isLoading menjadi false setelah proses selesai
     return isValid;
   };
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     switch (name) {
@@ -109,7 +113,7 @@ const handleSubmit = async (e) => {
     e.preventDefault();
     const isValid = await validateUsernameAndPassword();
     if (isValid) {
-      // setIsLoggedIn(true);
+      setIsLoading(true);
       navigate('/dashboard');
     }
   };
@@ -124,6 +128,7 @@ const handleSubmit = async (e) => {
       title="Welcome back!"
       description="Enter username and password to sign in"
       image={curved9}>
+        {isLoading && <withSplashScreen />}
       <SoftBox component="form" role="form">
         <SoftBox mb={2}>
           <SoftBox mb={1} ml={0.5}>
@@ -198,4 +203,4 @@ const handleSubmit = async (e) => {
 };
 
 
-export default SignIn;
+export default withSplashScreen(SignIn);

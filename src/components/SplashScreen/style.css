@@ -1,0 +1,24 @@
+/* CSS untuk gambar pada layar lebar */
+.splashStyle {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+  }
+  
+  /* CSS untuk gambar pada layar <= 768px */
+  @media only screen and (max-width: 768px) {
+    .splashStyle {
+      max-width: 100%; /* Maksimum lebar gambar adalah lebar kontainer */
+      height: auto; /* Tinggi gambar disesuaikan untuk mempertahankan aspek rasio */
+    }
+    
+  }
+  
+  /* CSS untuk gambar pada layar <= 576px */
+  @media only screen and (max-width: 576px) {
+    .splashStyle {
+      max-width: 100%; /* Maksimum lebar gambar adalah lebar kontainer */
+      height: auto; /* Tinggi gambar disesuaikan untuk mempertahankan aspek rasio */
+    }
+    
+  }

@@ -64,7 +64,7 @@ function Tables() {
     // axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;    
     try {
       await axios.post('http://152.42.188.210:8080/index.php/api/auth/create_circle', {
-        circle_name: your_circle_name,
+        circle_name: circle_name,
       }, { headers });
       console.log(axios);
       setCircles(); // Refresh data

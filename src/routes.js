@@ -16,6 +16,7 @@ import CreditCard from "examples/Icons/CreditCard";
 import Cube from "examples/Icons/Cube";
 import { Message } from "@mui/icons-material";
 import MessageLayout from "layouts/message";
+import withSplashScreen from "../src/components/SplashScreen";
 
 const routes = [
   {
@@ -65,8 +66,8 @@ const routes = [
   // },
   // { type: "title", title: "Account Pages", key: "account-pages" },
   {
-    // type: "collapse",
-    // name: "Profile",
+    type: "collapse",
+    name: "Profile",
     key: "profile",
     route: "/profile",
     icon: <CustomerSupport size="12px" />,
