@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.a6b10223.css",
-    "main.js": "/static/js/main.97219883.js",
+    "main.css": "/static/css/main.3285699c.css",
+    "main.js": "/static/js/main.38d49a0c.js",
     "static/media/curved0.jpg": "/static/media/curved0.d146ec6e9401aa9d52c5.jpg",
     "static/media/curved14.jpg": "/static/media/curved14.12c9ea54425c4f1bc1d7.jpg",
     "static/media/waves-white.svg": "/static/media/waves-white.eac3c8078f7e1e28ef33f010c9782f40.svg",
@@ -11,13 +11,14 @@
     "static/media/white-curved.jpeg": "/static/media/white-curved.a5b7db662b0b14ab5534.jpeg",
     "static/media/visa.png": "/static/media/visa.71c0d5e9e2aaee42e4c3.png",
     "static/media/mastercard.png": "/static/media/mastercard.27fca3e7637a9458fb64.png",
+    "static/media/BillManagement.png": "/static/media/BillManagement.825eabfb094e374f55b2.png",
     "static/media/bruce-mars.jpg": "/static/media/bruce-mars.45f6477957606abd2f24.jpg",
     "static/media/team-2.jpg": "/static/media/team-2.e725aef8c892cb21f262.jpg",
     "static/media/logo-spotify.svg": "/static/media/logo-spotify.3f055cde07c024fb2b73063b46416f1b.svg",
     "index.html": "/index.html"
   },
   "entrypoints": [
-    "static/css/main.a6b10223.css",
-    "static/js/main.97219883.js"
+    "static/css/main.3285699c.css",
+    "static/js/main.38d49a0c.js"
   ]
 }
