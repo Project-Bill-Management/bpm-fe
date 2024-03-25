@@ -144,7 +144,7 @@ function App() {
       {layout === "" && <Configurator />}
       <Routes>
         {getRoutes(routes)}
-        <Route path="*" element={<Navigate to="/authentication/sign-in" />} />
+        <Route path="*" element={<Navigate to="/sign-in" />} />
       </Routes>
     </ThemeProvider>
   );

@@ -43,7 +43,7 @@ function WorkWithTheRockets() {
           </SoftBox>
           <SoftTypography
             component="a"
-            href="#"
+            href="/tables"
             variant="button"
             color="white"
             fontWeight="medium"
