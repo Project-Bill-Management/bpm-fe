@@ -15,6 +15,8 @@ import routes from "routes";
 import { useSoftUIController, setMiniSidenav, setOpenConfigurator } from "context";
 import brand from "assets/images/logo-ct.png";
 import withSplashScreen from "components/SplashScreen";
+// import { getMessaging } from "firebase/messaging";
+// import { messaging } from "./layouts/message/firebase";
 
 function App() {
   const [controller, dispatch] = useSoftUIController();
@@ -22,6 +24,30 @@ function App() {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
+  // const messagingInstance = getMessaging();
+  // const messaging = getMessaging();
+
+  // useEffect(() => {
+  //   const getFirebaseToken = async () => {
+  //     try {
+  //       const token = await messagingInstance.getToken();
+  //       console.log("Firebase Token:", token);
+  //     } catch (error) {
+  //       console.error("Error getting Firebase token:", error);
+  //     }
+  //   };
+  //   getFirebaseToken();
+  // }, []);
+
+  // useEffect(() => {
+  //   const unsubscribe = messaging.onMessage((message) => {
+  //       console.log('Message received:', message);
+  //       // Handle the received message here
+  //   });
+  
+  //   return unsubscribe;
+  // }, []);
+  
 
   useMemo(() => {
     const cacheRtl = createCache({

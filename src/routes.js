@@ -15,8 +15,10 @@ import CustomerSupport from "examples/Icons/CustomerSupport";
 import CreditCard from "examples/Icons/CreditCard";
 import Cube from "examples/Icons/Cube";
 import { Message } from "@mui/icons-material";
-import MessageLayout from "layouts/message";
+import MessageList from "layouts/message/index";
 import withSplashScreen from "../src/components/SplashScreen";
+import InviteCircle from "layouts/tables/InviteCircle";
+import MessageDisplay from "layouts/message/MessageDisplay";
 
 const routes = [
   {
@@ -37,13 +39,31 @@ const routes = [
     component: <Tables />,
     noCollapse: true,
   },
+  // {
+  //   // type: "collapse",
+  //   // name: "NotifInviteCircle",
+  //   key: "NotifInviteCircle",
+  //   route: "/NotifInviteCircle",
+  //   icon: <Message size="12px" />,
+  //   component: <NotifInviteCircle />,
+  //   noCollapse: true,
+  // },
+  {
+    // type: "collapse",
+    // name: "Message Box",
+    key: "MessageDisplay",
+    route: "/MessageDisplay",
+    // icon: <Message size="12px" />,
+    component: <MessageDisplay />,
+    noCollapse: true,
+  },
   {
     type: "collapse",
-    name: "Message Box",
-    key: "message",
-    route: "/message",
+    name: "Message List",
+    key: "MessageList",
+    route: "/MessageList",
     icon: <Message size="12px" />,
-    component: <MessageLayout />,
+    component: <MessageList/>,
     noCollapse: true,
   },
   {
@@ -92,6 +112,17 @@ const routes = [
     component: <SignUp />,
     noCollapse: true,
   },
+  {
+    // type: "collapse",
+    // name: "Invite Circle",
+    key: "invite-circle",
+    route: "/InviteCircle/:id_circle/:circle_name",
+    icon: <SpaceShip size="12px" />,
+    component: <InviteCircle/>,
+    noCollapse: true,
+  },
 ];
+
+
 
 export default routes;

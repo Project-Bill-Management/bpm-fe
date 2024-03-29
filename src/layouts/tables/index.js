@@ -2,18 +2,19 @@ import React, { useState, useEffect } from 'react';
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
+import { IconButton } from '@mui/material';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { Modal, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import Table from "examples/Tables/Table";
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { IconButton } from '@mui/material';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Link } from 'react-router-dom';
 import {
   CButton,
   CCard,
@@ -27,6 +28,8 @@ import {
   CTableRow,
 } from "@coreui/react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+
 function Tables() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -41,7 +44,7 @@ function Tables() {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState("asc");
-  const [sortField, setSortField] = useState("created_at");
+  const [sortField, setSortField] = useState("created_at");  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -90,29 +93,40 @@ function Tables() {
     } catch (error) {
       console.error("Error submitting form:", error);
       // setError('An error occurred while submitting the form');
-    }    
+    }
     setIsValid(true);
   };
 
   //get
   const fetchData = async () => {
+    const token = localStorage.getItem('jwtToken');
+    if (!token) {
+      setError("Token not found. Please login again.");
+      setLoading(false);
+      return;
+    }
+    const headers = { 'Authorization': `Bearer ${token}` };
     try {
-      const response = await axios.get('http://152.42.188.210:8080/index.php/api/auth/get_circle');
+      const response = await axios.get('http://152.42.188.210:8080/index.php/api/auth/get_circle', { headers });
+
+      console.log("Response dari server:", response.data); // Tambahkan baris ini
+      console.log("ID pembuat circle:", circles.creator_username);
       setCircles(response.data.data);
-      response.data.data.forEach(circle => {
-        //console.log("ID dari circle", circle.circle_name, "adalah", circle.id_circle);
-        //console.log("Updating circle with ID:", id);
-      });
+
     } catch (error) {
-      setError("Failed to fetch data. Please try again.");
+      if (error.response && error.response.data && error.response.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Failed to fetch data. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchData();
   }, []);
-
 
   const showModalAdd = () => {
     setcircle_name("");
@@ -207,31 +221,9 @@ function Tables() {
     }
   };
 
-  const getUsernameById = (userId) => {
-    const circle = circles.find(circle => circle.id_circle === userId);
-    return circle ? circle.creator_circle : '';
-  };
-
-
-  //sortir
-  // const handleSort = (field) => {
-  //   if (sortField === field) {
-  //     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-  //   } else {
-  //     setSortField(field);
-  //     setSortOrder("asc");
-  //   }
-  // };
-  // const sortedCircles = circles.sort((a, b) => {
-  //   if (sortOrder === "asc") {
-  //     return a[sortField] > b[sortField] ? 1 : -1;
-  //   } else {
-  //     return a[sortField] < b[sortField] ? 1 : -1;
-  //   }
-  // });
-
   return (
     <DashboardLayout>
+      <DashboardNavbar />
       <ToastContainer />
       <SoftBox py={3}>
         <SoftBox mb={3}>
@@ -248,8 +240,8 @@ function Tables() {
                   <CTableHead>
                     <CTableRow>
                       <CTableHeaderCell scope="col">
-                        <SoftTypography variant="body4">Id</SoftTypography>
-                        {sortField === "circle_name" && (
+                        <SoftTypography variant="body4">No</SoftTypography>
+                        {sortField === "index" && (
                           <IconButton size="small">
                           </IconButton>
                         )}
@@ -258,23 +250,13 @@ function Tables() {
                         <SoftTypography variant="body4">Circle Name</SoftTypography>
                         {sortField === "circle_name" && (
                           <IconButton size="small">
-                            
                           </IconButton>
                         )}
                       </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
-                        <SoftTypography variant="body4">Creator by</SoftTypography>
+                        <SoftTypography variant="body4">Creator</SoftTypography>
                         {sortField === "creator_circle" && (
                           <IconButton size="small">
-                          
-                          </IconButton>
-                        )}
-                      </CTableHeaderCell>
-                      <CTableHeaderCell scope="col">
-                        <SoftTypography variant="body4">Created at</SoftTypography>
-                        {sortField === "created_at" && (
-                          <IconButton size="small">
-                            
                           </IconButton>
                         )}
                       </CTableHeaderCell>
@@ -283,27 +265,28 @@ function Tables() {
                       </CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
-                  <CTableBody>
-                    {circles.map((item, index) => {
-                      console.log(item.creator_circle);
-                      // const username = getUsernameById(item.creator_circle);
-                      return (
-                        <CTableRow key={index}>
-                          <CTableDataCell>{item.id_circle}</CTableDataCell>
-                          <CTableDataCell>{item.circle_name}</CTableDataCell>
-                          <CTableDataCell>{item.creator_circle}</CTableDataCell>
-                          <CTableDataCell>{item.created_at}</CTableDataCell>
-                          <CTableDataCell>
-                            <CButton className='btn btn-primary text-white me-2' onClick={() => showModalUpdate(item)}>
-                              Edit
-                            </CButton>
-                            <CButton className='btn btn-danger text-white' onClick={() => showModalDelete(item)}>
-                              Delete
-                            </CButton>
-                          </CTableDataCell>
-                        </CTableRow>
-                      );
-                    })}
+                  <CTableBody >
+                    {circles.map((item, index) => (
+                      <CTableRow key={index}>
+                        <CTableDataCell>
+                          <Link to={`/InviteCircle/${item.id_circle}/${item.circle_name}`}>{index + 1}</Link>
+                        </CTableDataCell>
+                        <CTableDataCell>
+                        <Link to={`/InviteCircle/${item.id_circle}/${item.circle_name}`}>{item.circle_name}</Link>
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          <Link to={`/InviteCircle/${item.id_circle}/${item.circle_name}`}>{item.creator_username}</Link>
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          <CButton className='btn btn-primary text-white me-2' onClick={() => showModalUpdate(item)}>
+                            <EditIcon />
+                          </CButton>
+                          <CButton className='btn btn-danger text-white' onClick={() => showModalDelete(item)}>
+                            <DeleteIcon />
+                          </CButton>
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))}
                   </CTableBody>
                 </CTable>
               </CCardBody>
@@ -311,6 +294,7 @@ function Tables() {
           </Card>
         </SoftBox>
       </SoftBox>
+      {/* <Link to="/InviteToCircle" className="btn btn-primary">Invite to Circle</Link> */}
       <div className='body-flex'>
         <div className="overlay" />
         <div className="flex">
