@@ -59,7 +59,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Message List",
+    name: "Message Box",
     key: "MessageList",
     route: "/MessageList",
     icon: <Message size="12px" />,

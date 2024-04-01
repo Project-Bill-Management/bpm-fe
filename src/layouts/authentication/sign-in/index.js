@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
@@ -7,7 +7,6 @@ import SoftButton from "components/SoftButton";
 import CoverLayout from "layouts/authentication/components/CoverLayout";
 import curved9 from "assets/images/curved-images/curved-6.jpg";
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import withSplashScreen from '../../../components/SplashScreen';
@@ -20,22 +19,22 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState('');
   const [error, setError] = useState('');
-  // const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showError, setShowError] = useState(false); // State untuk menampilkan pesan error
   const isLoggedIn = localStorage.getItem('jwtToken');
+  const [currentUser, setCurrentUser] = useState(null);
 
   const validateUsernameAndPassword = async () => { //sifat sign in
     setIsLoading(true);
     let usernameError = '';
     let passwordError = '';
     let isValid = true;
-  
+
     // Validasi username tidak boleh kosong
     if (username.trim() === '') {
       usernameError = '*Username is required';
       isValid = false;
     }
-  
+
     // Validasi password tidak boleh kosong
     if (password.trim() === '') {
       passwordError = '*Password is required';
@@ -56,6 +55,7 @@ const SignIn = () => {
         axios.interceptors.request.use(
           config => {
             const token = localStorage.getItem('jwtToken');
+            setCurrentUser(localStorage.getItem('username'))
             setIsLoggedIn(true);
             console.log(token);
             if (token) {
@@ -83,7 +83,7 @@ const SignIn = () => {
         isValid = false;
       }
     }
-  
+
     setUsernameError(usernameError);
     setPasswordError(passwordError);
     setShowError(true); // Menampilkan pesan error
@@ -109,7 +109,7 @@ const SignIn = () => {
     }
   };
 
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const isValid = await validateUsernameAndPassword();
     if (isValid) {
@@ -119,6 +119,7 @@ const handleSubmit = async (e) => {
   };
   useEffect(() => {
     if (isLoggedIn) {
+      setCurrentUser(localStorage.getItem('username'));
       navigate('/dashboard');
     }
   }, [isLoggedIn, navigate]);
@@ -128,7 +129,6 @@ const handleSubmit = async (e) => {
       title="Welcome back!"
       description="Enter username and password to sign in"
       image={curved9}>
-        {isLoading && <withSplashScreen />}
       <SoftBox component="form" role="form">
         <SoftBox mb={2}>
           <SoftBox mb={1} ml={0.5}>
