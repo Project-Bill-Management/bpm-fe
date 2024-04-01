@@ -44,7 +44,8 @@ function Tables() {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState("asc");
-  const [sortField, setSortField] = useState("created_at");  
+  const [sortField, setSortField] = useState("created_at");
+  const [currentUser, setCurrentUser] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -126,7 +127,8 @@ function Tables() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [currentUser]);
+
 
   const showModalAdd = () => {
     setcircle_name("");
@@ -229,11 +231,18 @@ function Tables() {
         <SoftBox mb={3}>
           <Card>
             <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
-              <SoftTypography variant="h3"></SoftTypography>
-              <Button variant="contained" startIcon={<AddIcon />} onClick={showModalAdd}>
-                Create Circle
-              </Button>
+              <div>
+                <Button variant="contained" startIcon={<AddIcon />} onClick={showModalAdd}>
+                  Create Circle
+                </Button>
+              </div>
+              <div>
+                <Button variant="contained" startIcon={<AddIcon />}>
+                  Join Circle
+                </Button>
+              </div>
             </SoftBox>
+
             <SoftBox textAlign="center">
               <CCardBody>
                 <CTable striped>
@@ -260,34 +269,41 @@ function Tables() {
                           </IconButton>
                         )}
                       </CTableHeaderCell>
-                      <CTableHeaderCell scope="col">
-                        <SoftTypography variant="body4">Action</SoftTypography>
-                      </CTableHeaderCell>
+                      {/* {circles.some(circle => circle.creator_username === currentUser) && ( // Tambahkan kondisi di sini
+                        <CTableHeaderCell scope="col">
+                          <SoftTypography variant="body4">Action</SoftTypography>
+                        </CTableHeaderCell>
+                      )} */}
                     </CTableRow>
                   </CTableHead>
-                  <CTableBody >
-                    {circles.map((item, index) => (
-                      <CTableRow key={index}>
-                        <CTableDataCell>
-                          <Link to={`/InviteCircle/${item.id_circle}/${item.circle_name}`}>{index + 1}</Link>
-                        </CTableDataCell>
-                        <CTableDataCell>
-                        <Link to={`/InviteCircle/${item.id_circle}/${item.circle_name}`}>{item.circle_name}</Link>
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          <Link to={`/InviteCircle/${item.id_circle}/${item.circle_name}`}>{item.creator_username}</Link>
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          <CButton className='btn btn-primary text-white me-2' onClick={() => showModalUpdate(item)}>
-                            <EditIcon />
-                          </CButton>
-                          <CButton className='btn btn-danger text-white' onClick={() => showModalDelete(item)}>
-                            <DeleteIcon />
-                          </CButton>
-                        </CTableDataCell>
-                      </CTableRow>
-                    ))}
+                  <CTableBody>
+                    {circles.map((item, index) => {
+                      console.log(item.creator_username);
+                      return (
+                        <CTableRow key={index}>
+                          <CTableDataCell>
+                            <Link to={`/InviteCircle/${item.id_circle}/${item.circle_name}`}>{index + 1}</Link>
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            <Link to={`/InviteCircle/${item.id_circle}/${item.circle_name}`}>{item.circle_name}</Link>
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            <Link to={`/InviteCircle/${item.id_circle}/${item.circle_name}`}>{item.creator_username}</Link>
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            <CButton className='btn btn-primary text-white me-2' onClick={() => showModalUpdate(item)}>
+                              <EditIcon />
+                            </CButton>
+                            <CButton className='btn btn-danger text-white' onClick={() => showModalDelete(item)}>
+                              <DeleteIcon />
+                            </CButton>
+                          </CTableDataCell>
+                        </CTableRow>
+                      );
+                    })}
+
                   </CTableBody>
+
                 </CTable>
               </CCardBody>
             </SoftBox>
