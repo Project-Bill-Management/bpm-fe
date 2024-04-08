@@ -69,34 +69,29 @@ function Tables() {
     }
     if (error) {
       setcircle_nameError(error);
-      setIsValid(false);
       return;
     }
     const isCircleExist = circles.some(circle => circle.circle_name === circle_name);
     if (isCircleExist) {
       setcircle_nameError('Circle name already exists');
-      setIsValid(false);
       return;
     }
-
+  
     const token = localStorage.getItem('jwtToken');
     const headers = { 'Authorization': `Bearer ${token}` };
-    //post
     try {
-      await axios.post('http://152.42.188.210:8080/index.php/api/auth/create_circle', {
+      const response = await axios.post('http://152.42.188.210:8080/index.php/api/auth/create_circle', {
         circle_name: circle_name,
       }, { headers });
       closeModalAdd();
       toast.success('Circle created successfully');
-      window.location.reload();
-      const updatedCircles = await getCircles();
-      setCircles(updatedCircles);
+      const newCircle = { id_circle: response.data.id_circle, circle_name: circle_name, creator_username: currentUser };
+      setCircles([...circles, newCircle]);
     } catch (error) {
       console.error("Error submitting form:", error);
-      // setError('An error occurred while submitting the form');
     }
-    setIsValid(true);
   };
+  
 
   //get
   const fetchData = async () => {
@@ -110,8 +105,11 @@ function Tables() {
     try {
       const response = await axios.get('http://152.42.188.210:8080/index.php/api/auth/get_circle', { headers });
 
-      console.log("Response dari server:", response.data); // Tambahkan baris ini
-      console.log("ID pembuat circle:", circles.creator_username);
+      console.log("Response dari server:", response.data);
+      console.log("Creator Circle:", circles.creator_username);
+      response.data.data.forEach(circle => {
+        console.log(circle.creator_username);
+      });
       setCircles(response.data.data);
 
     } catch (error) {
@@ -132,13 +130,11 @@ function Tables() {
 
   const showModalAdd = () => {
     setcircle_name("");
-    // setId_Circle("");
     setShowAddModal(true);
   };
 
   const closeModalAdd = () => {
     setcircle_name("")
-    // setId_Circle("");
     setShowAddModal(false);
   };
 
@@ -192,14 +188,12 @@ function Tables() {
       }, { headers });
       closeModalUpdate();
       toast.success('Circle updated successfully');
-      // Fetch updated data
-      window.location.reload();
-      const updatedData = await getCircles();
-      setCircles(updatedData);
+      const updatedData = circles.map(circle =>
+        circle.id_circle === id_circle ? { ...circle, circle_name: circle_name } : circle
+      );
+      setCircles(updatedData); // Memperbarui lingkaran yang diubah dalam state circles
     } catch (error) {
-      // console.error("Error updating circle:", error);
-      // setError('An error occurred while updating the circle');
-      // toast.error('Failed to update circle');
+      console.error("Error updating circle:", error);
     }
   };
 
@@ -216,8 +210,10 @@ function Tables() {
         `http://152.42.188.210:8080/index.php/api/auth/delete_circle/${id_circle}`,
         { headers }
       );
+      closeModalDelete();
       toast.success('Circle delete successfully');
-      window.location.reload();
+      const updatedData = circles.filter(circle => circle.id_circle !== id_circle);
+      setCircles(updatedData);
     } catch (error) {
       toast.error("Failed to delete");
     }
@@ -234,11 +230,6 @@ function Tables() {
               <div>
                 <Button variant="contained" startIcon={<AddIcon />} onClick={showModalAdd}>
                   Create Circle
-                </Button>
-              </div>
-              <div>
-                <Button variant="contained" startIcon={<AddIcon />}>
-                  Join Circle
                 </Button>
               </div>
             </SoftBox>

@@ -38,7 +38,7 @@ function Dashboard() {
       <DashboardNavbar />
       <SoftBox py={3}>
         <SoftBox mb={3}>
-          <Grid container spacing={3}>
+          {/* <Grid container spacing={3}>
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
                 title={{ text: "Your Circle" }}
@@ -74,7 +74,7 @@ function Dashboard() {
                 }}
               />
             </Grid>
-          </Grid>
+          </Grid> */}
         </SoftBox>
         <SoftBox mb={3}>
           <Grid container spacing={3}>
