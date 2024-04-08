@@ -19,7 +19,7 @@ function MessageList() {
       <Card>
         <SoftBox pt={3} px={2}>
           <SoftTypography variant="h6" fontWeight="medium">
-            Message Box
+            Message
           </SoftTypography>
         </SoftBox>
         <SoftBox pb={3} />
