@@ -8,7 +8,7 @@ import CoverLayout from "layouts/authentication/components/CoverLayout";
 import curved9 from "assets/images/curved-images/curved-6.jpg";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import withSplashScreen from '../../../components/SplashScreen';
 
 const SignIn = () => {
@@ -118,13 +118,13 @@ const SignIn = () => {
     }
   };
   useEffect(() => {
-    if (isLoggedIn) {
-      const token = response.data.token; // atau cara lain untuk mendapatkan token
-      localStorage.setItem('jwtToken', token);
-      setCurrentUser(username);
-      navigate('/dashboard');
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+        const decodedToken = jwtDecode(token);
+        setCurrentUser(decodedToken.username);
+        navigate('/dashboard');
     }
-  }, [isLoggedIn, navigate]);
+}, [isLoggedIn, navigate]);
 
   return (
     <CoverLayout

@@ -83,15 +83,33 @@ function Tables() {
       const response = await axios.post('http://152.42.188.210:8080/index.php/api/auth/create_circle', {
         circle_name: circle_name,
       }, { headers });
-      // Gunakan response di sini
+      console.log(response);
       closeModalAdd();
       toast.success('Circle created successfully');
       const newCircle = { id_circle: response.data.id_circle, circle_name: circle_name, creator_username: currentUser };
       setCircles([...circles, newCircle]);
     } catch (error) {
       console.error("Error submitting form:", error);
+      // Handle error here
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error("Server error response:", error.response.data);
+        console.error("Status code:", error.response.status);
+        console.error("Headers:", error.response.headers);
+        setError("Server error: " + error.response.data.message);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error("No response received:", error.request);
+        setError("No response from server. Please try again later.");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error("Request setup error:", error.message);
+        setError("Request setup error: " + error.message);
+      }
     }
 };
+
 
   //get
   const fetchData = async () => {
