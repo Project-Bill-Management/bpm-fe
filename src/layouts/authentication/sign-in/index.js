@@ -56,7 +56,7 @@ const SignIn = () => {
           config => {
             const token = localStorage.getItem('jwtToken');
             setCurrentUser(localStorage.getItem('username'))
-            setIsLoggedIn(true);
+            // setIsLoggedIn(true);
             console.log(token);
             if (token) {
               config.headers.Authorization = `Bearer ${token}`;
@@ -119,7 +119,9 @@ const SignIn = () => {
   };
   useEffect(() => {
     if (isLoggedIn) {
-      setCurrentUser(localStorage.getItem('username'));
+      const token = response.data.token; // atau cara lain untuk mendapatkan token
+      localStorage.setItem('jwtToken', token);
+      setCurrentUser(username);
       navigate('/dashboard');
     }
   }, [isLoggedIn, navigate]);

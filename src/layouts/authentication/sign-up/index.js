@@ -34,28 +34,28 @@ function SignUp() {
   const passwordValidator = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
   const referralCodeValidator = /^[a-zA-Z0-9]{6}$/;
 
-  const validateUsername = async () => {
-    let error = '';
-    if (username.trim() === '') {
-      error = '*username is required';
-    } else if (!usernameValidator.test(username)) {
-      error = '*username must have distinctive characteristics';
-    } else {
-      try {
-        const response = await axios.post('', {
-          username: username,
-        });
-        const isUsernameExists = response.data.exists;
-        if (isUsernameExists) {
-          error = '*username already exists';
-        }
-      } catch (error) {
-        console.error('Error checking username:', error);
-        error = '*An error occurred while checking username';
-      }
-    }
-    return error;
-};
+//   const validateUsername = async () => {
+//     let error = '';
+//     if (username.trim() === '') {
+//       error = '*username is required';
+//     } else if (!usernameValidator.test(username)) {
+//       error = '*username must have distinctive characteristics';
+//     } else {
+//       try {
+//         const response = await axios.post('', {
+//           username: username,
+//         });
+//         const isUsernameExists = response.data.exists;
+//         if (isUsernameExists) {
+//           error = '*username already exists';
+//         }
+//       } catch (error) {
+//         console.error('Error checking username:', error);
+//         error = '*An error occurred while checking username';
+//       }
+//     }
+//     return error;
+// };
 const validatePassword = () => {
   let error = '';
   if (password.trim() === '') {
@@ -76,31 +76,31 @@ const validatePassword = () => {
     return error;
   };
 
-  const validateReferralCode = async () => {
-    let error = '';
-    if (referralCode.trim() === '') {
-      error = '*referral code is required';
-    } else if (!referralCodeValidator.test(referralCode)) {
-      error = '*referral code must be 6 characters long and alphanumeric';
-    } else {
-      try {
-        const response = await axios.post('/check-referral-code', {
-          referralCode: referralCode,
-        });
-        const isReferralCodeUsed = response.data.used;
-        const isReferralCodeExpired = response.data.expired;
-        if (isReferralCodeUsed) {
-          error = '*referral code is already used by another user';
-        } else if (isReferralCodeExpired) {
-          error = '*referral code has expired';
-        }
-      } catch (error) {
-        console.error('Error checking referral code:', error);
-        error = '*An error occurred while checking referral code';
-      }
-    }
-    return error;
-};
+//   const validateReferralCode = async () => {
+//     let error = '';
+//     if (referralCode.trim() === '') {
+//       error = '*referral code is required';
+//     } else if (!referralCodeValidator.test(referralCode)) {
+//       error = '*referral code must be 6 characters long and alphanumeric';
+//     } else {
+//       try {
+//         const response = await axios.post('/check-referral-code', {
+//           referralCode: referralCode,
+//         });
+//         const isReferralCodeUsed = response.data.used;
+//         const isReferralCodeExpired = response.data.expired;
+//         if (isReferralCodeUsed) {
+//           error = '*referral code is already used by another user';
+//         } else if (isReferralCodeExpired) {
+//           error = '*referral code has expired';
+//         }
+//       } catch (error) {
+//         console.error('Error checking referral code:', error);
+//         error = '*An error occurred while checking referral code';
+//       }
+//     }
+//     return error;
+// };
 
   const handleChange = async (e) => {
     const { name, value } = e.target;
@@ -128,12 +128,12 @@ const validatePassword = () => {
     if (username === "" || password === "" || passwordConfirmation === "" || referralCode === "") {
     } else {
       try {
-        await axios.post('', {
-          username: username,
-          password: password,
-          passwordConfirmation : passwordConfirmation,
-          referralCode: referralCode,
-        });
+        // await axios.post('', {
+        //   username: username,
+        //   password: password,
+        //   passwordConfirmation : passwordConfirmation,
+        //   referralCode: referralCode,
+        // });
         window.location.href = '/dashboard';
       } catch (error) {
         console.error("Error submitting form:", error);

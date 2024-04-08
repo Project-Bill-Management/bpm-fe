@@ -47,17 +47,16 @@ function InviteCircle() {
         try {
             const token = localStorage.getItem('jwtToken');
             const headers = { 'Authorization': `Bearer ${token}` };
-
-            // Hanya lakukan request jika searchKeyword tidak kosong
+    
             if (searchKeyword.trim() !== "") {
-                const response = await axios.get(`http://152.42.188.210:8080/api/auth/search_user/${id_circle}`, { keyword: searchKeyword }, { headers });
+                const response = await axios.post(`http://152.42.188.210:8080/api/auth/search_user/${id_circle}`, { keyword: searchKeyword }, { headers });
                 if (response.status === 200) {
-                    setRecommendedUsers(response.data);
+                    const filteredUsers = response.data.data.filter(user => user.username.toLowerCase().startsWith(searchKeyword.toLowerCase()));
+                    setRecommendedUsers(filteredUsers);
                 } else {
                     throw new Error('Failed to fetch search results');
                 }
             } else {
-                // Bersihkan recommendedUsers jika searchKeyword kosong
                 setRecommendedUsers([]);
             }
         } catch (error) {
@@ -81,8 +80,7 @@ function InviteCircle() {
         setLoading(true);
         try {
             const response = await axios.get(`http://152.42.188.210:8080/api/auth/invite_circle/${id_circle}/invitations`, { headers });
-            console.log("Response dari server:", response.data); // Tambahkan baris ini
-            //   console.log("ID pembuat circle:", circles.creator_username);
+            console.log("Response dari server:", response.data);
             setCircles(response.data.data);
             setLoading(false);
 
@@ -105,41 +103,41 @@ function InviteCircle() {
         const { name, value } = e.target;
         switch (name) {
             case 'username':
-                setUsername(value);
-                setUsernameError('');
+                if (value.trim() !== "") {
+                    setUsername(value);
+                    setUsernameError('');
+                } else {
+                    setUsernameError('Username is required');
+                }
                 break;
             default:
                 break;
         }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (username === "") {
-            setError('Username is required');
-            return;
+   const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('jwtToken');
+    const headers = { 'Authorization': `Bearer ${token}` };
+    try {
+        const response = await axios.post(`http://152.42.188.210:8080/api/auth/invite_circle/${id_circle}`, {
+            username: username,
+        }, { headers });
+        console.log(`Inviting username ${username} to circle ${id_circle}`);
+        if (response.status === 200) {
+            setUsername('');
+            setError('');
+            toast.success('Invite To Circle successfully, waiting approve');
+            console.log('Invite To Circle successfully, waiting approve');
+        } else {
+            throw new Error('Failed to invite user to circle');
         }
-        const token = localStorage.getItem('jwtToken');
-        const headers = { 'Authorization': `Bearer ${token}` };
-        try {
-            const response = await axios.post(`http://152.42.188.210:8080/api/auth/invite_circle/${id_circle}`, {
-                username: username,
-            }, { headers });
-            console.log(`Inviting username ${username} to circle ${id_circle}`);
-            if (response.status === 200) {
-                setUsername('');
-                setError('');
-                toast.success('Invite To Circle successfully, waiting approve');
-                console.log('Invite To Circle successfully, waiting approve');
-            } else {
-                throw new Error('Failed to invite user to circle');
-            }
-        } catch (error) {
-            console.error("Error submitting form:", error);
-            setError('Make sure the username entered is correct');
-            toast.error("Failed to invite");
-        }
-    };
+    } catch (error) {
+        console.error("Error submitting form:", error);
+        setError('Failed to invite. Make sure the username entered is correct');
+        toast.error("Failed to invite");
+    }
+};
 
     const showModalInvite = () => {
         setUsername("");
@@ -149,6 +147,11 @@ function InviteCircle() {
     const closeModalInvite = () => {
         setUsername("");
         setShowInviteModal(false);
+    };
+
+    const handleClickUser = (user) => {
+        setUsername(user.username);
+        setRecommendedUsers([]);
     };
 
     return (
@@ -220,20 +223,19 @@ function InviteCircle() {
                                             </div>
                                         )}
                                         {Array.isArray(recommendedUsers) && recommendedUsers.map(user => (
-                                            <div key={user.id} className="user">
-                                                {user.name} - {user.email}
+                                            <div key={user.id} className="user" onClick={() => handleClickUser(user)}>
+                                                {user.username}
                                             </div>
                                         ))}
-
                                     </Form.Group>
                                     <Button variant="contained" type='submit' onClick={handleSubmit}>
-                                        Save
+                                        Invite
                                     </Button>
                                 </Form>
                             </Modal.Body>
                             <Modal.Footer>
                                 <Button variant="secondary" onClick={closeModalInvite}>
-                                    Close
+                                    Cancel
                                 </Button>
                             </Modal.Footer>
                         </Modal>
@@ -247,7 +249,7 @@ function InviteCircle() {
                 style={{
                     position: 'fixed',
                     bottom: '20px',
-                    left: '60%',
+                    left: '50%',
                     transform: 'translate(-50%, -50%)',
                 }}
             >
