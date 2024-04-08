@@ -39,15 +39,6 @@ const routes = [
     component: <Tables />,
     noCollapse: true,
   },
-  // {
-  //   // type: "collapse",
-  //   // name: "NotifInviteCircle",
-  //   key: "NotifInviteCircle",
-  //   route: "/NotifInviteCircle",
-  //   icon: <Message size="12px" />,
-  //   component: <NotifInviteCircle />,
-  //   noCollapse: true,
-  // },
   {
     // type: "collapse",
     // name: "Message Box",
@@ -75,15 +66,6 @@ const routes = [
     component: <Billing />,
     noCollapse: true,
   },
-  // {
-  //   type: "collapse",
-  //   name: "Virtual Reality",
-  //   key: "virtual-reality",
-  //   route: "/virtual-reality",
-  //   icon: <Cube size="12px" />,
-  //   component: <VirtualReality />,
-  //   noCollapse: true,
-  // },
   // { type: "title", title: "Account Pages", key: "account-pages" },
   {
     type: "collapse",

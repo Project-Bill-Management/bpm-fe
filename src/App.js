@@ -24,29 +24,6 @@ function App() {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
-  // const messagingInstance = getMessaging();
-  // const messaging = getMessaging();
-
-  // useEffect(() => {
-  //   const getFirebaseToken = async () => {
-  //     try {
-  //       const token = await messagingInstance.getToken();
-  //       console.log("Firebase Token:", token);
-  //     } catch (error) {
-  //       console.error("Error getting Firebase token:", error);
-  //     }
-  //   };
-  //   getFirebaseToken();
-  // }, []);
-
-  // useEffect(() => {
-  //   const unsubscribe = messaging.onMessage((message) => {
-  //       console.log('Message received:', message);
-  //       // Handle the received message here
-  //   });
-  
-  //   return unsubscribe;
-  // }, []);
   
 
   useMemo(() => {

@@ -83,6 +83,7 @@ function Tables() {
       const response = await axios.post('http://152.42.188.210:8080/index.php/api/auth/create_circle', {
         circle_name: circle_name,
       }, { headers });
+      // Gunakan response di sini
       closeModalAdd();
       toast.success('Circle created successfully');
       const newCircle = { id_circle: response.data.id_circle, circle_name: circle_name, creator_username: currentUser };
@@ -90,8 +91,7 @@ function Tables() {
     } catch (error) {
       console.error("Error submitting form:", error);
     }
-  };
-  
+};
 
   //get
   const fetchData = async () => {
