@@ -19,7 +19,7 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState('');
   const [error, setError] = useState('');
-  const [showError, setShowError] = useState(false); // State untuk menampilkan pesan error
+  const [showError, setShowError] = useState(false);
   const isLoggedIn = localStorage.getItem('jwtToken');
   const [currentUser, setCurrentUser] = useState(null);
 
@@ -40,7 +40,7 @@ const SignIn = () => {
       passwordError = '*Password is required';
       isValid = false;
     }
-    // Jika input username dan password tidak kosong, lakukan validasi server
+    // Jika input username dan password tidak kosong, lakukan validasi
     if (isValid) {
       try {
         const response = await axios.post('http://152.42.188.210:8080/index.php/api/auth/login', {

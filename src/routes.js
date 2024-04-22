@@ -19,6 +19,8 @@ import MessageList from "layouts/message/index";
 import withSplashScreen from "../src/components/SplashScreen";
 import InviteCircle from "layouts/tables/InviteCircle";
 import MessageDisplay from "layouts/message/MessageDisplay";
+import Event from "layouts/tables/event";
+import DetailEvent from "layouts/tables/detailEvent";
 
 const routes = [
   {
@@ -48,15 +50,15 @@ const routes = [
     component: <MessageDisplay />,
     noCollapse: true,
   },
-  {
-    type: "collapse",
-    name: "Message Box",
-    key: "MessageList",
-    route: "/MessageList",
-    icon: <Message size="12px" />,
-    component: <MessageList/>,
-    noCollapse: true,
-  },
+  // {
+  //   type: "collapse",
+  //   name: "Message Box",
+  //   key: "MessageList",
+  //   route: "/MessageList",
+  //   icon: <Message size="12px" />,
+  //   component: <MessageList/>,
+  //   noCollapse: true,
+  // },
   {
     type: "collapse",
     name: "Billing",
@@ -101,6 +103,24 @@ const routes = [
     route: "/InviteCircle/:id_circle/:circle_name",
     icon: <SpaceShip size="12px" />,
     component: <InviteCircle/>,
+    noCollapse: true,
+  },
+  {
+    // type: "collapse",
+    // name: "Invite Circle",
+    key: "event",
+    route: "/Event/:id_circle/:circle_name",
+    icon: <SpaceShip size="12px" />,
+    component: <Event/>,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "Detail Event",
+    key: "detailEvent",
+    route: "/DetailEvent",
+    icon: <SpaceShip size="12px" />,
+    component: <DetailEvent/>,
     noCollapse: true,
   },
 ];

@@ -11,10 +11,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
-import { IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Link } from 'react-router-dom';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import Box from '@mui/material/Box';
 import {
     CButton,
     CCard,
@@ -32,13 +32,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 function InviteCircle() {
     const { circle_name } = useParams();
     const { id_circle } = useParams();
-    const { circleId } = useParams();
     const [showInviteModal, setShowInviteModal] = useState(false);
     const [username, setUsername] = useState("");
     const [usernameError, setUsernameError] = useState(null);
     const [error, setError] = useState('');
     const [searchKeyword, setSearchKeyword] = useState("");
-    const [searchResults, setSearchResults] = useState([]);
     const [recommendedUsers, setRecommendedUsers] = useState([]);
     const [circles, setCircles] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -47,7 +45,7 @@ function InviteCircle() {
         try {
             const token = localStorage.getItem('jwtToken');
             const headers = { 'Authorization': `Bearer ${token}` };
-    
+
             if (searchKeyword.trim() !== "") {
                 const response = await axios.post(`http://152.42.188.210:8080/api/auth/search_user/${id_circle}`, { keyword: searchKeyword }, { headers });
                 if (response.status === 200) {
@@ -103,41 +101,49 @@ function InviteCircle() {
         const { name, value } = e.target;
         switch (name) {
             case 'username':
-                if (value.trim() !== "") {
-                    setUsername(value);
-                    setUsernameError('');
-                } else {
-                    setUsernameError('Username is required');
-                }
+                setUsername(value);
+                setUsernameError(value.trim() === '' ? '*Username is required' : '');
+                setUsernameError('');
                 break;
             default:
                 break;
         }
     };
 
-   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem('jwtToken');
-    const headers = { 'Authorization': `Bearer ${token}` };
-    try {
-        const response = await axios.post(`http://152.42.188.210:8080/api/auth/invite_circle/${id_circle}`, {
-            username: username,
-        }, { headers });
-        console.log(`Inviting username ${username} to circle ${id_circle}`);
-        if (response.status === 200) {
-            setUsername('');
-            setError('');
-            toast.success('Invite To Circle successfully, waiting approve');
-            console.log('Invite To Circle successfully, waiting approve');
-        } else {
-            throw new Error('Failed to invite user to circle');
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        let error = '';
+
+        if (username === "") {
+            error = 'Username is required';
         }
-    } catch (error) {
-        console.error("Error submitting form:", error);
-        setError('Failed to invite. Make sure the username entered is correct');
-        toast.error("Failed to invite");
-    }
-};
+
+        setUsernameError(error);
+        if (error) {
+            setError(error);
+            return;
+        }
+        const token = localStorage.getItem('jwtToken');
+        const headers = { 'Authorization': `Bearer ${token}` };
+        try {
+            const response = await axios.post(`http://152.42.188.210:8080/api/auth/invite_circle/${id_circle}`, {
+                username: username,
+            }, { headers });
+            console.log(`Inviting username ${username} to circle ${id_circle}`);
+            if (response.status === 200) {
+                setUsername('');
+                setError('');
+                toast.success('Invite successfully, waiting approve');
+                console.log('Invite successfully, waiting approve');
+            } else {
+                throw new Error('Failed to invite user to circle');
+            }
+        } catch (error) {
+            console.error("Error submitting form:", error);
+            setError('Failed to invite. Make sure the username entered is correct');
+            toast.error("Failed to invite");
+        }
+    };
 
     const showModalInvite = () => {
         setUsername("");
@@ -156,14 +162,26 @@ function InviteCircle() {
 
     return (
         <DashboardLayout>
-            <Card>
-                <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
+            <Card sx={{ margin: 'auto', maxWidth: 'sm' }}>
+                <SoftBox display="flex" justifyContent="center" alignItems="center" pt={2} px={2}>
                     <SoftTypography variant="h6" fontWeight="medium">
-                        {circle_name}
+                        Detail {circle_name}
                     </SoftTypography>
-                    <Button variant="contained" startIcon={<AddIcon />} onClick={showModalInvite}>
-                        Invite Circle
-                    </Button>
+                </SoftBox>
+                <SoftBox pb={3} />
+                <SoftBox display="flex" justifyContent="center">
+                    <Box textAlign="center" mr={5}>
+                        <EditIcon style={{ cursor: 'pointer' }} />
+                        <SoftTypography variant="body2" mt={1}>Edit</SoftTypography>
+                    </Box>
+                    <Box textAlign="center" mr={5}>
+                        <DeleteIcon style={{ cursor: 'pointer' }} />
+                        <SoftTypography variant="body2" mt={1}>Delete</SoftTypography>
+                    </Box>
+                    <Box textAlign="center">
+                        <AddCircleIcon style={{ cursor: 'pointer' }} onClick={showModalInvite} />
+                        <SoftTypography variant="body2" mt={1}>Add</SoftTypography>
+                    </Box>
                 </SoftBox>
                 <SoftBox pb={3} />
             </Card>
@@ -217,13 +235,17 @@ function InviteCircle() {
                                             }}
                                             value={searchKeyword}
                                         />
-                                        {error && (
+                                        {usernameError && (
                                             <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
-                                                {error}
+                                                {usernameError}
                                             </div>
                                         )}
                                         {Array.isArray(recommendedUsers) && recommendedUsers.map(user => (
-                                            <div key={user.id} className="user" onClick={() => handleClickUser(user)}>
+                                            <div
+                                                key={user.id}
+                                                className="user"
+                                                onClick={() => handleClickUser(user)} // Set username when user is clicked
+                                            >
                                                 {user.username}
                                             </div>
                                         ))}
@@ -242,7 +264,7 @@ function InviteCircle() {
                     </div>
                 </div>
             </div>
-            <Button
+            {/* <Button
                 variant="contained"
                 color="primary"
                 // onClick={}
@@ -254,7 +276,7 @@ function InviteCircle() {
                 }}
             >
                 Create Event
-            </Button>
+            </Button> */}
         </DashboardLayout>
     );
 }
