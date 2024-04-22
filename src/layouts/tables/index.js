@@ -3,7 +3,6 @@ import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import { IconButton } from '@mui/material';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { Modal, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import SoftBox from "components/SoftBox";
@@ -76,22 +75,40 @@ function Tables() {
       setcircle_nameError('Circle name already exists');
       return;
     }
-  
+
     const token = localStorage.getItem('jwtToken');
     const headers = { 'Authorization': `Bearer ${token}` };
     try {
       const response = await axios.post('http://152.42.188.210:8080/index.php/api/auth/create_circle', {
         circle_name: circle_name,
       }, { headers });
-      // Gunakan response di sini
+      console.log(response);
       closeModalAdd();
+      console.log(circles.creator_username);
       toast.success('Circle created successfully');
       const newCircle = { id_circle: response.data.id_circle, circle_name: circle_name, creator_username: currentUser };
       setCircles([...circles, newCircle]);
     } catch (error) {
       console.error("Error submitting form:", error);
+      // Handle error here
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error("Server error response:", error.response.data);
+        console.error("Status code:", error.response.status);
+        console.error("Headers:", error.response.headers);
+        setError("Server error: " + error.response.data.message);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error("No response received:", error.request);
+        setError("No response from server. Please try again later.");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error("Request setup error:", error.message);
+        setError("Request setup error: " + error.message);
+      }
     }
-};
+  };
 
   //get
   const fetchData = async () => {
@@ -210,12 +227,14 @@ function Tables() {
         `http://152.42.188.210:8080/index.php/api/auth/delete_circle/${id_circle}`,
         { headers }
       );
+      console.log(deleteData.data);
       closeModalDelete();
       toast.success('Circle delete successfully');
       const updatedData = circles.filter(circle => circle.id_circle !== id_circle);
       setCircles(updatedData);
     } catch (error) {
       toast.error("Failed to delete");
+      console.error("Error delete circle:", error);
     }
   };
 
@@ -233,7 +252,6 @@ function Tables() {
                 </Button>
               </div>
             </SoftBox>
-
             <SoftBox textAlign="center">
               <CCardBody>
                 <CTable striped>
@@ -273,13 +291,13 @@ function Tables() {
                       return (
                         <CTableRow key={index}>
                           <CTableDataCell>
-                            <Link to={`/InviteCircle/${item.id_circle}/${item.circle_name}`}>{index + 1}</Link>
+                            <Link to={`/Event/${item.id_circle}/${item.circle_name}`}>{index + 1}</Link>
                           </CTableDataCell>
                           <CTableDataCell>
-                            <Link to={`/InviteCircle/${item.id_circle}/${item.circle_name}`}>{item.circle_name}</Link>
+                            <Link to={`/Event/${item.id_circle}/${item.circle_name}`}>{item.circle_name}</Link>
                           </CTableDataCell>
                           <CTableDataCell>
-                            <Link to={`/InviteCircle/${item.id_circle}/${item.circle_name}`}>{item.creator_username}</Link>
+                            <Link to={`/Event/${item.id_circle}/${item.circle_name}`}>{item.creator_username}</Link>
                           </CTableDataCell>
                           <CTableDataCell>
                             <CButton className='btn btn-primary text-white me-2' onClick={() => showModalUpdate(item)}>
@@ -342,7 +360,6 @@ function Tables() {
           </div>
         </div>
       </div>
-
       <div className='body-flex'>
         <div className="overlay" />
         <div className="flex">
