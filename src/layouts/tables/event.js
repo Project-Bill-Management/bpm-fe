@@ -109,7 +109,7 @@ const [end_event, setEnd_event] = useState(new Date().toISOString().slice(0, 19)
     const token = localStorage.getItem('jwtToken');
     const headers = { 'Authorization': `Bearer ${token}` };
     try {
-      const response = await axios.post('http:152.42.188.210:8080/index.php/api/auth/post_events', {
+      const response = await axios.post(`http://152.42.188.210:8080/index.php/api/auth/post_events/${id_circle}`, {
         nama_event: nama_event,
         deskripsi: deskripsi,
         start_event: start_event,
