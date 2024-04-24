@@ -13,6 +13,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import TextField from '@mui/material/TextField';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Event() {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,11 +24,10 @@ function Event() {
   const [deskripsiError, setDeskripsiError] = useState(null);
   const [start_eventErr, setStart_eventErr] = useState(null);
   const [end_eventError, setEnd_eventError] = useState(null);
-  const { circle_name } = useParams();
+  const { id_circle, circle_name } = useParams();
   const [showEventModal, setShowEventModal] = useState(false);
   const [start_event, setStart_event] = useState(new Date().toISOString().slice(0, 19));
-const [end_event, setEnd_event] = useState(new Date().toISOString().slice(0, 19));
-  const [id_circle, setId_circle] = useState(null);
+  const [end_event, setEnd_event] = useState(new Date().toISOString().slice(0, 19));
   const [eventData, setEventData] = useState(null);
 
   const handleStartDateChange = (e) => {
@@ -34,13 +35,13 @@ const [end_event, setEnd_event] = useState(new Date().toISOString().slice(0, 19)
     const formattedDate = format(date, 'yyyy-MM-dd HH:mm:ss');
     setStart_event(formattedDate);
   };
-  
+
   const handleEndDataChange = (e) => {
     const date = new Date(e.target.value);
     const formattedDate = format(date, 'yyyy-MM-dd HH:mm:ss');
     setEnd_event(formattedDate);
   };
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     switch (name) {
@@ -80,36 +81,36 @@ const [end_event, setEnd_event] = useState(new Date().toISOString().slice(0, 19)
     let deskripsiError = '';
     let start_eventErr = '';
     let end_eventError = '';
-    
+
     if (nama_event === "") {
       nama_eventError = 'Event name is required';
     } else if (nama_event.length < 3) {
       nama_eventError = 'Event name must be at least 3 characters long';
     }
-    
+
     if (deskripsi === "") {
       deskripsiError = 'Description is required';
     }
     if (!start_event || typeof start_event !== 'string' || start_event.trim() === '') {
       start_eventErr = 'Start date is required';
     }
-    
+
     if (!end_event || typeof end_event !== 'string' || end_event.trim() === '') {
       end_eventError = 'End date is required';
     }
-    
+
     setNama_eventError(nama_eventError);
     setDeskripsiError(deskripsiError);
     setStart_eventErr(start_eventErr);
     setEnd_eventError(end_eventError);
-    
+
     if (nama_eventError || deskripsiError || start_eventErr || end_eventError) {
       return;
     }
     const token = localStorage.getItem('jwtToken');
     const headers = { 'Authorization': `Bearer ${token}` };
     try {
-      const response = await axios.post('http:152.42.188.210:8080/index.php/api/auth/post_events', {
+      const response = await axios.post(`http://152.42.188.210:8080/index.php/api/auth/post_events/${id_circle}`, {
         nama_event: nama_event,
         deskripsi: deskripsi,
         start_event: start_event,
@@ -136,25 +137,27 @@ const [end_event, setEnd_event] = useState(new Date().toISOString().slice(0, 19)
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log('Trying to get token from localStorage...');
       const token = localStorage.getItem('jwtToken');
       if (!token) {
-        setError("Token not found. Please login again.");
+        console.error("Token not found in localStorage. Please login again.");
         return;
       }
-      console.log('Token retrieved from localStorage:', token);
 
-      const headers = { 'Authorization': `Bearer ${token}` };
+      const headers = {
+        'Authorization': `Bearer ${token}`,
+      };
+
       try {
         const response = await axios.get(`http://152.42.188.210:8080/index.php/api/auth/get_events/${id_circle}`, { headers });
         const filteredEvents = response.data.filter(event => event.circle_id === id_circle); // Filter events by circle ID
         setEventData(filteredEvents);
-        console.log("data:", config.data);
         console.log("Response dari server:", filteredEvents);
+        console.log("Response dari server:", response.data);
       } catch (error) {
         console.error("Error fetching event data:", error);
       }
     };
+
     fetchData();
   }, [id_circle]);
 
@@ -176,31 +179,42 @@ const [end_event, setEnd_event] = useState(new Date().toISOString().slice(0, 19)
         <SoftBox pb={3} />
       </Card>
       <SoftBox pb={3} />
-      {eventData && eventData.data && eventData.data.length > 0 && (
+      {eventData && eventData.data && eventData.data.length > 0 ? (
+        eventData.data.map((item, index) => (
+          <Card key={item.id_event}>
+            <SoftBox pt={3} px={2}>
+              <SoftTypography variant="h6" fontWeight="medium" style={{ fontSize: '14px' }}>
+                {item.nama_event}
+              </SoftTypography>
+              <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
+                {item.deskripsi}
+              </SoftTypography>
+              <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
+                Start: {item.start_event}
+              </SoftTypography>
+              <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
+                End: {item.end_event}
+              </SoftTypography>
+              <div>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  style={{ position: 'absolute', bottom: 20, right: 20 }}
+                >
+                  Detail
+                </Button>
+              </div>
+            </SoftBox>
+            <SoftBox pb={3} />
+          </Card>
+        ))
+      ) : (
         <Card>
           <SoftBox pt={3} px={2}>
-            <SoftTypography variant="h6" fontWeight="medium" style={{ fontSize: '14px' }}>
-              {eventData.data[0].nama_event}
+            <SoftTypography variant="body1">
+              No events found for the authenticated user.
             </SoftTypography>
-            <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
-              {eventData.data[0].deskripsi}
-            </SoftTypography>
-            <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
-              Start: {eventData.data[0].start_event}
-            </SoftTypography>
-            <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
-              End: {eventData.data[0].end_event}
-            </SoftTypography>
-            <div>
-              <Button
-                variant="contained"
-                color="primary"
-                size="small"
-                style={{ position: 'absolute', bottom: 20, right: 20 }}
-              >
-                Detail
-              </Button>
-            </div>
           </SoftBox>
           <SoftBox pb={3} />
         </Card>
