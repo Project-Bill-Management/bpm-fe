@@ -172,7 +172,7 @@ function Tables() {
     setcircle_name(data.circle_name);
     setId_Circle(data.id_circle);
     setShowDeleteModal(true);
-  };
+  };  
 
   const closeModalDelete = () => {
     setcircle_name("");
@@ -221,7 +221,8 @@ function Tables() {
     const headers = { 'Authorization': `Bearer ${token}` };
     try {
       if (!id_circle) {
-        throw new Error('ID circle is not defined');
+        console.error('ID circle is not defined');
+        return;
       }
       const deleteData = await axios.delete(
         `http://152.42.188.210:8080/index.php/api/auth/delete_circle/${id_circle}`,
