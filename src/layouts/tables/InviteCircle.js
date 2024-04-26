@@ -30,8 +30,7 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function InviteCircle() {
-    const { circle_name } = useParams();
-    const { id_circle } = useParams();
+    const { circle_name, id_circle } = useParams();
     const [showInviteModal, setShowInviteModal] = useState(false);
     const [username, setUsername] = useState("");
     const [usernameError, setUsernameError] = useState(null);
@@ -40,6 +39,10 @@ function InviteCircle() {
     const [recommendedUsers, setRecommendedUsers] = useState([]);
     const [circles, setCircles] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [circle_nameError, setcircle_nameError] = useState(null);
+    // const [circle_name, setcircle_name] = useState("");
 
     const handleSearch = async () => {
         try {
@@ -103,13 +106,12 @@ function InviteCircle() {
             case 'username':
                 setUsername(value);
                 setUsernameError(value.trim() === '' ? '*Username is required' : '');
-                setUsernameError('');
                 break;
             default:
                 break;
         }
     };
-
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         let error = '';
@@ -159,6 +161,89 @@ function InviteCircle() {
         setUsername(user.username);
         setRecommendedUsers([]);
     };
+
+    const showModalUpdate = (data) => {
+        setcircle_name(data.circle_name);
+        setId_Circle(data.id_circle);
+        setShowUpdateModal(true);
+      };
+    
+    
+      const closeModalUpdate = () => {
+        setcircle_name("");
+        setId_Circle("");
+        setShowUpdateModal(false);
+      };
+    
+      const showModalDelete = (data) => {
+        setcircle_name(data.circle_name);
+        setId_Circle(data.id_circle);
+        setShowDeleteModal(true);
+      };  
+    
+      const closeModalDelete = () => {
+        setcircle_name("");
+        setId_Circle("");
+        setShowDeleteModal(false);
+      };    
+
+      const updatedCircles = async (e) => {
+        e.preventDefault();
+        let error = '';
+        if (id_circle === "") {
+          error = 'Circle ID is required';
+        } else {
+          if (circle_name === "") {
+            error = 'Circle name is required';
+          } else if (circle_name.length < 3) {
+            error = 'Circle name must be at least 3 characters long';
+          }
+        }
+        if (error) {
+          setcircle_nameError(error);
+          return;
+        }
+        const token = localStorage.getItem('jwtToken');
+        const headers = { 'Authorization': `Bearer ${token}` };
+        try {
+          const response = await axios.put(`http://152.42.188.210:8080/index.php/api/auth/update_circle/${id_circle}`, {
+            circle_name: circle_name,
+          }, { headers });
+          closeModalUpdate();
+          toast.success('Circle updated successfully');
+          const updatedData = circles.map(circle =>
+            circle.id_circle === id_circle ? { ...circle, circle_name: circle_name } : circle
+          );
+          setCircles(updatedData); // Memperbarui lingkaran yang diubah dalam state circles
+        } catch (error) {
+          console.error("Error updating circle:", error);
+        }
+      };
+    
+      //deleted
+      const DeleteDataCircle = async (event) => {
+        event.preventDefault();
+        const token = localStorage.getItem('jwtToken');
+        const headers = { 'Authorization': `Bearer ${token}` };
+        try {
+          if (!id_circle) {
+            console.error('ID circle is not defined');
+            return;
+          }
+          const deleteData = await axios.delete(
+            `http://152.42.188.210:8080/index.php/api/auth/delete_circle/${id_circle}`,
+            { headers }
+          );
+          console.log(deleteData.data);
+          closeModalDelete();
+          toast.success('Circle delete successfully');
+          const updatedData = circles.filter(circle => circle.id_circle !== id_circle);
+          setCircles(updatedData);
+        } catch (error) {
+          toast.error("Failed to delete");
+          console.error("Error delete circle:", error);
+        }
+      };    
 
     return (
         <DashboardLayout>
@@ -277,6 +362,73 @@ function InviteCircle() {
             >
                 Create Event
             </Button> */}
+            <div className='body-flex'>
+        <div className="overlay" />
+        <div className="flex">
+          <div className="col-15 p-5">
+            <Modal show={showUpdateModal} onHide={closeModalUpdate} style={{ maxWidth: '1500px', width: '100%' }}>
+              <div className="overlay-icons" />
+              <Modal.Header closeButton>
+                <Modal.Title>Update Circle</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form onSubmit={updatedCircles}>
+                  <Form.Group className='mb-5' controlId='exampleForm.ControlInput1'>
+                    <Form.Control
+                      type="text"
+                      autoFocus
+                      onChange={(e) => setcircle_name(e.target.value)}
+                      value={circle_name}
+                    />
+                    {circle_nameError && (
+                      <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
+                        {circle_nameError}
+                      </div>
+                    )}
+                  </Form.Group>
+                  <Button variant="contained" type='submit' onClick={updatedCircles}>
+                    Save
+                  </Button>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={closeModalUpdate}>
+                  Close
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          </div>
+        </div>
+      </div>
+      <Modal show={showDeleteModal} onHide={closeModalDelete} style={{ maxWidth: '1500px', width: '100%' }}>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            Are you sure you deleted this data?
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="col-sm-12">
+            <div className="card">
+              <div className="card-body">
+                <div className="row">
+                  <p className="col-4 card-text">
+                    Circle Name
+                  </p>
+                  <p className="col-6 card-text">
+                    : {circle_name}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button type='submit' color="primary" className="px-4" onClick={DeleteDataCircle}>
+            Delete
+          </Button>
+          <Button variant="danger" onClick={closeModalDelete}>Cancel</Button>
+        </Modal.Footer>
+      </Modal>
         </DashboardLayout>
     );
 }

@@ -145,7 +145,7 @@ function Event() {
     }
     const headers = { 'Authorization': `Bearer ${token}` };
     try {
-      const response = await axios.get(`http://152.42.188.210:8080/index.php/api/auth/get_events/`, { headers });
+      const response = await axios.get(`http://152.42.188.210:8080/index.php/api/auth/get_events`, { headers });
       console.log("Response dari server:", response.data);
       setEvents(response.data.data);
     } catch (error) {
@@ -161,7 +161,7 @@ function Event() {
   useEffect(() => {
     fetchData();
   }, []);
-  
+
   return (
     <DashboardLayout>
       <Card>
@@ -180,46 +180,41 @@ function Event() {
         <SoftBox pb={3} />
       </Card>
       <SoftBox pb={3} />
-      {events && events.length > 0 ? (
-  events.map((item, index) => (
-    <Card key={item.id_event}>
-      <SoftBox pt={3} px={2}>
-        <SoftTypography variant="h6" fontWeight="medium" style={{ fontSize: '14px' }}>
-          {item.nama_event}
-        </SoftTypography>
-        <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
-          {item.deskripsi}
-        </SoftTypography>
-        <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
-          Start: {item.start_event}
-        </SoftTypography>
-        <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
-          End: {item.end_event}
-        </SoftTypography>
-        <div>
-          <Button
-            variant="contained"
-            color="primary"
-            size="small"
-            style={{ position: 'absolute', bottom: 20, right: 20 }}
-          >
-            Detail
-          </Button>
-        </div>
-      </SoftBox>
-      <SoftBox pb={3} />
-    </Card>
-  ))
-) : (
-  <Card>
-    <SoftBox pt={3} px={2}>
-      <SoftTypography variant="body1">
-        No events found for the authenticated user.
-      </SoftTypography>
-    </SoftBox>
-    <SoftBox pb={3} />
-  </Card>
-)}
+      {events && events.length > 0 && (
+        events.map((item, index) => (
+          <SoftBox key={item.id_event} mb={2}>
+            <Card p={2}>
+              <SoftBox pt={3} px={2}>
+                <SoftTypography variant="h6" fontWeight="medium" style={{ fontSize: '14px' }}>
+                  {item.nama_event}
+                </SoftTypography>
+                <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
+                  {item.deskripsi}
+                </SoftTypography>
+                <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
+                  Start: {item.start_event}
+                </SoftTypography>
+                <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
+                  End: {item.end_event}
+                </SoftTypography>
+                <div>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    component={Link}
+                    to="/DetailEvent"
+                    style={{ position: 'absolute', bottom: 20, right: 20 }}
+                  >
+                    Detail
+                  </Button>
+                </div>
+              </SoftBox>
+              <SoftBox pb={3} />
+            </Card>
+          </SoftBox>
+        ))
+      )}
 
       <SoftBox pb={3} />
       <div className='body-flex'>
