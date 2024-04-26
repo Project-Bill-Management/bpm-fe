@@ -14,7 +14,6 @@ import TextField from '@mui/material/TextField';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 function Event() {
   const [isLoading, setIsLoading] = useState(false);
@@ -29,6 +28,8 @@ function Event() {
   const [start_event, setStart_event] = useState(new Date().toISOString().slice(0, 19));
   const [end_event, setEnd_event] = useState(new Date().toISOString().slice(0, 19));
   const [eventData, setEventData] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [error, setError] = useState('');
 
   const handleStartDateChange = (e) => {
     const date = new Date(e.target.value);
@@ -119,7 +120,7 @@ function Event() {
       console.log(response);
       closeModalEvent();
       toast.success('Event created successfully');
-      setEvents([...EventSource, newEvent]);
+      setEvents(response.data.data);
     } catch (error) {
       console.error("error form:", error);
       if (error.response) {
@@ -135,31 +136,31 @@ function Event() {
     }
   };
 
+  const fetchData = async () => {
+    const token = localStorage.getItem('jwtToken');
+    if (!token) {
+      setError("Token not found. Please login again.");
+      setIsLoading(false);
+      return;
+    }
+    const headers = { 'Authorization': `Bearer ${token}` };
+    try {
+      const response = await axios.get(`http://152.42.188.210:8080/index.php/api/auth/get_events`, { headers });
+      console.log("Response dari server:", response.data);
+      setEvents(response.data.data);
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Failed to fetch data. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem('jwtToken');
-      if (!token) {
-        console.error("Token not found in localStorage. Please login again.");
-        return;
-      }
-
-      const headers = {
-        'Authorization': `Bearer ${token}`,
-      };
-
-      try {
-        const response = await axios.get(`http://152.42.188.210:8080/index.php/api/auth/get_events/${id_circle}`, { headers });
-        const filteredEvents = response.data.filter(event => event.circle_id === id_circle); // Filter events by circle ID
-        setEventData(filteredEvents);
-        console.log("Response dari server:", filteredEvents);
-        console.log("Response dari server:", response.data);
-      } catch (error) {
-        console.error("Error fetching event data:", error);
-      }
-    };
-
     fetchData();
-  }, [id_circle]);
+  }, []);
 
   return (
     <DashboardLayout>
@@ -179,46 +180,42 @@ function Event() {
         <SoftBox pb={3} />
       </Card>
       <SoftBox pb={3} />
-      {eventData && eventData.data && eventData.data.length > 0 ? (
-        eventData.data.map((item, index) => (
-          <Card key={item.id_event}>
-            <SoftBox pt={3} px={2}>
-              <SoftTypography variant="h6" fontWeight="medium" style={{ fontSize: '14px' }}>
-                {item.nama_event}
-              </SoftTypography>
-              <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
-                {item.deskripsi}
-              </SoftTypography>
-              <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
-                Start: {item.start_event}
-              </SoftTypography>
-              <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
-                End: {item.end_event}
-              </SoftTypography>
-              <div>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  style={{ position: 'absolute', bottom: 20, right: 20 }}
-                >
-                  Detail
-                </Button>
-              </div>
-            </SoftBox>
-            <SoftBox pb={3} />
-          </Card>
-        ))
-      ) : (
-        <Card>
-          <SoftBox pt={3} px={2}>
-            <SoftTypography variant="body1">
-              No events found for the authenticated user.
-            </SoftTypography>
+      {events && events.length > 0 && (
+        events.map((item, index) => (
+          <SoftBox key={item.id_event} mb={2}>
+            <Card p={2}>
+              <SoftBox pt={3} px={2}>
+                <SoftTypography variant="h6" fontWeight="medium" style={{ fontSize: '14px' }}>
+                  {item.nama_event}
+                </SoftTypography>
+                <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
+                  {item.deskripsi}
+                </SoftTypography>
+                <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
+                  Start: {item.start_event}
+                </SoftTypography>
+                <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
+                  End: {item.end_event}
+                </SoftTypography>
+                <div>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    component={Link}
+                    to="/DetailEvent"
+                    style={{ position: 'absolute', bottom: 20, right: 20 }}
+                  >
+                    Detail
+                  </Button>
+                </div>
+              </SoftBox>
+              <SoftBox pb={3} />
+            </Card>
           </SoftBox>
-          <SoftBox pb={3} />
-        </Card>
+        ))
       )}
+
       <SoftBox pb={3} />
       <div className='body-flex'>
         <div className="overlay" />

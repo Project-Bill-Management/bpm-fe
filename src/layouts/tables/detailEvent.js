@@ -7,24 +7,100 @@ import { Modal, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import axios from 'axios';
+import Transaction from 'layouts/billing/components/Transaction';
 
 function DetailEvent() {
   const [event, setEvent] = useState(null);
   const [showTransaksiModal, setShowTransaksiModal] = useState(false);
-  const [nama_transaksi, setNama_Transaksi] = useState("");
-  const [harga_transaksi, setHarga_Transaksi] = useState("");
+  const [transaction_name, setTransaction_name] = useState("");
+  const [price, setPrice] = useState("");
+  const [transaction_nameError, setTransaction_nameError] = useState(null);
+  const [priceError, setPriceError] = useState(null);
+  const { id_circle, circle_name, id_event } = useParams();
+  const [transactions, setTransactions] = useState([]);
+
+  const handleChange = (e) => {
+    const {name, value} = e.target;
+    switch (name) {
+      case 'transaction_name' :
+        setTransaction_name(value);
+        setTransaction_nameError(value.trim() === '' ? '*event name is required' : '');
+        setTransaction_nameError('');
+        break;
+        case 'price' :
+          setPrice(value);
+          setPriceError(value.trim() === '' ? '*Price is required' : '');
+          setPriceError('');
+          break;
+          default:
+          break;
+    }
+  }
 
   const showModalTransaksi = () => {
-    setNama_Transaksi("");
-    setHarga_Transaksi("");
+    setTransaction_name("");
+    setPrice("");
     setShowTransaksiModal(true);
   };
 
   const closeModalTransaksi = () => {
-    setNama_Transaksi("");
-    setHarga_Transaksi("");
+    setTransaction_name("");
+    setPrice("");
     setShowTransaksiModal(false);
   };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    let transaction_nameError = '';
+    let priceError = '';
+
+    if (transaction_name === "") {
+        transaction_nameError = 'Transaction name is required';
+    } else if (transaction_name.length < 3) {
+        transaction_nameError = 'Transaction name must be at least 3 characters long';
+    }
+    if (price === "") {
+        priceError = 'Price is required';
+    }
+    setTransaction_nameError(transaction_nameError);
+    setPriceError(priceError);
+
+    if (transaction_nameError || priceError) {
+        return;
+    }
+
+    const existingTransaction = transactions.find(transaksi => transaksi.transaction_name === transaction_name);
+    if (existingTransaction) {
+        toast.error('Transaction already exists');
+        return;
+    }
+
+    const token = localStorage.getItem('jwtToken');
+    const headers = { 'Authorization': `Bearer ${token}` };
+    try {
+        const response = await axios.post(`http://152.42.188.210:8080/api/auth/create_transaksi/id_circle/${id_event}`, {
+            transaction_name: transaction_name,
+            price: price,
+        }, { headers });
+        console.log(response);
+        closeModalTransaksi();
+        toast.success('Transaction created successfully');
+        setTransactions([...transactions, response.data.data]);
+    } catch (error) {
+        console.log('error form:', error);
+        if (error.response) {
+            console.error("Headers:", error.response.headers);
+            // setError("Server error: " + error.response.data.message);
+        } else if (error.request) {
+            // console.error("No response received:", error.request);
+        } else {
+            console.error("Request setup error:", error.message);
+        }
+    }
+};
 
   return (
     <DashboardLayout>
@@ -79,61 +155,33 @@ function DetailEvent() {
                     <Form.Control
                       type="text"
                       placeholder='Enter transaction name'
-                      name='nama_transaksi'
+                      name='transaction_name'
                       autoFocus
-                      // onChange={handleChange}
-                      value={nama_transaksi}
+                      onChange={handleChange}
+                      value={transaction_name}
                     />
-                    {/* {circle_nameError && (
+                    {transaction_nameError && (
                       <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
-                        {circle_nameError}
+                        {transaction_nameError}
                       </div>
-                    )} */}
+                    )}
                   </Form.Group>
                   <Form.Group className='mb-2' controlId='exampleForm.ControlInput1'>
                     <Form.Control
                       type="text"
                       placeholder='Enter transaction price'
-                      name='harga_transaksi'
+                      name='price'
                       autoFocus
-                      // onChange={handleChange}
-                      value={harga_transaksi}
+                      onChange={handleChange}
+                      value={price}
                     />
-                    {/* {circle_nameError && (
+                    {priceError && (
                       <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
-                        {circle_nameError}
+                        {priceError}
                       </div>
-                    )} */}
+                    )}
                   </Form.Group>
-                  <Form.Group className='mb-2' controlId='exampleForm.ControlInput1'>
-                    <Form.Check
-                      type="checkbox"
-                      label="Alfrida"
-                      name="payment_method"
-                      id="cashRadio"
-                    // onChange={handleChange}
-                    // checked={paymentMethod === 'cash'}
-                    />
-                    <Form.Check
-                      type="checkbox"
-                      label="Deswinta"
-                      name="payment_method"
-                      id="creditCardRadio"
-                    // onChange={handleChange}
-                    // checked={paymentMethod === 'credit_card'}
-                    />
-                  </Form.Group>
-                  {/* <Form.Group className='mb-2' controlId='exampleForm.ControlInput1'>
-                    <Form.Control
-                      as="textarea"
-                      rows={3}
-                      placeholder='Enter transaction notes'
-                      name='keterangan_transaksi'
-                      // onChange={handleChange}
-                      // value={keterangan_transaksi}
-                    />
-                  </Form.Group> */}
-                  <Button variant="contained" type='submit'>
+                  <Button variant="contained" type='submit' onClick={handleFormSubmit}>
                     Save
                   </Button>
                 </Form>

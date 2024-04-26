@@ -311,7 +311,6 @@ function Tables() {
                         </CTableRow>
                       );
                     })}
-
                   </CTableBody>
 
                 </CTable>
