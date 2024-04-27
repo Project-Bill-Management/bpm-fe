@@ -118,7 +118,7 @@ const routes = [
     type: "collapse",
     name: "Detail Event",
     key: "detailEvent",
-    route: "/DetailEvent",
+    route: "/DetailEvent/:id_event/:nama_event",
     icon: <SpaceShip size="12px" />,
     component: <DetailEvent/>,
     noCollapse: true,
