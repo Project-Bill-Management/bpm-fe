@@ -10,7 +10,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import Transaction from 'layouts/billing/components/Transaction';
+import Headerdetail from '../tables/data/kosong';
 
 function DetailEvent() {
   const [event, setEvent] = useState(null);
@@ -19,24 +19,29 @@ function DetailEvent() {
   const [price, setPrice] = useState("");
   const [transaction_nameError, setTransaction_nameError] = useState(null);
   const [priceError, setPriceError] = useState(null);
-  const { id_circle, circle_name, id_event } = useParams();
+  const { id_event } = useParams();
   const [transactions, setTransactions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [deskripsi, setDeskripsi] = useState([]);
+  const [start_event, setStart_event] = useState([]);
+  const [end_event, setEnd_event] = useState([]);
+  const [nama_event, setNama_event] = useState([]);
+  const [creator_event, setCreator_event] = useState([]);
 
   const handleChange = (e) => {
-    const {name, value} = e.target;
+    const { name, value } = e.target;
     switch (name) {
-      case 'transaction_name' :
+      case 'transaction_name':
         setTransaction_name(value);
-        setTransaction_nameError(value.trim() === '' ? '*event name is required' : '');
-        setTransaction_nameError('');
+        setTransaction_nameError(value.trim() === '' ? '* Transaction name is required' : '');
         break;
-        case 'price' :
-          setPrice(value);
-          setPriceError(value.trim() === '' ? '*Price is required' : '');
-          setPriceError('');
-          break;
-          default:
-          break;
+      case 'price':
+        setPrice(value);
+        setPriceError(value.trim() === '' ? '* Price is required' : '');
+        break;
+      default:
+        break;
     }
   }
 
@@ -54,80 +59,92 @@ function DetailEvent() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    let transaction_nameError = '';
-    let priceError = '';
 
-    if (transaction_name === "") {
-        transaction_nameError = 'Transaction name is required';
-    } else if (transaction_name.length < 3) {
-        transaction_nameError = 'Transaction name must be at least 3 characters long';
-    }
-    if (price === "") {
-        priceError = 'Price is required';
-    }
-    setTransaction_nameError(transaction_nameError);
-    setPriceError(priceError);
-
-    if (transaction_nameError || priceError) {
-        return;
+    if (!transaction_name || !price) {
+      setTransaction_nameError('* Transaction name is required');
+      setPriceError('* Price is required');
+      return;
     }
 
     const existingTransaction = transactions.find(transaksi => transaksi.transaction_name === transaction_name);
     if (existingTransaction) {
-        toast.error('Transaction already exists');
-        return;
+      toast.error('Transaction already exists');
+      return;
     }
 
     const token = localStorage.getItem('jwtToken');
     const headers = { 'Authorization': `Bearer ${token}` };
     try {
-        const response = await axios.post(`http://152.42.188.210:8080/api/auth/create_transaksi/id_circle/${id_event}`, {
-            transaction_name: transaction_name,
-            price: price,
-        }, { headers });
-        console.log(response);
-        closeModalTransaksi();
-        toast.success('Transaction created successfully');
-        setTransactions([...transactions, response.data.data]);
+      const response = await axios.post(`http://152.42.188.210:8080/api/auth/create_transaksi/id_circle/${id_event}`, {
+        transaction_name: transaction_name,
+        price: price,
+      }, { headers });
+      console.log(response);
+      closeModalTransaksi();
+      toast.success('Transaction created successfully');
+      setTransactions([...transactions, response.data.data]);
     } catch (error) {
-        console.log('error form:', error);
-        if (error.response) {
-            console.error("Headers:", error.response.headers);
-            // setError("Server error: " + error.response.data.message);
-        } else if (error.request) {
-            // console.error("No response received:", error.request);
-        } else {
-            console.error("Request setup error:", error.message);
-        }
+      console.log('error form:', error);
+      toast.error('Failed to create transaction');
     }
-};
+  };
+
+  const fetchData = async () => {
+    const token = localStorage.getItem('jwtToken');
+    if (!token) {
+      setError("Token not found. Please login again.");
+      setIsLoading(false);
+      return;
+    }
+    const headers = { 'Authorization': `Bearer ${token}` };
+    try {
+      const response = await axios.get(`http://152.42.188.210:8080/api/auth/get_events/${id_event}`, { headers });
+      console.log("Response dari server:", response.data);
+      setEvent(response.data); // Ubah menjadi response.data
+      setDeskripsi(response.data.deskripsi); // Set deskripsi event
+      setStart_event(response.data.start_event); // Set start_event
+      setEnd_event(response.data.end_event); // Set end_event
+      setNama_event(response.data.nama_event); // Set nama_event
+      setCreator_event(response.data.creator_event); // Set creator_event
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Failed to fetch data. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <DashboardLayout>
+      <SoftBox pb={2} />
+      <Headerdetail/>
       <Card>
-        <SoftBox pb={3} />
-        <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
-          <SoftTypography variant="h6" fontWeight="medium">
-            Detail Event
+        <SoftBox pt={3} px={3} style={{ display: 'flex', flexDirection: 'column',  textAlign: 'center' }}>
+          <SoftTypography variant="h6" fontWeight="bold" style={{ fontSize: '18px', alignItems: 'center' }}>
+           Event {nama_event} - Creator by {creator_event}
           </SoftTypography>
-        </SoftBox>
-        <SoftBox pb={3} />
-      </Card>
-      <SoftBox pb={3} />
-      <Card>
-        <SoftBox pb={3} />
-        <SoftBox px={3}>
-          <SoftTypography variant="h6">Event Name: Karaoke Bersama Prabowo</SoftTypography>
-          {/* <SoftTypography>{event.nama_event}</SoftTypography> */}
-          <SoftTypography variant="h6">Creator Event: OdyFrans</SoftTypography>
-          {/* <SoftTypography>{event.creator}</SoftTypography> */}
-          <SoftTypography variant="h6">Description: Merayakan kemenangan Prabowo gibran semua makan di tempat karaoke</SoftTypography>
-          {/* <SoftTypography>{event.deskripsi}</SoftTypography> */}
-          <SoftTypography variant="h6">Start Event: 2024-04-22 08:00:00</SoftTypography>
-          {/* <SoftTypography>{event.start_event}</SoftTypography> */}
-          <SoftTypography variant="h6">End Event: 2024-04-22 22:00:00</SoftTypography>
-          {/* <SoftTypography>{event.end_event}</SoftTypography> */}
-          <SoftTypography variant="h6">A : 5.000.000</SoftTypography>
+          <SoftTypography fontWeight="medium" style={{ fontSize: '15px', borderBottom: '1px solid #ccc', paddingBottom: '5px'}}>
+           Description: {deskripsi}
+          </SoftTypography>
+          <SoftBox pb={1} />
+          <SoftTypography fontWeight="medium" style={{ fontSize: '15px', paddingBottom: '5px', textAlign: 'left', marginLeft: '15px' }}>
+            Start event: {start_event} - End event: {end_event}
+          </SoftTypography>
+          <SoftTypography fontWeight="medium" style={{ fontSize: '15px', paddingBottom: '5px', textAlign: 'left', marginLeft: '15px' }}>
+            Total budget event: 1.500.000
+          </SoftTypography>
+          <SoftTypography fontWeight="medium" style={{ fontSize: '15px', paddingBottom: '5px', textAlign: 'left', marginLeft: '15px' }}>
+            username1: 500.000
+          </SoftTypography>
+          <SoftTypography fontWeight="medium" style={{ fontSize: '15px', paddingBottom: '5px', textAlign: 'left', marginLeft: '15px' }}>
+            username2: 500.000
+          </SoftTypography>
+          <SoftTypography fontWeight="medium" style={{ fontSize: '15px', paddingBottom: '5px', textAlign: 'left', marginLeft: '15px' }}>
+            username3: 500.000
+          </SoftTypography>
         </SoftBox>
         <SoftBox pb={3} />
         <Button

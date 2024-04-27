@@ -119,17 +119,16 @@ function Event() {
       }, { headers });
       console.log(response);
       closeModalEvent();
-      toast.success('Event created successfully');
+      fetchData();
       setEvents(response.data.data);
+      toast.success('Event created successfully');
+      console.log("toast:", toast.success);
     } catch (error) {
       console.error("error form:", error);
       if (error.response) {
-        // console.error("Server error response:", error.response.data);
-        // console.error("Status code:", error.response.status);
         console.error("Headers:", error.response.headers);
-        // setError("Server error: " + error.response.data.message);
       } else if (error.request) {
-        // console.error("No response received:", error.request);
+        console.error("No response received:", error.request);
       } else {
         console.error("Request setup error:", error.message);
       }
@@ -168,8 +167,8 @@ function Event() {
         <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
           <div>
             <Link to={`/InviteCircle/${id_circle}/${circle_name}`}>
-              <SoftTypography variant="h6" fontWeight="medium">
-                {circle_name}
+              <SoftTypography variant="h6" fontWeight="bold">
+                Event {circle_name}
               </SoftTypography>
             </Link>
           </div>
@@ -181,41 +180,37 @@ function Event() {
       </Card>
       <SoftBox pb={3} />
       {events && events.length > 0 && (
-        events.map((item, index) => (
+        events.map((item) => (
           <SoftBox key={item.id_event} mb={2}>
             <Card p={2}>
-              <SoftBox pt={3} px={2}>
-                <SoftTypography variant="h6" fontWeight="medium" style={{ fontSize: '14px' }}>
-                  {item.nama_event}
+            <Link to={`/DetailEvent/${item.id_event}/${item.nama_event}`}>
+              <SoftBox pt={3} px={2} style={{ marginLeft: '18px', marginRight: '18px' }}>
+                <SoftTypography variant="h5" fontWeight="bold" style={{ fontSize: '15px' }}>
+                  {item.nama_event} - Created by {item.creator_event}
                 </SoftTypography>
-                <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
-                  {item.deskripsi}
+                <SoftTypography variant="body2" fontWeight="medium" style={{ fontSize: '12px', marginRight: '8px' }}>
+                  Start Event: {item.start_event} End event: {item.end_event}
                 </SoftTypography>
-                <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
-                  Start: {item.start_event}
-                </SoftTypography>
-                <SoftTypography variant="body1" style={{ fontSize: '12px', marginBottom: '8px' }}>
-                  End: {item.end_event}
-                </SoftTypography>
-                <div>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="small"
-                    component={Link}
-                    to="/DetailEvent"
-                    style={{ position: 'absolute', bottom: 20, right: 20 }}
-                  >
-                    Detail
-                  </Button>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
+                  <SoftTypography variant="body2" fontWeight="medium" style={{ color: 'red', fontSize: '12px', marginRight: '8px' }}>
+                    -7000
+                  </SoftTypography>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="small"
+                      style={{ alignSelf: 'flex-end', marginLeft: 'auto', justifyContent: 'flex-end' }}
+                    >
+                      Detail
+                    </Button>
                 </div>
               </SoftBox>
-              <SoftBox pb={3} />
+              </Link>
+              <SoftBox pb={2} />
             </Card>
           </SoftBox>
         ))
       )}
-
       <SoftBox pb={3} />
       <div className='body-flex'>
         <div className="overlay" />
