@@ -1,12 +1,14 @@
 {
   "files": {
-    "main.css": "/static/css/main.3285699c.css",
-    "main.js": "/static/js/main.794e54ec.js",
+    "main.css": "/static/css/main.b9e7fd8d.css",
+    "main.js": "/static/js/main.b17c5fc4.js",
     "static/media/curved0.jpg": "/static/media/curved0.d146ec6e9401aa9d52c5.jpg",
     "static/media/curved14.jpg": "/static/media/curved14.12c9ea54425c4f1bc1d7.jpg",
     "static/media/waves-white.svg": "/static/media/waves-white.eac3c8078f7e1e28ef33f010c9782f40.svg",
     "static/media/rocket-white.png": "/static/media/rocket-white.de5786399f850a27a362.png",
     "static/media/curved-6.jpg": "/static/media/curved-6.71ee1d1cc8196ed2126b.jpg",
+    "static/media/bootstrap-icons.woff?": "/static/media/bootstrap-icons.39795c0b4513de014cf8.woff",
+    "static/media/bootstrap-icons.woff2?": "/static/media/bootstrap-icons.b7bcc075b395c14ce8c2.woff2",
     "static/media/ivancik.jpg": "/static/media/ivancik.442b474727c414bb3b85.jpg",
     "static/media/white-curved.jpeg": "/static/media/white-curved.a5b7db662b0b14ab5534.jpeg",
     "static/media/visa.png": "/static/media/visa.71c0d5e9e2aaee42e4c3.png",
@@ -18,7 +20,7 @@
     "index.html": "/index.html"
   },
   "entrypoints": [
-    "static/css/main.3285699c.css",
-    "static/js/main.794e54ec.js"
+    "static/css/main.b9e7fd8d.css",
+    "static/js/main.b17c5fc4.js"
   ]
 }
