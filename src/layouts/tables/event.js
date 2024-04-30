@@ -14,6 +14,7 @@ import TextField from '@mui/material/TextField';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Event() {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,13 +24,14 @@ function Event() {
   const [deskripsiError, setDeskripsiError] = useState(null);
   const [start_eventErr, setStart_eventErr] = useState(null);
   const [end_eventError, setEnd_eventError] = useState(null);
-  const { id_circle, circle_name } = useParams();
+  const { id_circle, circle_name, id_event } = useParams();
   const [showEventModal, setShowEventModal] = useState(false);
   const [start_event, setStart_event] = useState(new Date().toISOString().slice(0, 19));
   const [end_event, setEnd_event] = useState(new Date().toISOString().slice(0, 19));
   const [eventData, setEventData] = useState(null);
   const [events, setEvents] = useState([]);
   const [error, setError] = useState('');
+  // const [id_circle, setId_Circle] = useState([]);
 
   const handleStartDateChange = (e) => {
     const date = new Date(e.target.value);
@@ -79,7 +81,7 @@ function Event() {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     let nama_eventError = '';
-    let deskripsiError = '';
+    // let deskripsiError = '';
     let start_eventErr = '';
     let end_eventError = '';
 
@@ -88,24 +90,23 @@ function Event() {
     } else if (nama_event.length < 3) {
       nama_eventError = 'Event name must be at least 3 characters long';
     }
+   
+  if (!start_event || new Date(start_event) < new Date()) {
+    start_eventErr = 'Start date must be today or later';
+  }
 
-    if (deskripsi === "") {
-      deskripsiError = 'Description is required';
-    }
-    if (!start_event || typeof start_event !== 'string' || start_event.trim() === '') {
-      start_eventErr = 'Start date is required';
-    }
+  if (!end_event || new Date(end_event) < new Date()) {
+    end_eventError = 'End date must be today or later';
+  }
 
-    if (!end_event || typeof end_event !== 'string' || end_event.trim() === '') {
-      end_eventError = 'End date is required';
-    }
-
+  if (!end_event || new Date(end_event) < new Date(start_event)) {
+    end_eventError = 'End date must be after start event';
+  }
     setNama_eventError(nama_eventError);
-    setDeskripsiError(deskripsiError);
     setStart_eventErr(start_eventErr);
     setEnd_eventError(end_eventError);
 
-    if (nama_eventError || deskripsiError || start_eventErr || end_eventError) {
+    if (nama_eventError || start_eventErr || end_eventError) {
       return;
     }
     const token = localStorage.getItem('jwtToken');
@@ -117,12 +118,11 @@ function Event() {
         start_event: start_event,
         end_event: end_event,
       }, { headers });
+      toast.success('Event created successfully');
       console.log(response);
       closeModalEvent();
       fetchData();
       setEvents(response.data.data);
-      toast.success('Event created successfully');
-      console.log("toast:", toast.success);
     } catch (error) {
       console.error("error form:", error);
       if (error.response) {
@@ -163,12 +163,13 @@ function Event() {
 
   return (
     <DashboardLayout>
+      <ToastContainer />
       <Card>
         <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
           <div>
             <Link to={`/InviteCircle/${id_circle}/${circle_name}`}>
               <SoftTypography variant="h6" fontWeight="bold">
-                Event {circle_name}
+                Circle {circle_name}
               </SoftTypography>
             </Link>
           </div>
@@ -183,28 +184,27 @@ function Event() {
         events.map((item) => (
           <SoftBox key={item.id_event} mb={2}>
             <Card p={2}>
-            <Link to={`/DetailEvent/${item.id_event}/${item.nama_event}`}>
-              <SoftBox pt={3} px={2} style={{ marginLeft: '18px', marginRight: '18px' }}>
-                <SoftTypography variant="h5" fontWeight="bold" style={{ fontSize: '15px' }}>
-                  {item.nama_event} - Created by {item.creator_event}
-                </SoftTypography>
-                <SoftTypography variant="body2" fontWeight="medium" style={{ fontSize: '12px', marginRight: '8px' }}>
-                  Start Event: {item.start_event} End event: {item.end_event}
-                </SoftTypography>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
-                  <SoftTypography variant="body2" fontWeight="medium" style={{ color: 'red', fontSize: '12px', marginRight: '8px' }}>
-                    -7000
-                  </SoftTypography>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      size="small"
-                      style={{ alignSelf: 'flex-end', marginLeft: 'auto', justifyContent: 'flex-end' }}
-                    >
-                      Detail
-                    </Button>
-                </div>
-              </SoftBox>
+              <Link to={`/DetailEvent/${id_circle}/${item.id_event}`}>
+                <SoftBox pt={3} px={2} style={{ marginLeft: '18px', marginRight: '18px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '5px' }}>
+                    <SoftTypography fontWeight="bold" style={{ fontSize: '15px' }}>
+                      Event {item.nama_event} - Created by {item.creator_event}
+                    </SoftTypography>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <SoftTypography fontWeight="medium" style={{ color: 'red', fontSize: '15px', margin: '0 8px' }}>
+                        -500.000
+                      </SoftTypography>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        style={{ alignSelf: 'flex-end', justifyContent: 'flex-end' }}
+                      >
+                        Detail
+                      </Button>
+                    </div>
+                  </div>
+                </SoftBox>
               </Link>
               <SoftBox pb={2} />
             </Card>
@@ -246,11 +246,11 @@ function Event() {
                       value={deskripsi}
                       onChange={handleChange}
                     />
-                    {deskripsiError && (
+                    {/* {deskripsiError && (
                       <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
                         {deskripsiError}
                       </div>
-                    )}
+                    )} */}
                   </Form.Group>
                   <Form.Group className='mb-2' controlId="formStartEvent" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                     <div>

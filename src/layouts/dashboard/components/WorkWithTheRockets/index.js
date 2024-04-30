@@ -10,6 +10,8 @@ import SoftTypography from "components/SoftTypography";
 
 // Images
 import ivancik from "assets/images/ivancik.jpg";
+import Tables from "layouts/tables";
+import { Link } from 'react-router-dom';
 
 function WorkWithTheRockets() {
   return (
@@ -41,9 +43,9 @@ function WorkWithTheRockets() {
             Create a new circle and organize anyone who you think can enter the cricle or event.
             </SoftTypography>
           </SoftBox>
+          <Link  to="/tables">
           <SoftTypography
             component="a"
-            href="/tables"
             variant="button"
             color="white"
             fontWeight="medium"
@@ -68,6 +70,7 @@ function WorkWithTheRockets() {
             More
             <Icon sx={{ fontWeight: "bold" }}>arrow_forward</Icon>
           </SoftTypography>
+          </Link>
         </SoftBox>
       </SoftBox>
     </Card>

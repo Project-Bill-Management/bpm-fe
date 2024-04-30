@@ -21,6 +21,7 @@ import InviteCircle from "layouts/tables/InviteCircle";
 import MessageDisplay from "layouts/message/MessageDisplay";
 import Event from "layouts/tables/event";
 import DetailEvent from "layouts/tables/detailEvent";
+import Transaction from "layouts/billing/components/Transaction";
 
 const routes = [
   {
@@ -60,22 +61,12 @@ const routes = [
   //   noCollapse: true,
   // },
   {
-    type: "collapse",
-    name: "Billing",
+    // type: "collapse",
+    // name: "Billing",
     key: "billing",
     route: "/billing",
     icon: <CreditCard size="12px" />,
     component: <Billing />,
-    noCollapse: true,
-  },
-  // { type: "title", title: "Account Pages", key: "account-pages" },
-  {
-    type: "collapse",
-    name: "Profile",
-    key: "profile",
-    route: "/profile",
-    icon: <CustomerSupport size="12px" />,
-    component: <Profile />,
     noCollapse: true,
   },
   {
@@ -114,15 +105,43 @@ const routes = [
     component: <Event/>,
     noCollapse: true,
   },
+  // {
+  //   // type: "collapse",
+  //   // name: "Detail Event",
+  //   key: "detailEvent",
+  //   route: "/DetailEvent/:id_event/:nama_event",
+  //   icon: <SpaceShip size="12px" />,
+  //   component: <DetailEvent/>,
+  //   noCollapse: true,
+  // },
   {
-    type: "collapse",
-    name: "Detail Event",
+        type: "collapse",
+    name: "New Event",
     key: "detailEvent",
-    route: "/DetailEvent/:id_event/:nama_event",
+    route: "/DetailEvent/:id_circle/:id_event",
     icon: <SpaceShip size="12px" />,
     component: <DetailEvent/>,
     noCollapse: true,
   },
+  {
+    type: "collapse",
+    name: "Transaction History",
+    key: "transactionhistory",
+    // route: "/",
+    icon: <CreditCard size="12px" />,
+    component: <Transaction />,
+    noCollapse: true,
+  },
+    { type: "title", title: "Account Pages", key: "account-pages" },
+    {
+      type: "collapse",
+      name: "Profile",
+      key: "profile",
+      route: "/profile",
+      icon: <CustomerSupport size="12px" />,
+      component: <Profile />,
+      noCollapse: true,
+    },
 ];
 
 

@@ -8,7 +8,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import { useParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import Headerdetail from '../tables/data/kosong';
 
@@ -19,7 +20,7 @@ function DetailEvent() {
   const [price, setPrice] = useState("");
   const [transaction_nameError, setTransaction_nameError] = useState(null);
   const [priceError, setPriceError] = useState(null);
-  const { id_event } = useParams();
+  const { id_circle, id_event } = useParams();
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -75,14 +76,16 @@ function DetailEvent() {
     const token = localStorage.getItem('jwtToken');
     const headers = { 'Authorization': `Bearer ${token}` };
     try {
-      const response = await axios.post(`http://152.42.188.210:8080/api/auth/create_transaksi/id_circle/${id_event}`, {
+      const response = await axios.post(`http://152.42.188.210:8080/api/auth/create_transaksi/${id_circle}/${id_event}`, {
         transaction_name: transaction_name,
         price: price,
       }, { headers });
       console.log(response);
+      console.log("id:", id_circle);
       closeModalTransaksi();
-      toast.success('Transaction created successfully');
+      
       setTransactions([...transactions, response.data.data]);
+      toast.success('Transaction created successfully');
     } catch (error) {
       console.log('error form:', error);
       toast.error('Failed to create transaction');
@@ -119,30 +122,31 @@ function DetailEvent() {
 
   return (
     <DashboardLayout>
+      <ToastContainer />
       <SoftBox pb={2} />
       <Headerdetail/>
       <Card>
         <SoftBox pt={3} px={3} style={{ display: 'flex', flexDirection: 'column',  textAlign: 'center' }}>
           <SoftTypography variant="h6" fontWeight="bold" style={{ fontSize: '18px', alignItems: 'center' }}>
-           Event {nama_event} - Creator by {creator_event}
+           Event Kampanye Akbar - Created by Username1
           </SoftTypography>
-          <SoftTypography fontWeight="medium" style={{ fontSize: '15px', borderBottom: '1px solid #ccc', paddingBottom: '5px'}}>
-           Description: {deskripsi}
+          <SoftTypography fontWeight="medium" style={{ fontSize: '15px', paddingBottom: '5px'}}>
+           Description: Event bersama untuk merayakan kemenangan prabowo
           </SoftTypography>
           <SoftBox pb={1} />
-          <SoftTypography fontWeight="medium" style={{ fontSize: '15px', paddingBottom: '5px', textAlign: 'left', marginLeft: '15px' }}>
-            Start event: {start_event} - End event: {end_event}
+          <SoftTypography fontWeight="medium" style={{ borderBottom: '1px solid #ccc', fontSize: '15px', paddingBottom: '5px', textAlign: 'left', marginLeft: '30px' }}>
+            Start event: 2024-04-28  End event: 2024-04-29
           </SoftTypography>
-          <SoftTypography fontWeight="medium" style={{ fontSize: '15px', paddingBottom: '5px', textAlign: 'left', marginLeft: '15px' }}>
+          <SoftTypography fontWeight="medium" style={{ borderBottom: '1px solid #ccc',fontSize: '15px', paddingBottom: '5px', textAlign: 'left', marginLeft: '30px' }}>
             Total budget event: 1.500.000
           </SoftTypography>
-          <SoftTypography fontWeight="medium" style={{ fontSize: '15px', paddingBottom: '5px', textAlign: 'left', marginLeft: '15px' }}>
+          <SoftTypography fontWeight="medium" style={{ borderBottom: '1px solid #ccc',fontSize: '15px', paddingBottom: '5px', textAlign: 'left', marginLeft: '30px' }}>
             username1: 500.000
           </SoftTypography>
-          <SoftTypography fontWeight="medium" style={{ fontSize: '15px', paddingBottom: '5px', textAlign: 'left', marginLeft: '15px' }}>
+          <SoftTypography fontWeight="medium" style={{ borderBottom: '1px solid #ccc',fontSize: '15px', paddingBottom: '5px', textAlign: 'left', marginLeft: '30px' }}>
             username2: 500.000
           </SoftTypography>
-          <SoftTypography fontWeight="medium" style={{ fontSize: '15px', paddingBottom: '5px', textAlign: 'left', marginLeft: '15px' }}>
+          <SoftTypography fontWeight="medium" style={{ fontSize: '15px', paddingBottom: '5px', textAlign: 'left', marginLeft: '30px' }}>
             username3: 500.000
           </SoftTypography>
         </SoftBox>
