@@ -17,6 +17,7 @@ import brand from "assets/images/logo-ct.png";
 import withSplashScreen from "components/SplashScreen";
 // import { getMessaging } from "firebase/messaging";
 // import { messaging } from "./layouts/message/firebase";
+import LandingPage from "./layouts/landing-page/landing-page";
 
 function App() {
   const [controller, dispatch] = useSoftUIController();
@@ -122,9 +123,12 @@ function App() {
         )}
         {layout === "vr" && <Configurator />}
         <Routes>
-          {getRoutes(routes)}
-          <Route path="*" element={<Navigate to="/dashboard" />} />
-        </Routes>
+    <Route path="/" element={<LandingPage />} />
+    {getRoutes(routes)}
+    <Route path="*" element={<Navigate to="/dashboard" />} />
+</Routes>
+
+
       </ThemeProvider>
     </CacheProvider>
   ) : (
@@ -146,9 +150,10 @@ function App() {
       )}
       {layout === "" && <Configurator />}
       <Routes>
-        {getRoutes(routes)}
-        <Route path="*" element={<Navigate to="/sign-in" />} />
-      </Routes>
+                <Route path="/" element={<LandingPage />} />
+                {getRoutes(routes)}
+                <Route path="*" element={<Navigate to="/sign-in" />} />
+            </Routes>
     </ThemeProvider>
   );
 }

@@ -21,7 +21,8 @@ import InviteCircle from "layouts/tables/InviteCircle";
 import MessageDisplay from "layouts/message/MessageDisplay";
 import Event from "layouts/tables/event";
 import DetailEvent from "layouts/tables/detailEvent";
-import Transaction from "layouts/billing/components/Transaction";
+import HistoryTransaction from "./layouts/tables/data/historytransaction";
+import LandingPage from "./layouts/landing-page/landing-page";
 
 const routes = [
   {
@@ -60,15 +61,15 @@ const routes = [
   //   component: <MessageList/>,
   //   noCollapse: true,
   // },
-  {
-    // type: "collapse",
-    // name: "Billing",
-    key: "billing",
-    route: "/billing",
-    icon: <CreditCard size="12px" />,
-    component: <Billing />,
-    noCollapse: true,
-  },
+  // {
+  //   type: "collapse",
+  //   name: "Billing",
+  //   key: "billing",
+  //   route: "/billing",
+  //   icon: <CreditCard size="12px" />,
+  //   component: <Billing />,
+  //   noCollapse: true,
+  // },
   {
     // type: "collapse",
     // name: "Sign In",
@@ -105,31 +106,31 @@ const routes = [
     component: <Event/>,
     noCollapse: true,
   },
+  {
+    // type: "collapse",
+    // name: "Detail Event",
+    key: "detailEvent",
+    route: "/DetailEvent/:id_event/:nama_event",
+    icon: <SpaceShip size="12px" />,
+    component: <DetailEvent/>,
+    noCollapse: true,
+  },
   // {
-  //   // type: "collapse",
-  //   // name: "Detail Event",
+  //       type: "collapse",
+  //   name: "New Event",
   //   key: "detailEvent",
-  //   route: "/DetailEvent/:id_event/:nama_event",
+  //   route: "/DetailEvent/:id_circle/:id_event",
   //   icon: <SpaceShip size="12px" />,
   //   component: <DetailEvent/>,
   //   noCollapse: true,
   // },
   {
-        type: "collapse",
-    name: "New Event",
-    key: "detailEvent",
-    route: "/DetailEvent/:id_circle/:id_event",
-    icon: <SpaceShip size="12px" />,
-    component: <DetailEvent/>,
-    noCollapse: true,
-  },
-  {
     type: "collapse",
-    name: "Transaction History",
-    key: "transactionhistory",
-    // route: "/",
+    name: "Transaction",
+    key: "historytransaction",
+    route: "/historytransaction",
     icon: <CreditCard size="12px" />,
-    component: <Transaction />,
+    component: <HistoryTransaction />,
     noCollapse: true,
   },
     { type: "title", title: "Account Pages", key: "account-pages" },
@@ -140,6 +141,15 @@ const routes = [
       route: "/profile",
       icon: <CustomerSupport size="12px" />,
       component: <Profile />,
+      noCollapse: true,
+    },
+    {
+      // type: "collapse",
+      // name: "Landing Page",
+      key: "landingpage",
+      route: "/landingpage",
+      icon: <CustomerSupport size="12px" />,
+      component: <LandingPage />,
       noCollapse: true,
     },
 ];
