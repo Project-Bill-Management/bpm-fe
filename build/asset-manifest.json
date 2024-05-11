@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.bed647fe.css",
-    "main.js": "/static/js/main.5aad0ed4.js",
+    "main.js": "/static/js/main.e0c53701.js",
     "static/media/home-decor-3.jpg": "/static/media/home-decor-3.74d13fcbd3c631fc7908.jpg",
     "static/media/home-decor-2.jpg": "/static/media/home-decor-2.b4e5397c9846645ba275.jpg",
     "static/media/home-decor-1.jpg": "/static/media/home-decor-1.05e218fd495ccc65c99d.jpg",
@@ -34,7 +34,6 @@
     "static/media/cat.png": "/static/media/cat.077086a0654634be593c.png",
     "static/media/team2.jpg": "/static/media/team2.600382c8ec818ea897fc.jpg",
     "static/media/team-4.jpg": "/static/media/team-4.a1e1c29f1b839ddae393.jpg",
-    "static/media/bruce-mars.jpg": "/static/media/bruce-mars.45f6477957606abd2f24.jpg",
     "static/media/invite.png": "/static/media/invite.adfc8548d8c978ed5120.png",
     "static/media/team3.png": "/static/media/team3.6b5ef56dcd06822e201e.png",
     "static/media/accept.png": "/static/media/accept.af2a744f043c0183e3bc.png",
@@ -50,6 +49,6 @@
   },
   "entrypoints": [
     "static/css/main.bed647fe.css",
-    "static/js/main.5aad0ed4.js"
+    "static/js/main.e0c53701.js"
   ]
 }

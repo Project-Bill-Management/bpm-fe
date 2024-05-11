@@ -10,7 +10,6 @@ import SoftAvatar from "components/SoftAvatar";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import { ExitToApp } from '@mui/icons-material';
 import breakpoints from "assets/theme/base/breakpoints";
-import burceMars from "assets/images/bruce-mars.jpg";
 import curved0 from "assets/images/curved-images/curved0.jpg";
 import { useNavigate } from 'react-router-dom';
 
@@ -33,6 +32,11 @@ function Header() {
 
     return () => window.removeEventListener("resize", handleTabsOrientation);
   }, [tabsOrientation]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    setIsLoggedIn(token ? true : false);
+  }, []);
 
   const handleSetTabValue = (event, newValue) => setTabValue(newValue);
 
@@ -79,7 +83,6 @@ function Header() {
         <Grid container spacing={3} alignItems="center">
           <Grid item>
             <SoftAvatar
-              // src={burceMars}
               alt="profile-image"
               variant="rounded"
               size="xl"
@@ -93,6 +96,7 @@ function Header() {
               </SoftTypography>
             </SoftBox>
           </Grid>
+          {isLoggedIn && (
             <Grid item xs={10} md={6} lg={2} sx={{ ml: "auto" }}>
               <AppBar position="static">
                 <Tabs
@@ -109,6 +113,7 @@ function Header() {
                 </Tabs>
               </AppBar>
             </Grid>
+          )}
         </Grid>
       </Card>
     </SoftBox>
