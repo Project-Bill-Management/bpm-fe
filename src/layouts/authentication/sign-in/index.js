@@ -9,7 +9,6 @@ import curved9 from "assets/images/curved-images/curved-6.jpg";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-import withSplashScreen from '../../../components/SplashScreen';
 
 const SignIn = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -205,4 +204,4 @@ const SignIn = () => {
 };
 
 
-export default withSplashScreen(SignIn);
+export default SignIn;

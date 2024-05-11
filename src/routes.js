@@ -1,11 +1,49 @@
+/**
+=========================================================
+* Soft UI Dashboard React - v4.0.1
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
+* Copyright 2023 Creative Tim (https://www.creative-tim.com)
+
+Coded by www.creative-tim.com
+
+ =========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+*/
+
+/** 
+  All of the routes for the Soft UI Dashboard React are added here,
+  You can add a new route, customize the routes and delete the routes here.
+
+  Once you add a new route on this file it will be visible automatically on
+  the Sidenav.
+
+  For adding a new route you can follow the existing routes in the routes array.
+  1. The `type` key with the `collapse` value is used for a route.
+  2. The `type` key with the `title` value is used for a title inside the Sidenav. 
+  3. The `type` key with the `divider` value is used for a divider between Sidenav items.
+  4. The `name` key is used for the name of the route on the Sidenav.
+  5. The `key` key is used for the key of the route (It will help you with the key prop inside a loop).
+  6. The `icon` key is used for the icon of the route on the Sidenav, you have to add a node.
+  7. The `collapse` key is used for making a collapsible item on the Sidenav that has other routes
+  inside (nested routes), you need to pass the nested routes inside an array as a value for the `collapse` key.
+  8. The `route` key is used to store the route location which is used for the react router.
+  9. The `href` key is used to store the external links location.
+  10. The `title` key is only for the item with the type of `title` and its used for the title text on the Sidenav.
+  10. The `component` key is used to store the component of its route.
+*/
+
+// Soft UI Dashboard React layouts
 import Dashboard from "layouts/dashboard";
-import Tables from "layouts/tables";
 import Billing from "layouts/billing";
 import VirtualReality from "layouts/virtual-reality";
 import RTL from "layouts/rtl";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
+// Soft UI Dashboard React icons
 import Shop from "examples/Icons/Shop";
 import Office from "examples/Icons/Office";
 import Settings from "examples/Icons/Settings";
@@ -14,15 +52,11 @@ import SpaceShip from "examples/Icons/SpaceShip";
 import CustomerSupport from "examples/Icons/CustomerSupport";
 import CreditCard from "examples/Icons/CreditCard";
 import Cube from "examples/Icons/Cube";
-import { Message } from "@mui/icons-material";
-import MessageList from "layouts/message/index";
-import withSplashScreen from "../src/components/SplashScreen";
-import InviteCircle from "layouts/tables/InviteCircle";
-import MessageDisplay from "layouts/message/MessageDisplay";
-import Event from "layouts/tables/event";
-import DetailEvent from "layouts/tables/detailEvent";
-import HistoryTransaction from "./layouts/tables/data/historytransaction";
-import LandingPage from "./layouts/landing-page/landing-page";
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import MyCircle from "layouts/tables/circle/mycircle";
+import JoinCircle from "layouts/tables/circle/joincircle";
+import TableEvent from "layouts/tables/event/TableEvent";
+import InviteCircle from "layouts/tables/circle/invitecircle";
 
 const routes = [
   {
@@ -36,31 +70,40 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Circle",
-    key: "tables",
-    route: "/tables",
+    name: "My Circle",
+    key: "MyCircle",
+    route: "/MyCircle",
     icon: <Office size="12px" />,
-    component: <Tables />,
+    component: <MyCircle />,
     noCollapse: true,
   },
   {
     // type: "collapse",
-    // name: "Message Box",
-    key: "MessageDisplay",
-    route: "/MessageDisplay",
-    // icon: <Message size="12px" />,
-    component: <MessageDisplay />,
+    // name: "Event",
+    key: "Invite",
+    route: "/InviteCircle/:id_circle/:circle_name",
+    icon: <Office size="12px" />,
+    component: <InviteCircle />,
     noCollapse: true,
   },
-  // {
-  //   type: "collapse",
-  //   name: "Message Box",
-  //   key: "MessageList",
-  //   route: "/MessageList",
-  //   icon: <Message size="12px" />,
-  //   component: <MessageList/>,
-  //   noCollapse: true,
-  // },
+  {
+    // type: "collapse",
+    // name: "Event",
+    key: "Event",
+    route: "/Event/:id_circle/:circle_name",
+    icon: <Office size="12px" />,
+    component: <TableEvent />,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "Join Circle",
+    key: "Join",
+    route: "/Join",
+    icon: <Office size="12px" />,
+    component: <JoinCircle />,
+    noCollapse: true,
+  },
   // {
   //   type: "collapse",
   //   name: "Billing",
@@ -70,11 +113,39 @@ const routes = [
   //   component: <Billing />,
   //   noCollapse: true,
   // },
+  // {
+  //   type: "collapse",
+  //   name: "Virtual Reality",
+  //   key: "virtual-reality",
+  //   route: "/virtual-reality",
+  //   icon: <Cube size="12px" />,
+  //   component: <VirtualReality />,
+  //   noCollapse: true,
+  // },
+  // {
+  //   type: "collapse",
+  //   name: "RTL",
+  //   key: "rtl",
+  //   route: "/rtl",
+  //   icon: <Settings size="12px" />,
+  //   component: <RTL />,
+  //   noCollapse: true,
+  // },
+  { type: "title", title: "Account Pages", key: "account-pages" },
   {
-    // type: "collapse",
-    // name: "Sign In",
+    type: "collapse",
+    name: "Profile",
+    key: "profile",
+    route: "/profile",
+    icon: <CustomerSupport size="12px" />,
+    component: <Profile />,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "Sign In",
     key: "sign-in",
-    route: "/sign-in",
+    route: "/authentication/sign-in",
     icon: <Document size="12px" />,
     component: <SignIn />,
     noCollapse: true,
@@ -88,72 +159,6 @@ const routes = [
     component: <SignUp />,
     noCollapse: true,
   },
-  {
-    // type: "collapse",
-    // name: "Invite Circle",
-    key: "invite-circle",
-    route: "/InviteCircle/:id_circle/:circle_name",
-    icon: <SpaceShip size="12px" />,
-    component: <InviteCircle/>,
-    noCollapse: true,
-  },
-  {
-    // type: "collapse",
-    // name: "Invite Circle",
-    key: "event",
-    route: "/Event/:id_circle/:circle_name",
-    icon: <SpaceShip size="12px" />,
-    component: <Event/>,
-    noCollapse: true,
-  },
-  {
-    // type: "collapse",
-    // name: "Detail Event",
-    key: "detailEvent",
-    route: "/DetailEvent/:id_event/:nama_event",
-    icon: <SpaceShip size="12px" />,
-    component: <DetailEvent/>,
-    noCollapse: true,
-  },
-  // {
-  //       type: "collapse",
-  //   name: "New Event",
-  //   key: "detailEvent",
-  //   route: "/DetailEvent/:id_circle/:id_event",
-  //   icon: <SpaceShip size="12px" />,
-  //   component: <DetailEvent/>,
-  //   noCollapse: true,
-  // },
-  {
-    type: "collapse",
-    name: "Transaction",
-    key: "historytransaction",
-    route: "/historytransaction",
-    icon: <CreditCard size="12px" />,
-    component: <HistoryTransaction />,
-    noCollapse: true,
-  },
-    { type: "title", title: "Account Pages", key: "account-pages" },
-    {
-      type: "collapse",
-      name: "Profile",
-      key: "profile",
-      route: "/profile",
-      icon: <CustomerSupport size="12px" />,
-      component: <Profile />,
-      noCollapse: true,
-    },
-    {
-      // type: "collapse",
-      // name: "Landing Page",
-      key: "landingpage",
-      route: "/landingpage",
-      icon: <CustomerSupport size="12px" />,
-      component: <LandingPage />,
-      noCollapse: true,
-    },
 ];
-
-
 
 export default routes;

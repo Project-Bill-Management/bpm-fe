@@ -1,4 +1,17 @@
-//container work whit the rockets
+/**
+=========================================================
+* Soft UI Dashboard React - v4.0.1
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
+* Copyright 2023 Creative Tim (https://www.creative-tim.com)
+
+Coded by www.creative-tim.com
+
+ =========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+*/
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -10,19 +23,17 @@ import SoftTypography from "components/SoftTypography";
 
 // Images
 import ivancik from "assets/images/ivancik.jpg";
-import Tables from "layouts/tables";
-import { Link } from 'react-router-dom';
 
 function WorkWithTheRockets() {
   return (
     <Card sx={{ height: "100%" }}>
-      <SoftBox position="relative" height="100%" p={3}>
+      <SoftBox position="relative" height="100%" p={2}>
         <SoftBox
           display="flex"
           flexDirection="column"
           height="100%"
-          py={3}
-          px={3}
+          py={2}
+          px={2}
           borderRadius="lg"
           sx={{
             backgroundImage: ({ functions: { linearGradient, rgba }, palette: { gradients } }) =>
@@ -33,19 +44,19 @@ function WorkWithTheRockets() {
             backgroundSize: "cover",
           }}
         >
-          <SoftBox mb={3} pt={3}>
+          <SoftBox mb={3} pt={1}>
             <SoftTypography variant="h5" color="white" fontWeight="bold">
-            Create and approve
+            Circle and event features
             </SoftTypography>
           </SoftBox>
-          <SoftBox mb={10}>
+          <SoftBox mb={2}>
             <SoftTypography variant="body2" color="white">
-            Create a new circle and organize anyone who you think can enter the cricle or event.
+            Form your circle then plan events together without worrying about splitting the bill.
             </SoftTypography>
           </SoftBox>
-          <Link  to="/tables">
           <SoftTypography
             component="a"
+            href="#"
             variant="button"
             color="white"
             fontWeight="medium"
@@ -67,10 +78,9 @@ function WorkWithTheRockets() {
               },
             }}
           >
-            More
+            Read More
             <Icon sx={{ fontWeight: "bold" }}>arrow_forward</Icon>
           </SoftTypography>
-          </Link>
         </SoftBox>
       </SoftBox>
     </Card>
