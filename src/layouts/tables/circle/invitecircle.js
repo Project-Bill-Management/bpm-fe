@@ -126,7 +126,7 @@ function InviteCircle() {
         width="80%"
       >
         <Card>
-          <Box py={4} px={4}>
+          <Box py={3} px={3}>
             <Box
               display="flex"
               flexDirection="column"
@@ -134,7 +134,7 @@ function InviteCircle() {
               width="100%"
               height="80%"
             >
-              <Box display="flex" textAlign="center" mb={2}>
+              <Box display="flex" textAlign="center" mb={1}>
                 <SoftTypography variant="h6" fontWeight="bold">
                   Pay attention to your inviters. When you invite another user, that user will enter your circle automatically.
                 </SoftTypography>

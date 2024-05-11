@@ -142,8 +142,8 @@ const routes = [
     noCollapse: true,
   },
   {
-    type: "collapse",
-    name: "Sign In",
+    // type: "collapse",
+    // name: "Sign In",
     key: "sign-in",
     route: "/authentication/sign-in",
     icon: <Document size="12px" />,
