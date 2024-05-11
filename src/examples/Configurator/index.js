@@ -95,7 +95,7 @@ function Configurator() {
         px={3}
       >
         <SoftBox>
-          <SoftTypography variant="h5">Display settings</SoftTypography>
+          <SoftTypography variant="h5">Setting</SoftTypography>
           <SoftTypography variant="body2" color="text">
             See our dashboard options.
           </SoftTypography>
@@ -108,7 +108,7 @@ function Configurator() {
             stroke: dark.main,
             strokeWidth: "2px",
             cursor: "pointer",
-            mt: 5,
+            mt: 2,
           })}
           onClick={handleCloseConfigurator}
         >
@@ -153,7 +153,7 @@ function Configurator() {
           </SoftBox>
         </SoftBox>
 
-        <SoftBox mt={5} lineHeight={1}>
+        <SoftBox mt={3} lineHeight={1}>
           <SoftTypography variant="h6">Sidenav Type</SoftTypography>
           <SoftTypography variant="button" color="text" fontWeight="regular">
             Choose between 2 different sidenav types.
@@ -162,7 +162,7 @@ function Configurator() {
           <SoftBox
             sx={{
               display: "flex",
-              mt: 5,
+              mt: 2,
             }}
           >
             <SoftButton
@@ -190,7 +190,7 @@ function Configurator() {
             </SoftButton>
           </SoftBox>
         </SoftBox>
-        <SoftBox mt={5} mb={2} lineHeight={1}>
+        <SoftBox mt={3} mb={2} lineHeight={1}>
           <SoftTypography variant="h6">Navbar Fixed</SoftTypography>
 
           <Switch checked={fixedNavbar} onChange={handleFixedNavbar} />
@@ -198,9 +198,9 @@ function Configurator() {
 
         <Divider />
 
-        <SoftBox mt={5} mb={2}>
+        {/* <SoftBox mt={3} mb={2}>
           <SoftBox mb={2}>
-            {/* <SoftButton
+            <SoftButton
               component={Link}
               href="https://www.creative-tim.com/product/soft-ui-dashboard-react"
               target="_blank"
@@ -210,9 +210,9 @@ function Configurator() {
               fullWidth
             >
               free download
-            </SoftButton> */}
+            </SoftButton>
           </SoftBox>
-          {/* <SoftButton
+          <SoftButton
             component={Link}
             href="https://www.creative-tim.com/learning-lab/react/quick-start/soft-ui-dashboard/"
             target="_blank"
@@ -222,9 +222,9 @@ function Configurator() {
             fullWidth
           >
             view documentation
-          </SoftButton> */}
+          </SoftButton>
         </SoftBox>
-        {/* <SoftBox display="flex" justifyContent="center">
+        <SoftBox display="flex" justifyContent="center">
           <a
             className="github-button"
             href="https://github.com/creativetimofficial/soft-ui-dashboard-react"
@@ -236,16 +236,16 @@ function Configurator() {
             Star
           </a>
         </SoftBox> */}
-        {/* <SoftBox mt={5} textAlign="center">
+        {/* <SoftBox mt={3} textAlign="center">
           <SoftBox mb={0.5}>
-            <SoftTypography variant="h6">Get other interesting information!</SoftTypography>
+            <SoftTypography variant="h6">Thank you for sharing!</SoftTypography>
           </SoftBox>
 
           <SoftBox display="flex" justifyContent="center">
             <SoftBox mr={1.5}>
               <SoftButton
                 component={Link}
-                href="#"
+                href="//twitter.com/intent/tweet?text=Check%20Soft%20UI%20Dashboard%20React%20made%20by%20%40CreativeTim%20%23webdesign%20%23dashboard%20%23react%23mui&url=https%3A%2F%2Fwww.creative-tim.com%2Fproduct%2Fsoft-ui-dashboard-react"
                 target="_blank"
                 rel="noreferrer"
                 color="dark"
@@ -256,13 +256,13 @@ function Configurator() {
             </SoftBox>
             <SoftButton
               component={Link}
-              href="#"
+              href="https://www.facebook.com/sharer/sharer.php?u=https://www.creative-tim.com/product/soft-ui-dashboard-react"
               target="_blank"
               rel="noreferrer"
               color="dark"
             >
               <FacebookIcon />
-              &nbsp; Facebook
+              &nbsp; Share
             </SoftButton>
           </SoftBox>
         </SoftBox> */}

@@ -1,247 +1,76 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+/**
+=========================================================
+* Soft UI Dashboard React - v4.0.1
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
+* Copyright 2023 Creative Tim (https://www.creative-tim.com)
+
+Coded by www.creative-tim.com
+
+ =========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+*/
+
+import { useState } from "react";
+
+// react-router-dom components
+import { Link } from "react-router-dom";
+
+// @mui material components
 import Card from "@mui/material/Card";
 import Checkbox from "@mui/material/Checkbox";
-import BasicLayout from "layouts/authentication/components/BasicLayout";
-import Socials from "layouts/authentication/components/Socials";
-import Separator from "layouts/authentication/components/Separator";
+
+// Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftInput from "components/SoftInput";
 import SoftButton from "components/SoftButton";
-import curved14 from "assets/images/curved-images/curved14.jpg";
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+
+// Authentication layout components
+import BasicLayout from "layouts/authentication/components/BasicLayout";
+import Socials from "layouts/authentication/components/Socials";
+import Separator from "layouts/authentication/components/Separator";
+
+// Images
+import curved6 from "assets/images/curved-images/curved14.jpg";
 
 function SignUp() {
-  const [state, setState] = useState({
-  });
-  
-  const navigate = useNavigate();
-  const [usernameError, setUsernameError] = useState(null);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordConfirmation, setPasswordConfirmation] = useState('');
-  const [error, setError] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isValid, setIsValid] = useState(false);
-  const [passwordError, setPasswordError] = useState('');
-  const [passwordConfirmationError, setPasswordConfirmationError] = useState('');
-  const [referralCode, setReferralCode] = useState('');
-  const [referralCodeError, setReferralCodeError] = useState('');
+  const [agreement, setAgremment] = useState(true);
 
-  const usernameValidator = /^[a-zA-Z0-9_]{3,30}$/;
-  const passwordValidator = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
-  const referralCodeValidator = /^[a-zA-Z0-9]{6}$/;
-
-//   const validateUsername = async () => {
-//     let error = '';
-//     if (username.trim() === '') {
-//       error = '*username is required';
-//     } else if (!usernameValidator.test(username)) {
-//       error = '*username must have distinctive characteristics';
-//     } else {
-//       try {
-//         const response = await axios.post('', {
-//           username: username,
-//         });
-//         const isUsernameExists = response.data.exists;
-//         if (isUsernameExists) {
-//           error = '*username already exists';
-//         }
-//       } catch (error) {
-//         console.error('Error checking username:', error);
-//         error = '*An error occurred while checking username';
-//       }
-//     }
-//     return error;
-// };
-const validatePassword = () => {
-  let error = '';
-  if (password.trim() === '') {
-    error = '*password is required';
-  } else if (!passwordValidator.test(password)) {
-    error = '*password must contain at least 8 characters, 1 number, 1 uppercase, and 1 lowercase';
-  }
-  return error;
-};
-
-  const validatePasswordConfirmation = () => {
-    let error = '';
-    if (passwordConfirmation.trim() === '') {
-      error = '*password confirmation is required';
-    } else if (passwordConfirmation !== password) {
-      error = '*password confirmation does not match password';
-    }
-    return error;
-  };
-
-//   const validateReferralCode = async () => {
-//     let error = '';
-//     if (referralCode.trim() === '') {
-//       error = '*referral code is required';
-//     } else if (!referralCodeValidator.test(referralCode)) {
-//       error = '*referral code must be 6 characters long and alphanumeric';
-//     } else {
-//       try {
-//         const response = await axios.post('/check-referral-code', {
-//           referralCode: referralCode,
-//         });
-//         const isReferralCodeUsed = response.data.used;
-//         const isReferralCodeExpired = response.data.expired;
-//         if (isReferralCodeUsed) {
-//           error = '*referral code is already used by another user';
-//         } else if (isReferralCodeExpired) {
-//           error = '*referral code has expired';
-//         }
-//       } catch (error) {
-//         console.error('Error checking referral code:', error);
-//         error = '*An error occurred while checking referral code';
-//       }
-//     }
-//     return error;
-// };
-
-  const handleChange = async (e) => {
-    const { name, value } = e.target;
-    switch (name) {
-      case 'username':
-        setUsername(value);
-        setUsernameError(''); // Reset error
-        break;
-      case 'password':
-        setPassword(value);
-        setPasswordError('');
-        break;
-      case 'passwordConfirmation':
-        setPasswordConfirmation(value);
-        setPasswordConfirmationError('');
-        break;
-      case 'referralCode':
-        setReferralCode(value);
-        setReferralCodeError('');
-      default:
-        break;
-    }
-  
-    e.preventDefault();
-    if (username === "" || password === "" || passwordConfirmation === "" || referralCode === "") {
-    } else {
-      try {
-        // await axios.post('', {
-        //   username: username,
-        //   password: password,
-        //   passwordConfirmation : passwordConfirmation,
-        //   referralCode: referralCode,
-        // });
-        window.location.href = '/dashboard';
-      } catch (error) {
-        console.error("Error submitting form:", error);
-      }
-    }
-  };
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const newUsernameError = await validateUsername();
-    const newPasswordError = await validatePassword();
-    const newPasswordConfirmationError = validatePasswordConfirmation();
-    const newReferralCodeError = await validateReferralCode();
-  
-    setUsernameError(newUsernameError);
-    setPasswordError(newPasswordError);
-    setPasswordConfirmationError(newPasswordConfirmationError);
-    setReferralCodeError(newReferralCodeError);
-  
-    const isFormValid = !newUsernameError && !newPasswordError && !newPasswordConfirmationError && !newReferralCodeError;
-    if (isFormValid) {
-      setIsSubmitted(true);
-      navigate('/dashboard');
-    } else {
-      setError('Please fill in all fields correctly');
-    }
-  };  
+  const handleSetAgremment = () => setAgremment(!agreement);
 
   return (
     <BasicLayout
       title="Welcome!"
-      description="Use this awesome form to log in or create a new account."
-      image={curved14}>
+      description="Use these awesome forms to login or create new account in your project for free."
+      image={curved6}
+    >
       <Card>
         <SoftBox p={3} mb={1} textAlign="center">
           <SoftTypography variant="h5" fontWeight="medium">
-            Register with
+            Register now
           </SoftTypography>
         </SoftBox>
-        <SoftBox mb={2}>
+        {/* <SoftBox mb={2}>
           <Socials />
         </SoftBox>
-        <Separator />
-        <SoftBox pt={2} pb={3} px={3}>
-          <SoftBox component="form" role="form" onSubmit={handleSubmit}>
-            <SoftBox mb={1}>
-              <SoftInput
-                placeholder="username must have distinctive characteristics"
-                name="username"
-                value={username}
-                onChange={handleChange}
-              />
+        <Separator /> */}
+        <SoftBox pt={3} pb={4} px={4}>
+          <SoftBox component="form" role="form">
+            <SoftBox mb={3}>
+              <SoftInput placeholder="Username" />
             </SoftBox>
-            {usernameError && (
-              <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
-                {usernameError}
-              </div>
-            )}
-            <SoftBox mb={2}>
-              <SoftInput
-                type="password"
-                placeholder="password must contain at least 8 characters, 1 number, 1 upper and 1 lowercase"
-                name="password"
-                value={password}
-                onChange={handleChange}
-              />
-              {passwordError && (
-                <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
-                  {passwordError}
-                </div>
-              )}
-              </SoftBox>
-            <SoftBox mb={2}>
-              <SoftInput
-                type="password"
-                placeholder="password confirmation must match the password"
-                name="passwordConfirmation"
-                value={passwordConfirmation}
-                onChange={handleChange}
-              />
-                 {passwordConfirmationError && (
-                <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
-                  {passwordConfirmationError}
-                </div>
-              )}
+            <SoftBox mb={3}>
+              <SoftInput type="email" placeholder="Email" />
             </SoftBox>
-            <SoftBox mb={2}>
-              <SoftInput
-                type="text"
-                placeholder="Referral Code"
-                name="referralCode"
-                value={referralCode}
-                onChange={handleChange}
-              />
-                 {referralCodeError && (
-                <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
-                  {referralCodeError}
-                </div>
-              )}
+            <SoftBox mb={3}>
+              <SoftInput type="password" placeholder="Password" />
             </SoftBox>
             <SoftBox mt={4} mb={1}>
-              <SoftButton
-                type="submit"
-                variant="gradient"
-                color="dark"
-                fullWidth
-                onClick={handleSubmit}>
-                Sign up
+              <SoftButton variant="gradient" color="dark" fullWidth>
+                sign up
               </SoftButton>
             </SoftBox>
             <SoftBox mt={3} textAlign="center">
@@ -253,13 +82,15 @@ const validatePassword = () => {
                   variant="button"
                   color="dark"
                   fontWeight="bold"
-                  textGradient>
+                  textGradient
+                >
                   Sign in
                 </SoftTypography>
               </SoftTypography>
             </SoftBox>
           </SoftBox>
         </SoftBox>
+        <SoftBox pb={3} />
       </Card>
     </BasicLayout>
   );

@@ -1,4 +1,18 @@
-//container build by developers soft ui dahsbord
+/**
+=========================================================
+* Soft UI Dashboard React - v4.0.1
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
+* Copyright 2023 Creative Tim (https://www.creative-tim.com)
+
+Coded by www.creative-tim.com
+
+ =========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+*/
+
 // @mui material components
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
@@ -15,19 +29,19 @@ import rocketWhite from "assets/images/illustrations/rocket-white.png";
 function BuildByDevelopers() {
   return (
     <Card>
-      <SoftBox p={5}>
+      <SoftBox p={2}>
         <Grid container spacing={3}>
-          <Grid item xs={13} lg={7}>
+          <Grid item xs={12} lg={6}>
             <SoftBox display="flex" flexDirection="column" height="100%">
-              <SoftBox pt={2} mb={2}>
+              <SoftBox pt={1} mb={0.5}>
                 <SoftTypography variant="body2" color="text" fontWeight="medium">
                   Build by developers
                 </SoftTypography>
               </SoftBox>
               <SoftTypography variant="h5" fontWeight="bold" gutterBottom>
-              Bill Management
+                Bill Management
               </SoftTypography>
-              <SoftBox mb={10}>
+              <SoftBox mb={6}>
                 <SoftTypography variant="body2" color="text">
                 Schedule your events and invite members as flexibly as possible to facilitate your circle agenda.
                 </SoftTypography>
@@ -56,7 +70,7 @@ function BuildByDevelopers() {
                   },
                 }}
               >
-                More
+                Read More
                 <Icon sx={{ fontWeight: "bold" }}>arrow_forward</Icon>
               </SoftTypography>
             </SoftBox>

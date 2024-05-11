@@ -1,5 +1,3 @@
-//projects
-
 // @mui material components
 import Tooltip from "@mui/material/Tooltip";
 
@@ -49,15 +47,15 @@ export default function data() {
 
   return {
     columns: [
-      { name: "circle", align: "left" },
+      { name: "companies", align: "left" },
       { name: "members", align: "left" },
-      { name: "event", align: "center" },
+      { name: "budget", align: "center" },
       { name: "completion", align: "center" },
     ],
 
     rows: [
       {
-        circle: [logoXD, "Soft UI XD Version"],
+        companies: [logoXD, "Soft UI XD Version"],
         members: (
           <SoftBox display="flex" py={1}>
             {avatars([
@@ -68,19 +66,19 @@ export default function data() {
             ])}
           </SoftBox>
         ),
-        event: (
+        budget: (
           <SoftTypography variant="caption" color="text" fontWeight="medium">
-            21
+            $14,000
           </SoftTypography>
         ),
         completion: (
           <SoftBox width="8rem" textAlign="left">
-            <SoftProgress value={21} color="info" variant="gradient" label={false} />
+            <SoftProgress value={60} color="info" variant="gradient" label={false} />
           </SoftBox>
         ),
       },
       {
-        circle: [logoAtlassian, "Add Progress Track"],
+        companies: [logoAtlassian, "Add Progress Track"],
         members: (
           <SoftBox display="flex" py={1}>
             {avatars([
@@ -89,19 +87,19 @@ export default function data() {
             ])}
           </SoftBox>
         ),
-        event: (
+        budget: (
           <SoftTypography variant="caption" color="text" fontWeight="medium">
-          5
+            $3,000
           </SoftTypography>
         ),
         completion: (
           <SoftBox width="8rem" textAlign="left">
-            <SoftProgress value={5} color="info" variant="gradient" label={false} />
+            <SoftProgress value={10} color="info" variant="gradient" label={false} />
           </SoftBox>
         ),
       },
       {
-        circle: [logoSlack, "Fix Platform Errors"],
+        companies: [logoSlack, "Fix Platform Errors"],
         members: (
           <SoftBox display="flex" py={1}>
             {avatars([
@@ -110,19 +108,19 @@ export default function data() {
             ])}
           </SoftBox>
         ),
-        event: (
+        budget: (
           <SoftTypography variant="caption" color="text" fontWeight="medium">
-          -
+            Not set
           </SoftTypography>
         ),
         completion: (
           <SoftBox width="8rem" textAlign="left">
-            <SoftProgress value={0} color="success" variant="gradient" label={false} />
+            <SoftProgress value={100} color="success" variant="gradient" label={false} />
           </SoftBox>
         ),
       },
       {
-        circle: [logoSpotify, "Launch our Mobile App"],
+        companies: [logoSpotify, "Launch our Mobile App"],
         members: (
           <SoftBox display="flex" py={1}>
             {avatars([
@@ -133,37 +131,37 @@ export default function data() {
             ])}
           </SoftBox>
         ),
-        event: (
+        budget: (
           <SoftTypography variant="caption" color="text" fontWeight="medium">
-            13
+            $20,500
           </SoftTypography>
         ),
         completion: (
           <SoftBox width="8rem" textAlign="left">
-            <SoftProgress value={13} color="info" variant="gradient" label={false}/>
+            <SoftProgress value={100} color="success" variant="gradient" label={false} />
           </SoftBox>
         ),
       },
       {
-        circle: [logoJira, "Add the New Pricing Page"],
+        companies: [logoJira, "Add the New Pricing Page"],
         members: (
           <SoftBox display="flex" py={1}>
             {avatars([[team4, "Jessica Doe"]])}
           </SoftBox>
         ),
-        event: (
+        budget: (
           <SoftTypography variant="caption" color="text" fontWeight="medium">
-            7
+            $500
           </SoftTypography>
         ),
         completion: (
           <SoftBox width="8rem" textAlign="left">
-            <SoftProgress value={7} color="info" variant="gradient" label={false} />
+            <SoftProgress value={25} color="info" variant="gradient" label={false} />
           </SoftBox>
         ),
       },
       {
-        circle: [logoInvesion, "Redesign New Online Shop"],
+        companies: [logoInvesion, "Redesign New Online Shop"],
         members: (
           <SoftBox display="flex" py={1}>
             {avatars([
@@ -172,14 +170,14 @@ export default function data() {
             ])}
           </SoftBox>
         ),
-        event: (
+        budget: (
           <SoftTypography variant="caption" color="text" fontWeight="medium">
-            96
+            $2,000
           </SoftTypography>
         ),
         completion: (
           <SoftBox width="8rem" textAlign="left">
-            <SoftProgress value={96} color="success" variant="gradient" label={false} />
+            <SoftProgress value={40} color="info" variant="gradient" label={false} />
           </SoftBox>
         ),
       },

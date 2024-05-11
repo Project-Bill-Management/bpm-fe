@@ -1,4 +1,17 @@
-//side bar project
+/**
+=========================================================
+* Soft UI Dashboard React - v4.0.1
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
+* Copyright 2023 Creative Tim (https://www.creative-tim.com)
+
+Coded by www.creative-tim.com
+
+ =========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+*/
 
 import { useState } from "react";
 
@@ -51,7 +64,7 @@ function Projects() {
       <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
         <SoftBox>
           <SoftTypography variant="h6" gutterBottom>
-            Circle List
+            Projects
           </SoftTypography>
           <SoftBox display="flex" alignItems="center" lineHeight={0}>
             <Icon
@@ -61,7 +74,7 @@ function Projects() {
                 mt: -0.5,
               }}
             >
-              Successfully become
+              done
             </Icon>
             <SoftTypography variant="button" fontWeight="regular" color="text">
               &nbsp;<strong>30 done</strong> this month

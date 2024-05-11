@@ -39,7 +39,7 @@ function Transactions() {
             </Icon>
           </SoftBox>
           <SoftTypography variant="button" color="text" fontWeight="regular">
-            02-05-2024 s/d 02-06-2024
+            23 - 30 March 2020
           </SoftTypography>
         </SoftBox>
       </SoftBox>
@@ -65,16 +65,16 @@ function Transactions() {
           <Transaction
             color="error"
             icon="arrow_downward"
-            name="Iuran 'Beli galon event kampanye'"
-            description="02-05-2024"
-            value="- Rp. 5000"
+            name="Netflix"
+            description="27 March 2020, at 12:30 PM"
+            value="- $ 2,500"
           />
           <Transaction
             color="success"
             icon="arrow_upward"
-            name="'Iuran beli bolpoint event kampanye' di Acc"
-            description="01-05-2024"
-            value="+ 2.000"
+            name="Apple"
+            description="27 March 2020, at 04:30 AM"
+            value="+ $ 2,000"
           />
         </SoftBox>
         <SoftBox mt={1} mb={2}>
@@ -95,47 +95,33 @@ function Transactions() {
           m={0}
           sx={{ listStyle: "none" }}
         >
-           <Transaction
+          <Transaction
+            color="success"
+            icon="arrow_upward"
+            name="Stripe"
+            description="26 March 2020, at 13:45 PM"
+            value="+ $ 750"
+          />
+          <Transaction
+            color="success"
+            icon="arrow_upward"
+            name="HubSpot"
+            description="26 March 2020, at 12:30 PM"
+            value="+ $ 1,000"
+          />
+          <Transaction
+            color="success"
+            icon="arrow_upward"
+            name="Creative Tim"
+            description="26 March 2020, at 08:30 AM"
+            value="+ $ 2,500"
+          />
+          <Transaction
             color="dark"
             icon="priority_high"
-            name="Iuran beli bolpoint event kampanye"
-            description="30-04-2024"
+            name="Webflow"
+            description="26 March 2020, at 05:00 AM"
             value="Pending"
-          />
-          <Transaction
-            color="error"
-            icon="arrow_downward"
-            name="Iuran 'Beli bolpoint event kampanye"
-            description="30-04-2024"
-            value="- 2.000"
-          />
-           <Transaction
-            color="error"
-            icon="arrow_downward"
-            name="Iuran 'Beli galon event kampanye'"
-            description="02-05-2024"
-            value="- Rp. 5000"
-          />
-          <Transaction
-            color="success"
-            icon="arrow_upward"
-            name="'Iuran beli bolpoint event kampanye' di Acc"
-            description="01-05-2024"
-            value="+ 2.000"
-          />
-           <Transaction
-            color="error"
-            icon="arrow_downward"
-            name="Iuran 'Beli galon event kampanye'"
-            description="02-05-2024"
-            value="- Rp. 5000"
-          />
-          <Transaction
-            color="success"
-            icon="arrow_upward"
-            name="'Iuran beli bolpoint event kampanye' di Acc"
-            description="01-05-2024"
-            value="+ 2.000"
           />
         </SoftBox>
       </SoftBox>
