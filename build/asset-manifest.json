@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.bed647fe.css",
-    "main.js": "/static/js/main.e0c53701.js",
+    "main.js": "/static/js/main.a6cb0e1e.js",
     "static/media/home-decor-3.jpg": "/static/media/home-decor-3.74d13fcbd3c631fc7908.jpg",
     "static/media/home-decor-2.jpg": "/static/media/home-decor-2.b4e5397c9846645ba275.jpg",
     "static/media/home-decor-1.jpg": "/static/media/home-decor-1.05e218fd495ccc65c99d.jpg",
@@ -33,10 +33,10 @@
     "static/media/ivana-square.jpg": "/static/media/ivana-square.b04026bd1ae5cf0d8a68.jpg",
     "static/media/cat.png": "/static/media/cat.077086a0654634be593c.png",
     "static/media/team2.jpg": "/static/media/team2.600382c8ec818ea897fc.jpg",
+    "static/media/info.png": "/static/media/info.9d4b71d3779809ce8724.png",
     "static/media/team-4.jpg": "/static/media/team-4.a1e1c29f1b839ddae393.jpg",
     "static/media/invite.png": "/static/media/invite.adfc8548d8c978ed5120.png",
     "static/media/team3.png": "/static/media/team3.6b5ef56dcd06822e201e.png",
-    "static/media/accept.png": "/static/media/accept.af2a744f043c0183e3bc.png",
     "static/media/team-2.jpg": "/static/media/team-2.e725aef8c892cb21f262.jpg",
     "static/media/notification.png": "/static/media/notification.9704085da5b51492959f.png",
     "static/media/logo-slack.svg": "/static/media/logo-slack.7c47c5aa474b5c4fb39fcf05ffb8e4e7.svg",
@@ -49,6 +49,6 @@
   },
   "entrypoints": [
     "static/css/main.bed647fe.css",
-    "static/js/main.e0c53701.js"
+    "static/js/main.a6cb0e1e.js"
   ]
 }

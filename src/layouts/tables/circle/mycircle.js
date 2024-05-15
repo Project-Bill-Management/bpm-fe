@@ -329,7 +329,6 @@ function MyCircle() {
             setShowInviteModal(false);
           };
 
-
     return (
         <DashboardLayout>
             <DashboardNavbar />

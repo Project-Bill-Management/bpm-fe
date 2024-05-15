@@ -116,11 +116,8 @@ function JoinCircle() {
                     <SoftBox pb={3} />
                     <SoftBox>
                         <SoftBox
-                            sx={{
-                                "& .MuiTableRow-root:not(:last-child)": {
-                                    "& td": {
-                                        borderBottom: ({ borders: { borderWidth, borderColor } }) =>
-                                            `${borderWidth[1]} solid ${borderColor}`,
+                            sx={{"& .MuiTableRow-root:not(:last-child)": {
+                                    "& td": {borderBottom: ({ borders: { borderWidth, borderColor } }) =>`${borderWidth[1]} solid ${borderColor}`,
                                     },
                                 },
                             }}
@@ -138,7 +135,7 @@ function JoinCircle() {
                                     ]}
                                     rows={circles.map(circle => ({
                                         image: <SoftAvatar src={team2} />,
-                                        circle: <Link to={`/Event/${circle.id_circle}/${circle.circle_name}`}>
+                                        circle: <Link to={`/EventJoin/${circle.id_circle}`}>
                                         {circle.circle_name}
                                     </Link>,
                                         status: (
