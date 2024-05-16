@@ -15,7 +15,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import invite from "assets/images/invite.png";
 import Table from "examples/Tables/Table";
 import SoftAvatar from "components/SoftAvatar";
-import accept from "assets/images/accept.png";
+import cat from "assets/images/avatar-animal/cat.png";
+import SuiBadgeDot from "components/SoftBadge";
+import SuiBox from "components/SoftBox";
 
 function InviteCircle() {
   const { id_circle, circle_name } = useParams();
@@ -117,23 +119,11 @@ function InviteCircle() {
   return (
     <DashboardLayout>
       <ToastContainer />
-      <Box
-        display="flex"
-        flexDirection="column"
-        // justifyContent="center"
-        // alignItems="center"
-        minHeight="100vh"
-        width="80%"
-      >
+      <Box display="flex" flexDirection="column" minHeight="100vh" width="80%">
         <Card>
           <Box py={3} px={3}>
             <Box
-              display="flex"
-              flexDirection="column"
-              // alignItems="center"
-              width="100%"
-              height="80%"
-            >
+              display="flex" flexDirection="column" width="100%" height="80%">
               <Box display="flex" textAlign="center" mb={1}>
                 <SoftTypography variant="h6" fontWeight="bold">
                   Pay attention to your inviters. When you invite another user, that user will enter your circle automatically.
@@ -144,7 +134,7 @@ function InviteCircle() {
         </Card>
         <SoftBox pb={2} />
         <Card>
-          <Box py={10} px={10}>
+          <Box py={8} px={8}>
             <Box
               display="flex"
               flexDirection="column"
@@ -200,14 +190,21 @@ function InviteCircle() {
                 <Table
                   columns={[
                     { name: "image", align: "center" },
+                    { name: "status", align: "center"},
                     { name: "name", align: "center" },
                   ]}
+                  
                   rows={members.map(item => ({
-                    image: <SoftAvatar src={accept} sx={{ width: '32px', height: '32px' }} />,
-                    name: item.invited_username
+                    image: <SoftAvatar src={cat} sx={{ width: '32px', height: '32px' }} />,
+                    status: (
+                      <SuiBox ml={-1.325}>
+                          <SuiBadgeDot size="small" badgeContent="member active" />
+                      </SuiBox>
+                  ),
+                    name: item.invited_username,
                   }))}
                 />
-                {loading && <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>}
+                 {loading && <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>}
                 {error && <SoftTypography style={{ paddingLeft: '20px' }}>{error} </SoftTypography>}
               </>
             </SoftBox>

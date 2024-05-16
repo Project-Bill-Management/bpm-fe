@@ -43,6 +43,7 @@ import RTL from "layouts/rtl";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
+import Cube from "examples/Icons/Cube";
 // Soft UI Dashboard React icons
 import Shop from "examples/Icons/Shop";
 import Office from "examples/Icons/Office";
@@ -51,12 +52,13 @@ import Document from "examples/Icons/Document";
 import SpaceShip from "examples/Icons/SpaceShip";
 import CustomerSupport from "examples/Icons/CustomerSupport";
 import CreditCard from "examples/Icons/CreditCard";
-import Cube from "examples/Icons/Cube";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import MyCircle from "layouts/tables/circle/mycircle";
 import JoinCircle from "layouts/tables/circle/joincircle";
-import TableEvent from "layouts/tables/event/TableEvent";
+import EventMyCircle from "layouts/tables/event/MyEvent";
 import InviteCircle from "layouts/tables/circle/invitecircle";
+import DetailEventMyCircle from "layouts/tables/event/DetailEventMyCircle";
+import EventJoin from "layouts/tables/event/EventJoin";
 
 const routes = [
   {
@@ -90,17 +92,35 @@ const routes = [
     // type: "collapse",
     // name: "Event",
     key: "Event",
-    route: "/Event/:id_circle/:circle_name",
+    route: "/EventMyCircle/:id_circle/:circle_name",
     icon: <Office size="12px" />,
-    component: <TableEvent />,
+    component: <EventMyCircle />,
+    noCollapse: true,
+  },
+  {
+    // type: "collapse",
+    // name: "Detail event",
+    key: "Detail event My Circle",
+    route: "/DetailEventMyCircle/:id_circle/:id_event",
+    icon: <Office size="12px" />,
+    component: <DetailEventMyCircle />,
+    noCollapse: true,
+  },
+  {
+    // type: "collapse",
+    // name: "Detail event",
+    key: "Event Join",
+    route: "/EventJoin/:id_circle/:circle_name",
+    icon: <Office size="12px" />,
+    component: <EventJoin />,
     noCollapse: true,
   },
   {
     type: "collapse",
     name: "Join Circle",
-    key: "Join",
-    route: "/Join",
-    icon: <Office size="12px" />,
+    key: "Join Circle",
+    route: "/JoinCircle",
+    icon: <Cube size="12px" />,
     component: <JoinCircle />,
     noCollapse: true,
   },
@@ -139,6 +159,15 @@ const routes = [
     route: "/profile",
     icon: <CustomerSupport size="12px" />,
     component: <Profile />,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "FaQ",
+    key: "FaQ",
+    route: "/",
+    icon: <Settings size="12px" />,
+    component: <JoinCircle />,
     noCollapse: true,
   },
   {
