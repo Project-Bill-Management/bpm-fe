@@ -55,10 +55,10 @@ import CreditCard from "examples/Icons/CreditCard";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import MyCircle from "layouts/tables/circle/mycircle";
 import JoinCircle from "layouts/tables/circle/joincircle";
-import TableEvent from "layouts/tables/event/TableEvent";
+import EventMyCircle from "layouts/tables/event/MyEvent";
 import InviteCircle from "layouts/tables/circle/invitecircle";
-import DetailEvent from "layouts/tables/event/eventdetail";
-import EventJoin from "layouts/tables/event/eventdetailjoin";
+import DetailEventMyCircle from "layouts/tables/event/DetailEventMyCircle";
+import EventJoin from "layouts/tables/event/EventJoin";
 
 const routes = [
   {
@@ -92,25 +92,25 @@ const routes = [
     // type: "collapse",
     // name: "Event",
     key: "Event",
-    route: "/Event/:id_circle/:circle_name",
+    route: "/EventMyCircle/:id_circle/:circle_name",
     icon: <Office size="12px" />,
-    component: <TableEvent />,
+    component: <EventMyCircle />,
     noCollapse: true,
   },
   {
     // type: "collapse",
     // name: "Detail event",
-    key: "Detail event",
-    route: "/detailevent/:id_event",
+    key: "Detail event My Circle",
+    route: "/DetailEventMyCircle/:id_circle/:id_event",
     icon: <Office size="12px" />,
-    component: <DetailEvent />,
+    component: <DetailEventMyCircle />,
     noCollapse: true,
   },
   {
     // type: "collapse",
     // name: "Detail event",
-    key: "Detail event",
-    route: "/EventJoin/:id_circle",
+    key: "Event Join",
+    route: "/EventJoin/:id_circle/:circle_name",
     icon: <Office size="12px" />,
     component: <EventJoin />,
     noCollapse: true,
@@ -118,8 +118,8 @@ const routes = [
   {
     type: "collapse",
     name: "Join Circle",
-    key: "Join",
-    route: "/Join",
+    key: "Join Circle",
+    route: "/JoinCircle",
     icon: <Cube size="12px" />,
     component: <JoinCircle />,
     noCollapse: true,

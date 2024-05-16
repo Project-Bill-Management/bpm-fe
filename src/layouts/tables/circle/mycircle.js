@@ -371,7 +371,7 @@ function MyCircle() {
                                     ]}
                                     rows={circles.map(circle => ({
                                         image: <SoftAvatar src={team1} />,
-                                        circle: <Link to={`/Event/${circle.id_circle}/${circle.circle_name}`}>
+                                        circle: <Link to={`/EventMyCircle/${circle.id_circle}/${circle.circle_name}`}>
                                             {circle.circle_name}
                                         </Link>,
                                         members: (

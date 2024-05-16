@@ -9,31 +9,30 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import axios from 'axios';
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
-import "bootstrap/dist/css/bootstrap.min.css";
 import TextField from '@mui/material/TextField';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import IconButton from '@mui/material/IconButton';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
 import Icon from '@mui/material/Icon';
 import time from "assets/images/time.png";
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { Grid } from '@mui/material';
 
-function TableEvent() {
-    const [isLoading, setIsLoading] = useState(false);
+function EventMyCircle() {
+    const [isLoading, setIsLoading] = useState(true);
     const [nama_event, setNama_event] = useState("");
     const [nama_eventError, setNama_eventError] = useState(null);
     const [deskripsi, setDeskripsi] = useState("");
     const [deskripsiError, setDeskripsiError] = useState(null);
     const [start_eventErr, setStart_eventErr] = useState(null);
     const [end_eventError, setEnd_eventError] = useState(null);
-    const { id_circle, circle_name, id_event } = useParams();
+    const { id_circle, circle_name } = useParams();
     const [showEventModal, setShowEventModal] = useState(false);
     const [start_event, setStart_event] = useState(new Date().toISOString().slice(0, 19));
     const [end_event, setEnd_event] = useState(new Date().toISOString().slice(0, 19));
     const [events, setEvents] = useState([]);
+    const [circle, setCircle] = useState(null);
     const [error, setError] = useState('');
 
     const handleStartDateChange = (e) => {
@@ -71,6 +70,7 @@ function TableEvent() {
         setStart_event(new Date());
         setEnd_event(new Date());
     };
+
     const closeModalEvent = () => {
         setNama_event("");
         setDeskripsi("");
@@ -82,7 +82,6 @@ function TableEvent() {
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         let nama_eventError = '';
-        // let deskripsiError = '';
         let start_eventErr = '';
         let end_eventError = '';
 
@@ -103,6 +102,7 @@ function TableEvent() {
         if (!end_event || new Date(end_event) < new Date(start_event)) {
             end_eventError = 'End date must be after start event';
         }
+
         setNama_eventError(nama_eventError);
         setStart_eventErr(start_eventErr);
         setEnd_eventError(end_eventError);
@@ -110,8 +110,10 @@ function TableEvent() {
         if (nama_eventError || start_eventErr || end_eventError) {
             return;
         }
+
         const token = localStorage.getItem('jwtToken');
         const headers = { 'Authorization': `Bearer ${token}` };
+
         try {
             const response = await axios.post(`http://152.42.188.210:8080/index.php/api/auth/post_events/${id_circle}`, {
                 nama_event: nama_event,
@@ -119,13 +121,13 @@ function TableEvent() {
                 start_event: start_event,
                 end_event: end_event,
             }, { headers });
+
             toast.success('Event created successfully');
             console.log(response);
             closeModalEvent();
             fetchData();
-            setEvents(response.data.data);
         } catch (error) {
-            console.error("error form:", error);
+            console.error("Error form:", error);
             if (error.response) {
                 console.error("Headers:", error.response.headers);
             } else if (error.request) {
@@ -144,6 +146,7 @@ function TableEvent() {
             return;
         }
         const headers = { 'Authorization': `Bearer ${token}` };
+
         try {
             const response = await axios.get(`http://152.42.188.210:8080/index.php/api/auth/get_events/${id_circle}`, { headers });
             console.log("Response dari server:", response.data);
@@ -158,19 +161,21 @@ function TableEvent() {
             setIsLoading(false);
         }
     };
+
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [id_circle]);
 
     const handleJoinEvent = async (id_event) => {
         const token = localStorage.getItem('jwtToken');
         const headers = { 'Authorization': `Bearer ${token}` };
+
         try {
             const response = await axios.post(`http://152.42.188.210:8080/api/auth/join-event/${id_event}`, {}, { headers });
             console.log(response);
             toast.success('Successfully joined the event');
         } catch (error) {
-            console.error("error joining event:", error);
+            console.error("Error joining event:", error);
             if (error.response) {
                 console.error("Status code:", error.response.status);
                 console.error("Response data:", error.response.data);
@@ -200,23 +205,23 @@ function TableEvent() {
                 <SoftBox pb={3} />
             </Card>
             <SoftBox pb={2} />
-            {events && events.length > 0 && events.map((item) => (
-                <Card key={item.id_event} style={{ marginBottom: '20px' }}>
-                    <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <SoftTypography variant="h5" fontWeight="bold" style={{ marginLeft: "50px", marginRight: "10px" }}>
-                                {item.nama_event}
-                            </SoftTypography>
-                            <img src={time} alt="time" style={{ marginLeft: '25px', marginRight: '25px', width: '150px', height: '150px' }} />
-                            <SoftBox ml={2}>
-                                <SoftTypography variant="body2" color="text" fontWeight="medium">
-                                    {item.start_event} - {item.end_event}
-                                </SoftTypography>
-                                <SoftTypography variant="body2" color="text" fontWeight="medium">
-                                    {item.deskripsi}
-                                </SoftTypography>
-                                <div style={{ borderBottom: '1px solid #ccc', width: '100%' }}></div>
-                                <Link to={`/detailevent/${item.id_event}`}>
+            <Grid container spacing={2}>
+                {events && events.length > 0 && events.map((item) => (
+                    <Grid item xs={12} sm={6} md={4} key={item.id_event}>
+                        <Card style={{ marginBottom: '20px' }}>
+                            <SoftBox display="flex" justifyContent="space-between" pt={3} px={3}>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <SoftTypography variant="h5" fontWeight="bold" style={{marginLeft: '15px', marginRight: '20px' }}>
+                                        Event {item.nama_event}
+                                    </SoftTypography>
+                                    <img src={time} alt="time" style={{ marginLeft: '20px', marginRight: '15px', width: '100px', height: '100px' }} />
+                                </div>
+                            </SoftBox>
+                            <SoftBox pb={2} />
+                            <div style={{ borderBottom: '1px solid #ccc', width: '100%' }}></div>
+                            <SoftBox pb={1} />
+                            <SoftBox px={3} pb={3}>
+                                <Link to={`/DetailEventMyCircle/${id_circle}/${item.id_event}`}>
                                     <SoftTypography
                                         component="span"
                                         variant="button"
@@ -228,28 +233,26 @@ function TableEvent() {
                                             display: "inline-flex",
                                             alignItems: "center",
                                             cursor: "pointer",
-
                                             "& .material-icons-round": {
                                                 fontSize: "1.125rem",
                                                 transform: `translate(2px, -0.5px)`,
                                                 transition: "transform 0.2s cubic-bezier(0.34,1.61,0.7,1.3)",
                                             },
-
                                             "&:hover .material-icons-round, &:focus  .material-icons-round": {
                                                 transform: `translate(6px, -0.5px)`,
                                             },
                                         }}
                                     >
-                                        view event detail
-                                        <Icon sx={{ fontWeight: "bold" }}>arrow_forward</Icon>
+                                        View Detail
+                                        <ArrowForwardIcon sx={{ fontWeight: "bold" }} />
                                     </SoftTypography>
                                 </Link>
                             </SoftBox>
-                        </div>
-                    </SoftBox>
-                    <SoftBox pb={3} />
-                </Card>
-            ))}
+                        </Card>
+                    </Grid>
+                ))}
+            </Grid>
+
             <SoftBox pb={3} />
             <div className='body-flex'>
                 <div className="overlay" />
@@ -285,6 +288,11 @@ function TableEvent() {
                                             value={deskripsi}
                                             onChange={handleChange}
                                         />
+                                        {deskripsiError && (
+                                            <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
+                                                {deskripsiError}
+                                            </div>
+                                        )}
                                     </Form.Group>
                                     <Form.Group className='mb-2' controlId="formStartEvent" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                                         <div>
@@ -338,4 +346,4 @@ function TableEvent() {
     );
 }
 
-export default TableEvent;
+export default EventMyCircle;

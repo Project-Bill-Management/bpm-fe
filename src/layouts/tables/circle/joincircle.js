@@ -110,7 +110,7 @@ function JoinCircle() {
                 <Card>
                     <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
                             <SoftTypography variant="h6" fontWeight="bold">
-                                My Circle
+                                Circle Join
                             </SoftTypography>
                     </SoftBox>
                     <SoftBox pb={3} />
@@ -135,7 +135,7 @@ function JoinCircle() {
                                     ]}
                                     rows={circles.map(circle => ({
                                         image: <SoftAvatar src={team2} />,
-                                        circle: <Link to={`/EventJoin/${circle.id_circle}`}>
+                                        circle: <Link to={`/EventJoin/${circle.id_circle}/${circle.circle_name}`}>
                                         {circle.circle_name}
                                     </Link>,
                                         status: (

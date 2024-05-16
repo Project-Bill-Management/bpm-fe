@@ -4,35 +4,23 @@ import { Card } from '@mui/material';
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import { Modal, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from 'axios';
 import Button from "@mui/material/Button";
-import AddIcon from "@mui/icons-material/Add";
 import "bootstrap/dist/css/bootstrap.min.css";
-import TextField from '@mui/material/TextField';
 import { Link } from 'react-router-dom';
-import { format } from 'date-fns';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import IconButton from '@mui/material/IconButton';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
-import Icon from '@mui/material/Icon';
 import time from "assets/images/time.png";
+import Icon from '@mui/material/Icon';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import MuiIcon from '@mui/material/Icon';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { Grid } from '@mui/material';
 
 function EventJoin() {
     const [isLoading, setIsLoading] = useState(false);
-    const [nama_event, setNama_event] = useState("");
-    const [nama_eventError, setNama_eventError] = useState(null);
-    const [deskripsi, setDeskripsi] = useState("");
-    const [deskripsiError, setDeskripsiError] = useState(null);
-    const [start_eventErr, setStart_eventErr] = useState(null);
-    const [end_eventError, setEnd_eventError] = useState(null);
     const { id_circle, circle_name, id_event } = useParams();
-    const [showEventModal, setShowEventModal] = useState(false);
-    const [start_event, setStart_event] = useState(new Date().toISOString().slice(0, 19));
-    const [end_event, setEnd_event] = useState(new Date().toISOString().slice(0, 19));
     const [events, setEvents] = useState([]);
     const [error, setError] = useState('');
 
@@ -97,23 +85,23 @@ function EventJoin() {
                 <SoftBox pb={3} />
             </Card>
             <SoftBox pb={2} />
-            {events && events.length > 0 && events.map((item) => (
-                <Card key={item.id_event} style={{ marginBottom: '20px' }}>
-                    <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <SoftTypography variant="h5" fontWeight="bold" style={{ marginLeft: "50px", marginRight: "10px" }}>
-                                {item.nama_event}
-                            </SoftTypography>
-                            <img src={time} alt="time" style={{ marginLeft: '25px', marginRight: '25px', width: '150px', height: '150px' }} />
-                            <SoftBox ml={2}>
-                                <SoftTypography variant="body2" color="text" fontWeight="medium">
-                                    {item.start_event} - {item.end_event}
-                                </SoftTypography>
-                                <SoftTypography variant="body2" color="text" fontWeight="medium">
-                                    {item.deskripsi}
-                                </SoftTypography>
-                                <div style={{ borderBottom: '1px solid #ccc', width: '100%' }}></div>
-                                <Link to={`/detailevent/${item.id_event}`}>
+            <Grid container spacing={2}>
+                {events && events.length > 0 && events.map((item) => (
+                    <Grid item xs={12} sm={6} md={4} key={item.id_event}>
+                        <Card style={{ marginBottom: '20px' }}>
+                            <SoftBox display="flex" justifyContent="space-between" pt={3} px={3}>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <SoftTypography variant="h5" fontWeight="bold" style={{ marginRight: '15px' }}>
+                                        Event {item.nama_event}
+                                    </SoftTypography>
+                                    <img src={time} alt="time" style={{ width: '100px', height: '100px' }} />
+                                </div>
+                            </SoftBox>
+                            <SoftBox pb={2} />
+                            <div style={{ borderBottom: '1px solid #ccc', width: '100%' }}></div>
+                            <SoftBox pb={1} />
+                            <SoftBox px={3} pb={3}>
+                                <Link to={`/DetailEventMyCircle/${id_circle}/${item.id_event}`}>
                                     <SoftTypography
                                         component="span"
                                         variant="button"
@@ -125,35 +113,26 @@ function EventJoin() {
                                             display: "inline-flex",
                                             alignItems: "center",
                                             cursor: "pointer",
-
                                             "& .material-icons-round": {
                                                 fontSize: "1.125rem",
                                                 transform: `translate(2px, -0.5px)`,
                                                 transition: "transform 0.2s cubic-bezier(0.34,1.61,0.7,1.3)",
                                             },
-
                                             "&:hover .material-icons-round, &:focus  .material-icons-round": {
                                                 transform: `translate(6px, -0.5px)`,
                                             },
                                         }}
                                     >
-                                        view event detail
-                                        <Icon sx={{ fontWeight: "bold" }}>arrow_forward</Icon>
+                                        View Detail
+                                        <ArrowForwardIcon sx={{ fontWeight: "bold" }} />
                                     </SoftTypography>
                                 </Link>
                             </SoftBox>
-                        </div>
-                    </SoftBox>
-                    <SoftBox display="flex" flexDirection="column" alignItems="flex-end" style={{ marginRight: "20px" }}>
-                        {/* <Link to={`/detailevent/${item.id_event}/${item.nama_event}`}> */}
-                        <Button variant="contained" color="primary" onClick={() => handleJoinEvent(item.id_event)}>
-                            Join
-                        </Button>
-                        {/* </Link> */}
-                    </SoftBox>
-                    <SoftBox pb={3} />
-                </Card>
-            ))}
+                        </Card>
+                    </Grid>
+                ))}
+            </Grid>
+
             <SoftBox pb={3} />
         </DashboardLayout>
     );

@@ -14,8 +14,16 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import info from "assets/images/info.png";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import EventIcon from '@material-ui/icons/Event';
+import checklist2 from 'assets/images/checklist2.png';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import { Grid } from '@material-ui/core'
+import PeopleIcon from '@mui/icons-material/People';
+import InfoIcon from '@mui/icons-material/Info';
+import PaymentIcon from '@mui/icons-material/Payment';
+import Typography from '@mui/material/Typography';
 
-function DetailEvent() {
+function DetailEventMyCircle() {
     const { id_circle, id_event } = useParams();
     const navigate = useNavigate();
     const [showTransaksiModal, setShowTransaksiModal] = useState(false);
@@ -23,12 +31,13 @@ function DetailEvent() {
     const [price, setPrice] = useState("");
     const [transaction_nameError, setTransaction_nameError] = useState(null);
     const [priceError, setPriceError] = useState(null);
-    const [selectedMembers, setSelectedMembers] = useState([]);
+    const [selected_users, SetSelected_users] = useState([]);
     const [events, setEvents] = useState([]);
     const [transactions, setTransactions] = useState([]);
     const [members, setMembers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+    const [details, setDetails] = useState([]);
 
     console.log("id_circle:", id_circle);
     console.log("id_event:", id_event);
@@ -58,9 +67,9 @@ function DetailEvent() {
         }
         const headers = { 'Authorization': `Bearer ${token}` };
         try {
-            const response = await axios.get(`http://152.42.188.210:8080/index.php/api/auth/get_events/${id_event}`, { headers });
+            const response = await axios.get(`http://152.42.188.210:8080/index.php/api/auth/event/${id_event}`, { headers });
             console.log("Response dari server:", response.data);
-            setEvents(response.data);
+            setEvents(response.data.data);
         } catch (error) {
             if (error.response && error.response.data && error.response.data.message) {
                 setError(error.response.data.message);
@@ -74,6 +83,33 @@ function DetailEvent() {
 
     useEffect(() => {
         fetchData();
+    }, [id_event]);
+
+    const GetTransaction = async () => {
+        const token = localStorage.getItem('jwtToken');
+        if (!token) {
+            setError("Token not found. Please login again.");
+            setIsLoading(false);
+            return;
+        }
+        const headers = { 'Authorization': `Bearer ${token}` };
+        try {
+            const response = await axios.get(`http://152.42.188.210:8080/api/auth/get_detail/${id_event}`, { headers });
+            console.log("Response dari server:", response.data);
+            setDetails(response.data);
+        } catch (error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                setError(error.response.data.message);
+            } else {
+                setError("Failed to fetch data. Please try again.");
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        GetTransaction();
     }, [id_event]);
 
     const handleChange = (e) => {
@@ -94,7 +130,7 @@ function DetailEvent() {
 
     const handleMemberSelect = (e) => {
         const { value, checked } = e.target;
-        setSelectedMembers(prev =>
+        SetSelected_users(prev =>
             checked ? [...prev, value] : prev.filter(member => member !== value)
         );
     };
@@ -132,7 +168,7 @@ function DetailEvent() {
             const response = await axios.post(`http://152.42.188.210:8080/api/auth/create_transaksi/${id_circle}/${id_event}`, {
                 transaction_name: transaction_name,
                 price: price,
-                members: selectedMembers
+                members: selected_users,
             }, { headers });
             console.log(response);
             console.log("id:", id_circle);
@@ -151,79 +187,108 @@ function DetailEvent() {
             <Box display="flex" flexDirection="column" minHeight="100vh" width="100%">
                 <Card>
                     <Box display="flex" flexDirection="column" minHeight="100%" width="100%">
-                        <Box display="flex" alignItems="center" mb={8} mt={8}>
-                            <Box position="relative">
-                                <ArrowBackIcon style={{ position: 'absolute', top: '-100px', left: '50px', cursor: 'pointer' }} onClick={() => navigate(-1)} />
-                            </Box>
-                            <Box>
-                                <img src={info} alt="Invitation" style={{ width: '150px', height: '150px', marginRight: '20px', marginLeft: "60px" }} />
-                            </Box>
-                            <Box>
-                                {events && events.length > 0 && events.map((event) => (
-                                    <React.Fragment key={event.id_event}>
-                                        <SoftTypography variant="h6" fontWeight="bold">
-                                            Detail Event {event.nama_event}
-                                        </SoftTypography>
-                                        <SoftTypography variant="h6" fontWeight="bold">
-                                            {event.start_event} - {event.end_event}
-                                        </SoftTypography>
-                                        <SoftTypography variant="h6" color="text" fontWeight="medium" style={{ marginRight: '30px' }}>
-                                            {event.deskripsi}
-                                        </SoftTypography>
-                                    </React.Fragment>
-                                ))}
-                                <SoftTypography variant="h6" fontWeight="bold">
-                                    Split Bill
-                                </SoftTypography>
-                                {Array.isArray(members) && members.length > 0 ? (
-                                    members.map(members => (
-                                        <SoftTypography key={members.user_id} variant="h6" fontWeight="bold">
-                                            {members.username}
-                                        </SoftTypography>
-                                    ))
-                                ) : (
-                                    <SoftTypography variant="h6" color="text" fontWeight="medium">
-                                        No members found
-                                    </SoftTypography>
-                                )}
-                                <Box display="flex" justifyContent="space-between" width="80%">
-                                    <SoftTypography variant="h6" fontWeight="bold">
-                                        Total bill: 1.000.000
-                                    </SoftTypography>
-                                    <SoftTypography
-                                        display="flex" justifyContent="flex-end" width="50%"
-                                        component="a"
-                                        href="#"
-                                        variant="button"
-                                        color="text"
-                                        fontWeight="medium"
-                                        sx={{
-                                            display: "inline-flex",
-                                            alignItems: "center",
-                                            cursor: "pointer",
-                                            "& .material-icons-round": {
-                                                fontSize: "1.125rem",
-                                                transform: `translate(2px, -0.5px)`,
-                                                transition: "transform 0.2s cubic-bezier(0.34,1.61,0.7,1.3)",
-                                            },
-                                            "&:hover .material-icons-round, &:focus  .material-icons-round": {
-                                                transform: `translate(6px, -0.5px)`,
-                                            },
-                                        }}
-                                    >
-                                        detail transaction
-                                        <Icon className="material-icons-round" sx={{ fontWeight: "bold" }}>arrow_forward</Icon>
-                                    </SoftTypography>
-                                </Box>
-                            </Box>
+                        <Box position="relative">
+                            <ArrowBackIcon style={{ position: 'absolute', top: '40px', left: '40px', cursor: 'pointer' }} onClick={() => navigate(-1)} />
                         </Box>
-                        <Box display="flex" justifyContent="flex-end" alignItems="flex-end" mr={3} mb={3}>
-                            <Button variant="contained" color="primary" onClick={showModalTransaksi}>
-                                Add Transaction
-                            </Button>
+                        <Box display="flex" alignItems="center" flexDirection="column" mb={-5} mt={4}>
+                            <img src={info} alt="Invitation" style={{ width: '100px', height: '100px', margin: 'auto' }} />
+                        </Box>
+                        <Box display="flex" alignItems="center" flexDirection="column" mb={4} mt={8}>
+                            {events && (
+                                <React.Fragment key={events.id_event}>
+                                    <SoftTypography variant="h6" fontWeight="bold" style={{ display: 'flex', alignItems: 'center' }}>
+                                        Detail Event {events.nama_event}
+                                        <img src={checklist2} style={{ width: '20px', height: '20px', marginLeft: '5px' }} />
+                                    </SoftTypography>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <SoftTypography variant="h6" fontWeight="bold">
+                                            <EventIcon style={{ verticalAlign: 'middle' }} /> {events.start_event} - {events.end_event}
+                                        </SoftTypography>
+                                        <SoftTypography variant="h6" fontWeight="bold" style={{ marginLeft: '10px', display: 'flex', alignItems: 'center' }}>
+                                            <AccountCircleIcon style={{ marginRight: '5px' }} /> Creator: {events.creator_event}
+                                        </SoftTypography>
+                                    </div>
+                                    <SoftTypography variant="h6" color="text" fontWeight="medium" style={{ marginRight: '30px' }}>
+                                        {events.deskripsi}
+                                    </SoftTypography>
+                                </React.Fragment>
+                            )}
                         </Box>
                     </Box>
                 </Card>
+                <Grid container spacing={2} style={{ marginTop: '10px' }}>
+                    <Grid item xs={8} style={{ flexBasis: '70%' }}>
+                        <Card>
+                            <Box display="flex" flexDirection="column" minHeight="100%" width="100%">
+                                <SoftTypography variant="h6" fontWeight="bold" ml={2} mt={2}>
+                                    Transaction <PaymentIcon style={{ marginRight: 8 }} />
+                                </SoftTypography>
+                                <Box display="flex" alignItems="flex-start" flexDirection="column" justifyContent="center">
+                                    <Box display="flex" alignItems="flex-start" flexDirection="column" justifyContent="center">
+                                        <Box display="flex" flexDirection="column" alignItems="flex-start" justifyContent="center" ml={2} mb={4} mt={2}>
+                                            {details && details.data && details.data.users ? (
+                                                <div>
+                                                    {details.data.users.map((user, index) => (
+                                                        <Box display="flex" key={index} width="100%">
+                                                            <Typography variant="h6" color="text" fontWeight="medium" style={{ flex: 1 }}>
+                                                                {user.username}:
+                                                            </Typography>
+                                                            <Typography variant="h6" color="text" fontWeight="medium" style={{ flex: 1, textAlign: 'right', paddingLeft: '16px' }}>
+                                                                {user.total_price_split}
+                                                            </Typography>
+                                                        </Box>
+                                                    ))}
+                                                    {details.data.total_transaksi && (
+                                                        <Box display="flex" mt={2} width="100%">
+                                                            <Typography variant="h6" fontWeight="bold" style={{ flex: 1 }}>
+                                                                Total Transaction: 
+                                                            </Typography>
+                                                            <Typography variant="h6" fontWeight="bold" style={{ flex: 1, textAlign: 'right', paddingLeft: '50px' }}>
+                                                                {details.data.total_transaksi}
+                                                            </Typography>
+                                                        </Box>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <Typography variant="h6" color="text" fontWeight="medium">
+                                                    Not found
+                                                </Typography>
+                                            )}
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            </Box>
+                            <Box display="flex" justifyContent="flex-end" alignItems="flex-end" mr={3} mb={3}>
+                                <Button variant="contained" color="primary" onClick={showModalTransaksi}>
+                                    Add Transaction
+                                </Button>
+                            </Box>
+                        </Card>
+                    </Grid>
+                    <Grid item xs={6} style={{ flexBasis: '30%' }}>
+                        <Card>
+                            <Box display="flex" flexDirection="column" minHeight="100%" width="100%">
+                                <SoftTypography variant="h6" fontWeight="bold" ml={2} mt={2}>
+                                    Event members <InfoIcon style={{ marginRight: 8 }} />
+                                </SoftTypography>
+                                <Box display="flex" alignItems="flex-start" flexDirection="column" justifyContent="center" ml={2} mb={4} mt={2}>
+                                    {Array.isArray(members) && members.length > 0 ? (
+                                        members.map(member => (
+                                            <SoftTypography key={member.user_id} variant="h6" fontWeight="bold">
+                                                <PeopleIcon /> {member.username}
+                                            </SoftTypography>
+                                        ))
+                                    ) : (
+                                        <SoftTypography variant="h6" color="text" fontWeight="medium">
+                                            No members found
+                                        </SoftTypography>
+                                    )}
+                                </Box>
+                            </Box>
+                        </Card>
+                    </Grid>
+                </Grid>
+
             </Box>
             <div className='body-flex'>
                 <div className="overlay" />
@@ -295,4 +360,4 @@ function DetailEvent() {
     );
 }
 
-export default DetailEvent;
+export default DetailEventMyCircle;
