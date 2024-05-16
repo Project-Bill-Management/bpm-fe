@@ -220,12 +220,12 @@ function DetailEventMyCircle() {
                     <Grid item xs={8} style={{ flexBasis: '70%' }}>
                         <Card>
                             <Box display="flex" flexDirection="column" minHeight="100%" width="100%">
-                                <SoftTypography variant="h6" fontWeight="bold" ml={2} mt={2}>
+                                <SoftTypography variant="h6" fontWeight="bold" ml={4} mt={4}>
                                     Transaction <PaymentIcon style={{ marginRight: 8 }} />
                                 </SoftTypography>
                                 <Box display="flex" alignItems="flex-start" flexDirection="column" justifyContent="center">
                                     <Box display="flex" alignItems="flex-start" flexDirection="column" justifyContent="center">
-                                        <Box display="flex" flexDirection="column" alignItems="flex-start" justifyContent="center" ml={2} mb={4} mt={2}>
+                                        <Box display="flex" flexDirection="column" alignItems="flex-start" justifyContent="center" ml={10} mb={4} mt={2}>
                                             {details && details.data && details.data.users ? (
                                                 <div>
                                                     {details.data.users.map((user, index) => (
@@ -233,19 +233,22 @@ function DetailEventMyCircle() {
                                                             <Typography variant="h6" color="text" fontWeight="medium" style={{ flex: 1 }}>
                                                                 {user.username}:
                                                             </Typography>
-                                                            <Typography variant="h6" color="text" fontWeight="medium" style={{ flex: 1, textAlign: 'right', paddingLeft: '16px' }}>
+                                                            <Typography variant="h6" color="text" fontWeight="medium" style={{ flex: 1, textAlign: 'right', paddingLeft: '50px' }}>
                                                                 {user.total_price_split}
                                                             </Typography>
                                                         </Box>
                                                     ))}
                                                     {details.data.total_transaksi && (
                                                         <Box display="flex" mt={2} width="100%">
-                                                            <Typography variant="h6" fontWeight="bold" style={{ flex: 1 }}>
-                                                                Total Transaction: 
-                                                            </Typography>
-                                                            <Typography variant="h6" fontWeight="bold" style={{ flex: 1, textAlign: 'right', paddingLeft: '50px' }}>
-                                                                {details.data.total_transaksi}
-                                                            </Typography>
+                                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                                <Typography variant="h6" fontWeight="bold" style={{ flex: 5, paddingRight:'50px' }}>
+                                                                    Total Transaction:
+                                                                </Typography>
+                                                                <Typography variant="h6" fontWeight="bold" style={{ flex: 1, textAlign: 'right' }}>
+                                                                    {details.data.total_transaksi}
+                                                                </Typography>
+                                                            </div>
+
                                                         </Box>
                                                     )}
                                                 </div>
@@ -268,10 +271,10 @@ function DetailEventMyCircle() {
                     <Grid item xs={6} style={{ flexBasis: '30%' }}>
                         <Card>
                             <Box display="flex" flexDirection="column" minHeight="100%" width="100%">
-                                <SoftTypography variant="h6" fontWeight="bold" ml={2} mt={2}>
+                                <SoftTypography variant="h6" fontWeight="bold" ml={4} mt={4}>
                                     Event members <InfoIcon style={{ marginRight: 8 }} />
                                 </SoftTypography>
-                                <Box display="flex" alignItems="flex-start" flexDirection="column" justifyContent="center" ml={2} mb={4} mt={2}>
+                                <Box display="flex" alignItems="flex-start" flexDirection="column" justifyContent="center" ml={10} mb={4} mt={2}>
                                     {Array.isArray(members) && members.length > 0 ? (
                                         members.map(member => (
                                             <SoftTypography key={member.user_id} variant="h6" fontWeight="bold">
