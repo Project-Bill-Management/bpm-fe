@@ -169,7 +169,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                     fontWeight="medium"
                     color={light ? "white" : "dark"}
                   >
-                    Sign in
+                    Account
                   </SoftTypography>
                 </IconButton>
               </Link>
