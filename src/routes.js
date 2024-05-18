@@ -165,9 +165,9 @@ const routes = [
     type: "collapse",
     name: "FaQ",
     key: "FaQ",
-    route: "/",
+    // route: "/",
     icon: <Settings size="12px" />,
-    component: <JoinCircle />,
+    // component: <JoinCircle />,
     noCollapse: true,
   },
   {
