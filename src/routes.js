@@ -37,9 +37,6 @@ Coded by www.creative-tim.com
 
 // Soft UI Dashboard React layouts
 import Dashboard from "layouts/dashboard";
-import Billing from "layouts/billing";
-import VirtualReality from "layouts/virtual-reality";
-import RTL from "layouts/rtl";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
@@ -51,14 +48,16 @@ import Settings from "examples/Icons/Settings";
 import Document from "examples/Icons/Document";
 import SpaceShip from "examples/Icons/SpaceShip";
 import CustomerSupport from "examples/Icons/CustomerSupport";
-import CreditCard from "examples/Icons/CreditCard";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import MyCircle from "layouts/tables/circle/mycircle";
 import JoinCircle from "layouts/tables/circle/joincircle";
 import EventMyCircle from "layouts/tables/event/MyEvent";
 import InviteCircle from "layouts/tables/circle/invitecircle";
+import MemberCircle from "layouts/tables/circle/member";
 import DetailEventMyCircle from "layouts/tables/event/DetailEventMyCircle";
 import EventJoin from "layouts/tables/event/EventJoin";
+import FaQ from "layouts/tables/faq/faq";
+import Notification from "layouts/tables/notificationn/notif";
 
 const routes = [
   {
@@ -80,8 +79,6 @@ const routes = [
     noCollapse: true,
   },
   {
-    // type: "collapse",
-    // name: "Event",
     key: "Invite",
     route: "/InviteCircle/:id_circle/:circle_name",
     icon: <Office size="12px" />,
@@ -89,8 +86,13 @@ const routes = [
     noCollapse: true,
   },
   {
-    // type: "collapse",
-    // name: "Event",
+    key: "Member",
+    route: "/MemberCircle/:id_circle/:circle_name",
+    icon: <Office size="12px" />,
+    component: <MemberCircle />,
+    noCollapse: true,
+  },
+  {
     key: "Event",
     route: "/EventMyCircle/:id_circle/:circle_name",
     icon: <Office size="12px" />,
@@ -98,8 +100,6 @@ const routes = [
     noCollapse: true,
   },
   {
-    // type: "collapse",
-    // name: "Detail event",
     key: "Detail event My Circle",
     route: "/DetailEventMyCircle/:id_circle/:id_event",
     icon: <Office size="12px" />,
@@ -107,8 +107,6 @@ const routes = [
     noCollapse: true,
   },
   {
-    // type: "collapse",
-    // name: "Detail event",
     key: "Event Join",
     route: "/EventJoin/:id_circle/:circle_name",
     icon: <Office size="12px" />,
@@ -118,39 +116,21 @@ const routes = [
   {
     type: "collapse",
     name: "Join Circle",
-    key: "Join Circle",
+    key: "JoinCircle",
     route: "/JoinCircle",
-    icon: <Cube size="12px" />,
+    icon: <Office size="12px" />,
     component: <JoinCircle />,
     noCollapse: true,
   },
-  // {
-  //   type: "collapse",
-  //   name: "Billing",
-  //   key: "billing",
-  //   route: "/billing",
-  //   icon: <CreditCard size="12px" />,
-  //   component: <Billing />,
-  //   noCollapse: true,
-  // },
-  // {
-  //   type: "collapse",
-  //   name: "Virtual Reality",
-  //   key: "virtual-reality",
-  //   route: "/virtual-reality",
-  //   icon: <Cube size="12px" />,
-  //   component: <VirtualReality />,
-  //   noCollapse: true,
-  // },
-  // {
-  //   type: "collapse",
-  //   name: "RTL",
-  //   key: "rtl",
-  //   route: "/rtl",
-  //   icon: <Settings size="12px" />,
-  //   component: <RTL />,
-  //   noCollapse: true,
-  // },
+  {
+    type: "collapse",
+    name: "Notification",
+    key: "Notification",
+    route: "/Notification",
+    icon: <Cube size="12px" />,
+    component: <Notification />,
+    noCollapse: true,
+  },
   { type: "title", title: "Account Pages", key: "account-pages" },
   {
     type: "collapse",
@@ -165,14 +145,12 @@ const routes = [
     type: "collapse",
     name: "FaQ",
     key: "FaQ",
-    // route: "/",
+    route: "/FaQ",
     icon: <Settings size="12px" />,
-    // component: <JoinCircle />,
+    component: <FaQ />,
     noCollapse: true,
   },
   {
-    // type: "collapse",
-    // name: "Sign In",
     key: "sign-in",
     route: "/authentication/sign-in",
     icon: <Document size="12px" />,
@@ -180,8 +158,6 @@ const routes = [
     noCollapse: true,
   },
   {
-    // type: "collapse",
-    // name: "Sign Up",
     key: "sign-up",
     route: "/authentication/sign-up",
     icon: <SpaceShip size="12px" />,

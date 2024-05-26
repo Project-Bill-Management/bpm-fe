@@ -252,7 +252,6 @@ function EventMyCircle() {
                     </Grid>
                 ))}
             </Grid>
-
             <SoftBox pb={3} />
             <div className='body-flex'>
                 <div className="overlay" />

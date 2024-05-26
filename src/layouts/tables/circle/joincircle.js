@@ -129,8 +129,8 @@ function JoinCircle() {
                                     columns={[
                                         { name: "image", align: "center" },
                                         { name: "circle", align: "center" },
-                                        { name: "members", align:"center"},
-                                        { name: "status", align: "center" },
+                                        { name: "member", align:"center"},
+                                        { name: "list", align: "center" },
                                         { name: "creator", align: "center" },
                                     ]}
                                     rows={circles.map(circle => ({
@@ -143,17 +143,21 @@ function JoinCircle() {
                                                 <SuiBadgeDot size="small" badgeContent="circle active" />
                                             </SuiBox>
                                         ),
-                                        members: (
+                                        member: (
                                             <SoftBox display="flex" py={1}>
                                                 {avatars([
                                                     [cat, "member"],
                                                     [deer, "member"],
                                                     [jaguar, "member"],
-                                                    [meerkar, "member"],
-                                                    [pandabear, "member"],
-                                                    [turtle, "member"],
                                                 ])}
                                             </SoftBox>
+                                        ),
+                                        list: (
+                                            <Tooltip title="">
+                                                <Link to={`/MemberCircle/${circle.id_circle}/${circle.circle_name}`}>
+                                                    <SuiBadgeDot size="small" badgeContent="List member" />
+                                                </Link>
+                                            </Tooltip>
                                         ),
                                         creator: circle.creator_username,
                                         

@@ -47,10 +47,13 @@ const SignIn = () => {
           password: password,
         });
         const token = response.data.data.token;
+        const userId = response.data.data.user_id;
         console.log(token);
+        console.log(userId);
         console.log(response.data.data.user_id);
         localStorage.setItem('username', username);
         localStorage.setItem('jwtToken', token);
+        localStorage.setItem('userId', userId);
         axios.interceptors.request.use(
           config => {
             const token = localStorage.getItem('jwtToken');

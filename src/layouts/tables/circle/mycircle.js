@@ -213,7 +213,7 @@ function MyCircle() {
             const updatedData = circles.map(circle =>
                 circle.id_circle === id_circle ? { ...circle, circle_name: circle_name } : circle
             );
-            setCircles(updatedData); // Memperbarui lingkaran yang diubah dalam state circles
+            setCircles(updatedData);
         } catch (error) {
             console.error("Error updating circle:", error);
         }

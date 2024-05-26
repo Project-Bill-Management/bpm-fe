@@ -24,6 +24,9 @@ function InviteCircle() {
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [username, setUsername] = useState("");
   const [usernameError, setUsernameError] = useState(null);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [recommendedUsers, setRecommendedUsers] = useState([]);
+  const [circles, setCircles] = useState([]);
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -46,11 +49,11 @@ function InviteCircle() {
   const handleSubmitInvite = async (e) => {
     e.preventDefault();
     let error = '';
-
+  
     if (username === "") {
       error = 'Username is required';
     }
-
+  
     setUsernameError(error);
     if (error) {
       setError(error);
@@ -70,6 +73,7 @@ function InviteCircle() {
         closeModalInvite();
         toast.success('Invite successfully');
         console.log('Invite successfully');
+        fetchData();
       } else {
         throw new Error('Failed to invite user to circle');
       }
@@ -79,7 +83,7 @@ function InviteCircle() {
       toast.error("Failed to invite");
     }
   };
-
+  
   const closeModalInvite = () => {
     setUsername("");
     setShowInviteModal(false);
@@ -115,6 +119,37 @@ function InviteCircle() {
     fetchData();
   }, []);
 
+  const handleSearch = async () => {
+    try {
+      const token = localStorage.getItem('jwtToken');
+      const headers = { 'Authorization': `Bearer ${token}` };
+
+      if (searchKeyword.trim() !== "") {
+        const response = await axios.post(`http://152.42.188.210:8080/api/auth/search_user/${id_circle}`, { keyword: searchKeyword }, { headers });
+        if (response.status === 200) {
+          const filteredUsers = response.data.data.filter(user => user.username.toLowerCase().startsWith(searchKeyword.toLowerCase()));
+          setRecommendedUsers(filteredUsers);
+        } else {
+          throw new Error('Failed to fetch search results');
+        }
+      } else {
+        setRecommendedUsers([]);
+      }
+    } catch (error) {
+      console.error("Error searching users:", error);
+      toast.error("Failed to fetch search results");
+    }
+  };
+
+  useEffect(() => {
+    handleSearch();
+  }, []);
+
+  const handleClickUser = (user) => {
+    setUsername(user.username);
+    setSearchKeyword(user.username);
+    setRecommendedUsers([]);
+  };
 
   return (
     <DashboardLayout>
@@ -223,19 +258,33 @@ function InviteCircle() {
               <Modal.Body>
                 <Form>
                   <Form.Group className='mb-5' controlId='exampleForm.ControlInput1'>
-                    <Form.Control
+                  <Form.Control
                       type="text"
                       placeholder='Enter Username'
-                      name='username'
-                      autoFocus
-                      onChange={handleChangeUsername}
-                      value={username}
+                      name='searchKeyword'
+                      onChange={(e) => {
+                        setSearchKeyword(e.target.value);
+                        handleSearch();
+                      }}
+                      value={searchKeyword}
                     />
                     {usernameError && (
                       <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
                         {usernameError}
                       </div>
                     )}
+                    {Array.isArray(recommendedUsers) && recommendedUsers.map(user => (
+                      <div
+                        key={user.id}
+                        className="user"
+                        onClick={() => handleClickUser(user)}
+                        style={{ cursor: 'pointer', padding: '5px 0', borderBottom: '1px solid #ddd' }}
+                      >
+                        <SoftTypography variant="h6" color="text" style={{ marginRight: '20px' }}>
+                          {user.username}
+                        </SoftTypography>
+                      </div>
+                    ))}
                   </Form.Group>
                   <Button variant="contained" type='submit' onClick={handleSubmitInvite}>
                     Invite

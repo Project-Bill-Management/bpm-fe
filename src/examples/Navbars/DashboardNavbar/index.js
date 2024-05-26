@@ -59,13 +59,14 @@ import team3 from "assets/images/team3.png";
 import notification from "assets/images/notification.png";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
 
+import ItemNotif from "layouts/tables/notificationn/item";
+
 function DashboardNavbar({ absolute, light, isMini }) {
   const [navbarType, setNavbarType] = useState();
   const [controller, dispatch] = useSoftUIController();
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator } = controller;
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
-
   useEffect(() => {
     // Setting the navbar type
     if (fixedNavbar) {
@@ -110,18 +111,14 @@ function DashboardNavbar({ absolute, light, isMini }) {
       onClose={handleCloseMenu}
       sx={{ mt: 2 }}
     >
+
       {/* <NotificationItem
-        image={<img src={team2} alt="person" />}
-        title={["New message", "from Laur"]}
-        date="13 minutes ago"
-        onClick={handleCloseMenu}
-      /> */}
-      <NotificationItem
         image={<img src={notification} alt="person" />}
         title={["Notification", "Not found"]}
         // date="1 day"
         onClick={handleCloseMenu}
-      />
+      /> */}
+      <ItemNotif/>
       {/* <NotificationItem
         color="secondary"
         image={
@@ -155,7 +152,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
               />
             </SoftBox>
             <SoftBox color={light ? "white" : "inherit"}>
-              <Link to="/authentication/sign-in">
+              {/* <Link to="/authentication/sign-in">
                 <IconButton sx={navbarIconButton} size="small">
                   <Icon
                     sx={({ palette: { dark, white } }) => ({
@@ -172,7 +169,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                     Account
                   </SoftTypography>
                 </IconButton>
-              </Link>
+              </Link> */}
               <IconButton
                 size="small"
                 color="inherit"
