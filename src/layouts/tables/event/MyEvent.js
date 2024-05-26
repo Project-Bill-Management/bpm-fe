@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card } from '@mui/material';
+import { Card, CircularProgress  } from '@mui/material';
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -189,69 +189,81 @@ function EventMyCircle() {
     };
 
     return (
-        <DashboardLayout>
-            <ToastContainer />
-            <Card>
-                <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
-                    <div>
-                        <SoftTypography variant="h6" fontWeight="bold">
-                            Circle {circle_name}
-                        </SoftTypography>
+<DashboardLayout>
+      <ToastContainer />
+      <Card>
+        <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
+          <div>
+            <SoftTypography variant="h6" fontWeight="bold">
+              Circle {circle_name}
+            </SoftTypography>
+          </div>
+          <Button variant="contained" startIcon={<AddIcon />} onClick={showModalEvent}>
+            Create Event
+          </Button>
+        </SoftBox>
+        <SoftBox pb={3} />
+      </Card>
+      <SoftBox pb={2} />
+      {isLoading ? (
+        <Grid container justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
+          <CircularProgress />
+        </Grid>
+      ) : (
+        <Grid container spacing={2}>
+          {events && events.length > 0 ? (
+            events.map((item) => (
+              <Grid item xs={12} sm={6} md={4} key={item.id_event}>
+                <Card style={{ marginBottom: '20px' }}>
+                  <SoftBox display="flex" justifyContent="space-between" pt={3} px={3}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <SoftTypography variant="h5" fontWeight="bold" style={{ marginLeft: '15px', marginRight: '20px' }}>
+                        Event {item.nama_event}
+                      </SoftTypography>
+                      <img src={time} alt="time" style={{ marginLeft: '20px', marginRight: '15px', width: '100px', height: '100px' }} />
                     </div>
-                    <Button variant="contained" startIcon={<AddIcon />} onClick={showModalEvent}>
-                        Create Event
-                    </Button>
-                </SoftBox>
-                <SoftBox pb={3} />
-            </Card>
-            <SoftBox pb={2} />
-            <Grid container spacing={2}>
-                {events && events.length > 0 && events.map((item) => (
-                    <Grid item xs={12} sm={6} md={4} key={item.id_event}>
-                        <Card style={{ marginBottom: '20px' }}>
-                            <SoftBox display="flex" justifyContent="space-between" pt={3} px={3}>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <SoftTypography variant="h5" fontWeight="bold" style={{marginLeft: '15px', marginRight: '20px' }}>
-                                        Event {item.nama_event}
-                                    </SoftTypography>
-                                    <img src={time} alt="time" style={{ marginLeft: '20px', marginRight: '15px', width: '100px', height: '100px' }} />
-                                </div>
-                            </SoftBox>
-                            <SoftBox pb={2} />
-                            <div style={{ borderBottom: '1px solid #ccc', width: '100%' }}></div>
-                            <SoftBox pb={1} />
-                            <SoftBox px={3} pb={3}>
-                                <Link to={`/DetailEventMyCircle/${id_circle}/${item.id_event}`}>
-                                    <SoftTypography
-                                        component="span"
-                                        variant="button"
-                                        color="text"
-                                        fontWeight="medium"
-                                        sx={{
-                                            mt: "auto",
-                                            mr: "auto",
-                                            display: "inline-flex",
-                                            alignItems: "center",
-                                            cursor: "pointer",
-                                            "& .material-icons-round": {
-                                                fontSize: "1.125rem",
-                                                transform: `translate(2px, -0.5px)`,
-                                                transition: "transform 0.2s cubic-bezier(0.34,1.61,0.7,1.3)",
-                                            },
-                                            "&:hover .material-icons-round, &:focus  .material-icons-round": {
-                                                transform: `translate(6px, -0.5px)`,
-                                            },
-                                        }}
-                                    >
-                                        View Detail
-                                        <ArrowForwardIcon sx={{ fontWeight: "bold" }} />
-                                    </SoftTypography>
-                                </Link>
-                            </SoftBox>
-                        </Card>
-                    </Grid>
-                ))}
-            </Grid>
+                  </SoftBox>
+                  <SoftBox pb={2} />
+                  <div style={{ borderBottom: '1px solid #ccc', width: '100%' }}></div>
+                  <SoftBox pb={1} />
+                  <SoftBox px={3} pb={3}>
+                    <Link to={`/DetailEventMyCircle/${id_circle}/${item.id_event}`}>
+                      <SoftTypography
+                        component="span"
+                        variant="button"
+                        color="text"
+                        fontWeight="medium"
+                        sx={{
+                          mt: "auto",
+                          mr: "auto",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          cursor: "pointer",
+                          "& .material-icons-round": {
+                            fontSize: "1.125rem",
+                            transform: `translate(2px, -0.5px)`,
+                            transition: "transform 0.2s cubic-bezier(0.34,1.61,0.7,1.3)",
+                          },
+                          "&:hover .material-icons-round, &:focus  .material-icons-round": {
+                            transform: `translate(6px, -0.5px)`,
+                          },
+                        }}
+                      >
+                        View Detail
+                        <ArrowForwardIcon sx={{ fontWeight: "bold" }} />
+                      </SoftTypography>
+                    </Link>
+                  </SoftBox>
+                </Card>
+              </Grid>
+            ))
+          ) : (
+            <SoftTypography variant="h6" textAlign="center">
+              No events available.
+            </SoftTypography>
+          )}
+        </Grid>
+      )}
             <SoftBox pb={3} />
             <div className='body-flex'>
                 <div className="overlay" />

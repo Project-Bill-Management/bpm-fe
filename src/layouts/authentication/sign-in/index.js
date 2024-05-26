@@ -128,6 +128,37 @@ const SignIn = () => {
     }
 }, [isLoggedIn, navigate]);
 
+// useEffect(() => {
+//   const checkToken = async () => {
+//     const token = localStorage.getItem('jwtToken');
+//     if (token) {
+//       try {
+//         const decodedToken = jwtDecode(token);
+//         const currentTime = Date.now() / 1000;
+//         if (decodedToken.exp < currentTime) {
+//           // Token kedaluwarsa, hapus token dan arahkan ke halaman login
+//           localStorage.removeItem('jwtToken');
+//           navigate('/login');
+//         } else {
+//           // Token masih berlaku, tetapkan pengguna saat ini dan arahkan ke halaman dashboard
+//           setCurrentUser(decodedToken.username);
+//           navigate('/dashboard');
+//         }
+//       } catch (error) {
+//         console.error('Error decoding token:', error);
+//         // Token tidak valid, hapus token dan arahkan ke halaman login
+//         localStorage.removeItem('jwtToken');
+//         navigate('/login');
+//       }
+//     } else {
+//       // Token tidak ada, arahkan ke halaman login
+//       navigate('/login');
+//     }
+//   };
+
+//   checkToken();
+// }, [navigate]);
+
   return (
     <CoverLayout
       title="Welcome back!"
@@ -177,6 +208,7 @@ const SignIn = () => {
             {error}
           </div>
         )}
+        {isLoading && <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>}
         <SoftBox mt={4} mb={1}>
           <SoftButton
             type="submit"

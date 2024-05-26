@@ -1,27 +1,22 @@
 {
   "files": {
     "main.css": "/static/css/main.bed647fe.css",
-    "main.js": "/static/js/main.50f95101.js",
+    "main.js": "/static/js/main.745ad6e2.js",
     "static/media/home-decor-3.jpg": "/static/media/home-decor-3.74d13fcbd3c631fc7908.jpg",
     "static/media/home-decor-2.jpg": "/static/media/home-decor-2.b4e5397c9846645ba275.jpg",
     "static/media/home-decor-1.jpg": "/static/media/home-decor-1.05e218fd495ccc65c99d.jpg",
     "static/media/curved0.jpg": "/static/media/curved0.d146ec6e9401aa9d52c5.jpg",
-    "static/media/vr-bg.jpg": "/static/media/vr-bg.7afa879d8396a599757f.jpg",
     "static/media/curved14.jpg": "/static/media/curved14.12c9ea54425c4f1bc1d7.jpg",
     "static/media/waves-white.svg": "/static/media/waves-white.56607573d7f27cc7c8eb151ea3d5bc67.svg",
     "static/media/marie.jpg": "/static/media/marie.1c6828424a074f143c2d.jpg",
     "static/media/rocket-white.png": "/static/media/rocket-white.de5786399f850a27a362.png",
     "static/media/curved-6.jpg": "/static/media/curved-6.71ee1d1cc8196ed2126b.jpg",
     "static/media/bootstrap-icons.woff?": "/static/media/bootstrap-icons.39795c0b4513de014cf8.woff",
-    "static/media/curved1.jpg": "/static/media/curved1.af81cb53f1615f33b710.jpg",
     "static/media/bootstrap-icons.woff2?": "/static/media/bootstrap-icons.b7bcc075b395c14ce8c2.woff2",
-    "static/media/icon-sun-cloud.png": "/static/media/icon-sun-cloud.3399b234b40032f90d9b.png",
     "static/media/ivancik.jpg": "/static/media/ivancik.442b474727c414bb3b85.jpg",
     "static/media/white-curved.jpeg": "/static/media/white-curved.a5b7db662b0b14ab5534.jpeg",
-    "static/media/visa.png": "/static/media/visa.71c0d5e9e2aaee42e4c3.png",
     "static/media/turtle.png": "/static/media/turtle.63aa63efc8fb64348a2e.png",
     "static/media/deer.png": "/static/media/deer.f3b6f4eacbe971cc0e71.png",
-    "static/media/mastercard.png": "/static/media/mastercard.27fca3e7637a9458fb64.png",
     "static/media/team-1.jpg": "/static/media/team-1.c821a2730a9c8e3f68eb.jpg",
     "static/media/kal-visuals-square.jpg": "/static/media/kal-visuals-square.22829a59e2c6afb94b7a.jpg",
     "static/media/pandabear.png": "/static/media/pandabear.de1697b9105026ffab09.png",
@@ -29,6 +24,7 @@
     "static/media/team-3.jpg": "/static/media/team-3.b75146da5bfdf9d8ae61.jpg",
     "static/media/meerkat.png": "/static/media/meerkat.8864cfe4fdf2268dcf23.png",
     "static/media/time.png": "/static/media/time.27fefd635c0900cca6bb.png",
+    "static/media/megaphone.png": "/static/media/megaphone.03e9f4fe967b9ceef2ac.png",
     "static/media/team1.jpg": "/static/media/team1.d591d15f3ae5bb912f85.jpg",
     "static/media/ivana-square.jpg": "/static/media/ivana-square.b04026bd1ae5cf0d8a68.jpg",
     "static/media/cat.png": "/static/media/cat.077086a0654634be593c.png",
@@ -50,6 +46,6 @@
   },
   "entrypoints": [
     "static/css/main.bed647fe.css",
-    "static/js/main.50f95101.js"
+    "static/js/main.745ad6e2.js"
   ]
 }

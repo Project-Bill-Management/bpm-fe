@@ -29,6 +29,7 @@ function DetailEventMyCircle() {
     const [transaction_nameError, setTransaction_nameError] = useState(null);
     const [priceError, setPriceError] = useState(null);
     const [selected_users, SetSelected_users] = useState([]);
+    const [transactionHistory, settransactionHistory] = useState([]);
     const [events, setEvents] = useState([]);
     const [transactions, setTransactions] = useState([]);
     const [members, setMembers] = useState([]);
@@ -113,6 +114,32 @@ function DetailEventMyCircle() {
         GetTransaction();
     }, [id_event]);
 
+    const GetHistoryTransaction = async () => {
+        const token = localStorage.getItem('jwtToken');
+        if (!token) {
+            setError("Token not found. Please login again.");
+            setIsLoading(false);
+            return;
+        }
+        const headers = { 'Authorization': `Bearer ${token}` };
+        try {
+            const response = await axios.get(`http://152.42.188.210:8080/api/auth/events/${id_event}/transactions`, { headers });
+            console.log("Response dari server:", response.data);
+            settransactionHistory(response.data.data); // Menyimpan data transaksi ke dalam state transactionHistory
+        } catch (error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                setError(error.response.data.message);
+            } else {
+                setError("Failed to fetch data. Please try again.");
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    useEffect(() => {
+        GetHistoryTransaction();
+    }, [id_event]);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         let errorMessage = '';
@@ -151,7 +178,7 @@ function DetailEventMyCircle() {
             };
         });
     };
-    
+
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
     };
@@ -174,26 +201,26 @@ function DetailEventMyCircle() {
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
-    
+
         if (!transaction_name || !price) {
             setTransaction_nameError('* Transaction name is required');
             setPriceError('* Price is required');
             return;
         }
-    
+
         const existingTransaction = transactions.find(transaksi => transaksi.transaction_name === transaction_name);
         if (existingTransaction) {
             toast.error('Transaction already exists');
             return;
         }
-    
+
         const selectedUsers = Object.keys(checkedMembers).filter(userId => checkedMembers[userId]);
-    
+
         if (selectedUsers.length === 0) {
             toast.error('Please select at least one member');
             return;
         }
-    
+
         const token = localStorage.getItem('jwtToken');
         const headers = { 'Authorization': `Bearer ${token}` };
         try {
@@ -212,7 +239,7 @@ function DetailEventMyCircle() {
             toast.error('Failed to create transaction');
         }
     };
-    
+
     useEffect(() => {
         setIsFormValid(transaction_name.trim() !== '' && price.trim() !== '' && selected_users.length > 0);
     }, [transaction_name, price, selected_users]);
@@ -227,7 +254,7 @@ function DetailEventMyCircle() {
         const headers = { 'Authorization': `Bearer ${token}` };
         try {
             const response = await axios.get(`http://152.42.188.210:8080/api/auth/user_split/${id_event}`, { headers });
-            console.log("User split data:", response.data);
+            console.log("User split data:", response.data.data);
             setUserSplit(response.data.data);
         } catch (error) {
             if (error.response && error.response.data && error.response.data.message) {
@@ -296,6 +323,7 @@ function DetailEventMyCircle() {
                                 </Typography>
                                 <Box display="flex" alignItems="flex-start" flexDirection="column" justifyContent="center">
                                     <Box display="flex" flexDirection="column" alignItems="flex-start" justifyContent="center" ml={10} mb={4} mt={2}>
+                                        {isLoading && <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>}
                                         {details && details.data && details.data.users ? (
                                             <div>
                                                 {details.data.users.map((user, index) => (
@@ -348,7 +376,7 @@ function DetailEventMyCircle() {
                                 </Typography>
                                 <Box display="flex" alignItems="flex-start" flexDirection="column" justifyContent="center" ml={4} mb={4} mt={2}>
                                     {Array.isArray(members) && members.length > 0 ? (
-                                        members.map(member => (
+                                        members.map((member) => (
                                             <Typography
                                                 key={member.user_id}
                                                 variant="h6"
@@ -357,11 +385,37 @@ function DetailEventMyCircle() {
                                             >
                                                 <PeopleIcon /> {member.username}
                                             </Typography>
-
                                         ))
                                     ) : (
                                         <Typography variant="h6" color="text" fontWeight="medium">
                                             No members found
+                                        </Typography>
+                                    )}
+                                </Box>
+                            </Box>
+                        </Card>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                        <Card>
+                            <Box display="flex" flexDirection="column" minHeight="100%" width="100%">
+                                <Typography variant="h6" fontWeight="bold" ml={2} mt={2}>
+                                    Transaction History
+                                </Typography>
+                                <Box display="flex" alignItems="flex-start" flexDirection="column" justifyContent="center" ml={2} mb={4} mt={2}>
+                                    {Array.isArray(transactionHistory) && transactionHistory.length > 0 ? (
+                                        transactionHistory.map((item, index) => (
+                                            <Box display="flex" key={index} width="100%" mb={2} alignItems="center">
+                                                <Typography variant="h6" color="text" fontWeight="medium" style={{ flex: 0.5 }}>
+                                                    {item.transaction_name}
+                                                </Typography>
+                                                <Typography variant="h6" color="text" fontWeight="medium" style={{ flex: 0.5 }}>
+                                                    {item.price}
+                                                </Typography>
+                                            </Box>
+                                        ))
+                                    ) : (
+                                        <Typography variant="h6" color="text" fontWeight="medium">
+                                            No transaction history found
                                         </Typography>
                                     )}
                                 </Box>
@@ -460,7 +514,7 @@ function DetailEventMyCircle() {
                                 <Button variant="secondary" onClick={closeModalTransaksi}>
                                     Close
                                 </Button>
-                                <Button variant="primary" onClick={handleFormSubmit} 
+                                <Button variant="primary" onClick={handleFormSubmit}
                                 // disabled={!isFormValid} style={{ backgroundColor: isFormValid ? 'blue' : 'grey' }}
                                 >
                                     Save Changes
