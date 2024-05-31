@@ -206,8 +206,8 @@ function EventMyCircle() {
       </Card>
       <SoftBox pb={2} />
       {isLoading ? (
-        <Grid container justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
-          <CircularProgress />
+        <Grid display="flex" justifyContent="center" alignItems="center" height="100px">
+           {isLoading && <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>}
         </Grid>
       ) : (
         <Grid container spacing={2}>
@@ -257,13 +257,17 @@ function EventMyCircle() {
                 </Card>
               </Grid>
             ))
-          ) : (
-            <SoftTypography variant="h6" textAlign="center">
-              No events available.
-            </SoftTypography>
-          )}
-        </Grid>
-      )}
+          ): (
+            <Grid item xs={12}>
+                <SoftBox display="flex" justifyContent="center" alignItems="center" height="100px">
+                    <SoftTypography variant="h6" color="text" fontWeight="medium">
+                        No events found
+                    </SoftTypography>
+                </SoftBox>
+            </Grid>
+        )}
+    </Grid>
+)}
             <SoftBox pb={3} />
             <div className='body-flex'>
                 <div className="overlay" />

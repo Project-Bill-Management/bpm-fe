@@ -14,6 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
+import SoftInput from "components/SoftInput";
 import {
     CButton,
     CCard,
@@ -47,6 +48,7 @@ function JoinCircle() {
     const [error, setError] = useState(null);
     const [circle_name, setcircle_name] = useState("");
     const [id_circle, setId_Circle] = useState("");
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         fetchData();
@@ -100,7 +102,11 @@ function JoinCircle() {
             />
           </Tooltip>
         ));
-
+        const handleSearchChange = (circle) => {
+            const { value } = circle.target;
+            setSearchTerm(value);
+            onSearch(value);
+        };
 
     return (
         <DashboardLayout>
@@ -108,11 +114,20 @@ function JoinCircle() {
             <ToastContainer />
             <SoftBox py={3}>
                 <Card>
-                    <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
-                            <SoftTypography variant="h6" fontWeight="bold">
+                <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
+                <SoftTypography variant="h6" fontWeight="bold">
                                 Circle Join
                             </SoftTypography>
+                <div>
+                        <SoftInput
+                    placeholder="Type here..."
+                    icon={{ component: "search", direction: "left" }}
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                />
+                        </div>
                     </SoftBox>
+                   
                     <SoftBox pb={3} />
                     <SoftBox>
                         <SoftBox

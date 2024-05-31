@@ -19,6 +19,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import InfoIcon from '@mui/icons-material/Info';
 import PaymentIcon from '@mui/icons-material/Payment';
 import SearchIcon from '@material-ui/icons/Search';
+import Table from "examples/Tables/Table";
 
 function DetailEventMyCircle() {
     const { id_circle, id_event } = useParams();
@@ -40,6 +41,7 @@ function DetailEventMyCircle() {
     const [isFormValid, setIsFormValid] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [checkedMembers, setCheckedMembers] = useState([]);
+    const [isAllChecked, setIsAllChecked] = useState(false);
 
     console.log("id_circle:", id_circle);
     console.log("id_event:", id_event);
@@ -167,25 +169,33 @@ function DetailEventMyCircle() {
                 break;
         }
     };
-    const handleMemberSelect = (e) => {
-        const { value, checked } = e.target;
-        setCheckedMembers(prev => {
-            // Jika ceklis diberi, tambahkan anggota ke dalam objek checkedMembers
-            // Jika tidak, hapus anggota dari objek checkedMembers
-            return {
-                ...prev,
-                [value]: checked
-            };
+    const handleMemberSelect = (event) => {
+        const { value, checked } = event.target;
+        setCheckedMembers((prevCheckedMembers) => ({
+            ...prevCheckedMembers,
+            [value]: checked,
+        }));
+    };
+
+    const handleCheckAll = (event) => {
+        const { checked } = event.target;
+        setIsAllChecked(checked);
+
+        const updatedCheckedMembers = {};
+        filteredMembers.forEach((member) => {
+            updatedCheckedMembers[member.user_id] = checked;
         });
+
+        setCheckedMembers(updatedCheckedMembers);
     };
 
-    const handleSearchChange = (e) => {
-        setSearchTerm(e.target.value);
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value);
     };
-
-    const filteredMembers = members.filter(member =>
+    const filteredMembers = members.filter((member) =>
         member.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
 
     const showModalTransaksi = () => {
         setTransaction_name("");
@@ -276,100 +286,192 @@ function DetailEventMyCircle() {
         <DashboardLayout>
             <Box display="flex" flexDirection="column" minHeight="100vh" width="100%">
                 <ToastContainer />
-                <Card>
-                    <Box display="flex" flexDirection="column" minHeight="100%" width="100%">
-                        <Box position="relative">
-                            <ArrowBackIcon
-                                style={{ position: 'absolute', top: '40px', left: '40px', cursor: 'pointer' }}
-                                onClick={() => navigate(-1)}
-                            />
-                        </Box>
-                        <Box display="flex" alignItems="center" flexDirection="column" mb={-5} mt={4}>
-                            <img src={info} alt="Invitation" style={{ width: '100px', height: '100px', margin: 'auto' }} />
-                        </Box>
-                        <Box display="flex" alignItems="center" flexDirection="column" mb={4} mt={8}>
-                            {events && (
-                                <React.Fragment key={events.id_event}>
-                                    <Typography variant="h6" fontWeight="bold" style={{ display: 'flex', alignItems: 'center' }}>
-                                        Detail Event {events.nama_event}
-                                        <img src={checklist2} style={{ width: '20px', height: '20px', marginLeft: '5px' }} />
-                                    </Typography>
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <Typography variant="h6" fontWeight="bold">
-                                            <EventIcon style={{ verticalAlign: 'middle' }} /> {events.start_event} - {events.end_event}
-                                        </Typography>
-                                        <Typography
-                                            variant="h6"
-                                            fontWeight="bold"
-                                            style={{ marginLeft: '10px', display: 'flex', alignItems: 'center' }}
-                                        >
-                                            <AccountCircleIcon style={{ marginRight: '5px' }} /> Creator: {events.creator_event}
-                                        </Typography>
-                                    </div>
-                                    <Typography variant="h6" color="text" fontWeight="medium" style={{ marginRight: '30px' }}>
-                                        {events.deskripsi}
-                                    </Typography>
-                                </React.Fragment>
-                            )}
-                        </Box>
-                    </Box>
-                </Card>
-                <Grid container spacing={2} style={{ marginTop: '10px' }}>
-                    <Grid item xs={12} md={8}>
-                        <Card>
+                <Box display="flex" flex="1" style={{ marginTop: '10px' }}>
+                    <Box flex="2" marginRight="10px">
+                        <Card style={{ maxHeight: '400px', overflow: 'auto' }}>
                             <Box display="flex" flexDirection="column" minHeight="100%" width="100%">
-                                <Typography variant="h6" fontWeight="bold" ml={2} mt={2}>
-                                    Transaction <PaymentIcon style={{ marginRight: 8 }} />
-                                </Typography>
-                                <Box display="flex" alignItems="flex-start" flexDirection="column" justifyContent="center">
-                                    <Box display="flex" flexDirection="column" alignItems="flex-start" justifyContent="center" ml={10} mb={4} mt={2}>
-                                        {isLoading && <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>}
-                                        {details && details.data && details.data.users ? (
-                                            <div>
-                                                {details.data.users.map((user, index) => (
-                                                    <Box display="flex" key={index} width="100%">
-                                                        <Typography variant="h6" color="text" fontWeight="medium" style={{ flex: 1 }}>
-                                                            {user.username}:
-                                                        </Typography>
-                                                        <Typography variant="h6" color="text" fontWeight="medium" style={{ flex: 1, textAlign: 'right', paddingLeft: '50px' }}>
-                                                            {user.total_price_split}
-                                                        </Typography>
-                                                    </Box>
-                                                ))}
-                                                {details.data.total_transaksi !== undefined && details.data.total_transaksi !== null ? (
-                                                    <Box display="flex" mt={1} width="100%">
-                                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                            <Typography variant="h6" fontWeight="bold" style={{ flex: 5, paddingRight: '50px' }}>
-                                                                Total Transaction:
-                                                            </Typography>
-                                                            <Typography variant="h6" fontWeight="bold" style={{ flex: 1, textAlign: 'right' }}>
-                                                                {details.data.total_transaksi}
-                                                            </Typography>
-                                                        </div>
-                                                    </Box>
-                                                ) : (
-                                                    <Typography variant="h6" color="text" fontWeight="medium">
-                                                        Not found
-                                                    </Typography>
-                                                )}
-                                            </div>
-                                        ) : (
-                                            <Typography variant="h6" color="text" fontWeight="medium">
-                                                Not found
+                                <Box position="relative">
+                                    <ArrowBackIcon
+                                        style={{ position: 'absolute', top: '40px', left: '40px', cursor: 'pointer' }}
+                                        onClick={() => navigate(-1)}
+                                    />
+                                </Box>
+                                <Box display="flex" alignItems="center" flexDirection="column" mb={-5} mt={4}>
+                                    <img src={info} alt="Invitation" style={{ width: '100px', height: '100px', margin: 'auto' }} />
+                                </Box>
+                                <Box display="flex" alignItems="center" flexDirection="column" mb={4} mt={8}>
+                                    {events && (
+                                        <React.Fragment key={events.id_event}>
+                                            <Typography variant="h6" fontWeight="bold" style={{ display: 'flex', alignItems: 'center' }}>
+                                                Detail Event {events.nama_event}
+                                                <img src={checklist2} style={{ width: '20px', height: '20px', marginLeft: '5px' }} />
                                             </Typography>
-                                        )}
-                                    </Box>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                <Typography style={{ marginLeft: '10px' }} variant="h6" fontWeight="bold">
+                                                    <EventIcon style={{ marginRight: '5px', verticalAlign: 'middle' }} /> {events.start_event}
+                                                </Typography>
+                                                <Typography style={{ marginLeft: '10px' }} variant="h6" fontWeight="bold">
+                                                    <EventIcon style={{ marginRight: '5px', verticalAlign: 'middle' }} /> {events.end_event}
+                                                </Typography>
+                                                <Typography
+                                                    variant="h6"
+                                                    fontWeight="bold"
+                                                    style={{ marginLeft: '10px', display: 'flex', alignItems: 'center' }}
+                                                >
+                                                    <AccountCircleIcon style={{ marginRight: '5px' }} />Creator: {events.creator_event}
+                                                </Typography>
+                                            </div>
+                                            <Typography variant="h6" color="text" fontWeight="medium" style={{ textAlign: 'center' }}>
+                                                {events.deskripsi}
+                                            </Typography>
+                                        </React.Fragment>
+                                    )}
                                 </Box>
                             </Box>
-                            <Box display="flex" justifyContent="flex-end" alignItems="flex-end" mr={3} mb={3}>
-                                <Button variant="contained" color="primary" onClick={showModalTransaksi}>
-                                    Add Transaction
-                                </Button>
-                            </Box>
                         </Card>
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                        <Card>
+
+                        {/* Additional Box and Card for Transactions */}
+                        {/* <Box marginTop="10px">
+                            <Card style={{ maxHeight: '400px', overflow: 'auto' }}>
+                                <Box display="flex" flexDirection="column" minHeight="100%" width="100%">
+                                    <Typography variant="h6" fontWeight="bold" ml={2} mt={2}>
+                                        Transaction <PaymentIcon style={{ marginRight: 8 }} />
+                                    </Typography>
+                                    <Box display="flex" alignItems="flex-start" flexDirection="column" justifyContent="center">
+                                        <Box display="flex" flexDirection="column" alignItems="flex-start" justifyContent="center" ml={10} mb={4} mt={2}>
+                                            {isLoading && <Typography style={{ paddingLeft: '20px' }}>Loading...</Typography>}
+                                            {details && details.data && details.data.users ? (
+                                                <div>
+                                                    {details.data.users.map((user, index) => (
+                                                        <Box display="flex" key={index} width="100%">
+                                                            <Typography variant="h6" color="text" fontWeight="medium" style={{ flex: 1 }}>
+                                                                {user.username}:
+                                                            </Typography>
+                                                            <Typography variant="h6" color="text" fontWeight="medium" style={{ flex: 1, textAlign: 'right', paddingLeft: '50px' }}>
+                                                                {user.total_price_split}
+                                                            </Typography>
+                                                        </Box>
+                                                    ))}
+                                                    {details.data.total_transaksi !== undefined && details.data.total_transaksi !== null ? (
+                                                        <Box display="flex" mt={1} width="100%">
+                                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                                <Typography variant="h6" fontWeight="bold" style={{ flex: 5, paddingRight: '50px' }}>
+                                                                    Total Transaction:
+                                                                </Typography>
+                                                                <Typography variant="h6" fontWeight="bold" style={{ flex: 1, textAlign: 'right' }}>
+                                                                    {details.data.total_transaksi}
+                                                                </Typography>
+                                                            </div>
+                                                        </Box>
+                                                    ) : (
+                                                        <Typography variant="h6" color="text" fontWeight="medium">
+                                                            Not found
+                                                        </Typography>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <Typography variant="h6" color="text" fontWeight="medium">
+                                                    Not found
+                                                </Typography>
+                                            )}
+                                        </Box>
+                                    </Box>
+                                </Box>
+                                <Box display="flex" justifyContent="flex-end" alignItems="flex-end" mr={3} mb={3}>
+                                    <Button variant="contained" color="primary" onClick={showModalTransaksi}>
+                                        Add Transaction
+                                    </Button>
+                                </Box>
+                            </Card>
+                        </Box> */}
+                        <Box marginTop="10px">
+                            <Box flex="2" marginRight="10px">
+                                <Card style={{ maxHeight: '400px', overflow: 'auto' }}>
+                                    <Box display="flex" flexDirection="column" minHeight="100%" width="100%">
+                                        <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
+                                            <Box ml="auto">
+                                                <Button variant="contained" startIcon={<AddIcon />} onClick={showModalTransaksi}>
+                                                    Add transaction
+                                                </Button>
+                                            </Box>
+                                        </SoftBox>
+
+                                        <Box>
+                                            <Table
+                                                columns={[
+                                                    { name: 'number', align: 'center' },
+                                                    { name: 'id-transaction', align: 'center' },
+                                                    { name: 'name', align: 'center' },
+                                                    { name: 'price', align: 'center' },
+                                                ]}
+                                                rows={transactionHistory.map((item, index) => ({
+                                                    number: index + 1,
+                                                    "id-transaction": (<Typography style={{ fontSize: '14px' }}>IDT-{item.transaction_id}</Typography>),
+                                                    name: item.transaction_name,
+                                                    price: item.price,
+                                                }))}
+                                            />
+                                            {isLoading && <Typography style={{ paddingLeft: '20px' }}>Loading...</Typography>}
+                                        </Box>
+                                    </Box>
+                                </Card>
+                            </Box>
+                        </Box>
+                    </Box>
+                    <Box flex="1" borderLeft="0px solid #ccc" paddingLeft="5px">
+                        <Card style={{ maxHeight: '400px', overflow: 'auto' }}>
+                            <Box display="flex" flexDirection="column" minHeight="100%" width="100%">
+                                <Typography variant="h6" fontWeight="bold" ml={2} mt={2}>
+                                    About
+                                </Typography>
+                                <div style={{ borderBottom: '1px solid #ccc', width: '100%', marginTop: '5px', marginBottom: '-10px' }}></div>
+                                <Typography ml={2} mt={2}
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    style={{ fontSize: '14px', marginRight: '5px' }}
+                                >
+                                    1. Add transaction
+                                </Typography>
+                                <Typography ml={2}
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    style={{ fontSize: '14px', marginRight: '5px' }}
+                                >
+                                    2. Enter the name and transaction price
+                                </Typography>
+                                <Typography ml={2}
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    style={{ fontSize: '14px', marginRight: '5px' }}
+                                >
+                                    3. Select member you want to split/select all
+                                </Typography>
+                                <Typography ml={2}
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    style={{ fontSize: '14px', marginRight: '5px' }}
+                                >
+                                    4. Transactions will be entered into the transaction table and the split results will be according to the price and number of members selected
+                                </Typography>
+
+                            </Box>
+                            <SoftBox pb={2} />
+                        </Card>
+                        <SoftBox pb={2} />
+                        <Card style={{ maxHeight: '400px', overflow: 'auto' }}>
+                            <Box display="flex" flexDirection="column" minHeight="100%" width="100%">
+                                <Typography variant="h6" fontWeight="bold" ml={2} mt={2}>
+                                    Note
+                                </Typography>
+                                <Typography ml={2} mt={1}
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    style={{ fontSize: '14px', marginRight: '5px' }}
+                                >
+                                    At this event, each member can make additional transactions
+                                </Typography>
+                            </Box>
+                            <div style={{ borderBottom: '1px solid #ccc', width: '100%', marginTop: '5px', marginBottom: '-10px' }}></div>
                             <Box display="flex" flexDirection="column" minHeight="100%" width="100%">
                                 <Typography variant="h6" fontWeight="bold" ml={2} mt={2}>
                                     Event members <InfoIcon style={{ marginRight: 8 }} />
@@ -394,8 +496,87 @@ function DetailEventMyCircle() {
                                 </Box>
                             </Box>
                         </Card>
-                    </Grid>
-                    <Grid item xs={12} md={12}>
+                    </Box>
+                </Box>
+                {/* <Box display="flex" flex="1" style={{ marginTop: '5px' }}>
+        <Box flex="2" marginRight="10px">
+            <Card style={{ maxHeight: '400px', overflow: 'auto' }}>
+                <Box display="flex" flexDirection="column" minHeight="100%" width="100%">
+                    <Typography variant="h6" fontWeight="bold" ml={2} mt={2}>
+                        Transaction <PaymentIcon style={{ marginRight: 8 }} />
+                    </Typography>
+                    <Box display="flex" alignItems="flex-start" flexDirection="column" justifyContent="center">
+                        <Box display="flex" flexDirection="column" alignItems="flex-start" justifyContent="center" ml={10} mb={4} mt={2}>
+                            {isLoading && <Typography style={{ paddingLeft: '20px' }}>Loading...</Typography>}
+                            {details && details.data && details.data.users ? (
+                                <div>
+                                    {details.data.users.map((user, index) => (
+                                        <Box display="flex" key={index} width="100%">
+                                            <Typography variant="h6" color="text" fontWeight="medium" style={{ flex: 1 }}>
+                                                {user.username}:
+                                            </Typography>
+                                            <Typography variant="h6" color="text" fontWeight="medium" style={{ flex: 1, textAlign: 'right', paddingLeft: '50px' }}>
+                                                {user.total_price_split}
+                                            </Typography>
+                                        </Box>
+                                    ))}
+                                    {details.data.total_transaksi !== undefined && details.data.total_transaksi !== null ? (
+                                        <Box display="flex" mt={1} width="100%">
+                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                <Typography variant="h6" fontWeight="bold" style={{ flex: 5, paddingRight: '50px' }}>
+                                                    Total Transaction:
+                                                </Typography>
+                                                <Typography variant="h6" fontWeight="bold" style={{ flex: 1, textAlign: 'right' }}>
+                                                    {details.data.total_transaksi}
+                                                </Typography>
+                                            </div>
+                                        </Box>
+                                    ) : (
+                                        <Typography variant="h6" color="text" fontWeight="medium">
+                                            Not found
+                                        </Typography>
+                                    )}
+                                </div>
+                            ) : (
+                                <Typography variant="h6" color="text" fontWeight="medium">
+                                    Not found
+                                </Typography>
+                            )}
+                        </Box>
+                    </Box>
+                </Box>
+                <Box display="flex" justifyContent="flex-end" alignItems="flex-end" mr={3} mb={3}>
+                    <Button variant="contained" color="primary" onClick={showModalTransaksi}>
+                        Add Transaction
+                    </Button>
+                </Box>
+            </Card>
+        </Box>
+        <Box flex="2" marginRight="10px">
+            <Card style={{ maxHeight: '400px', overflow: 'auto' }}>
+                <Box>
+                    <Table
+                        columns={[
+                            { name: 'number', align: 'center' },
+                            { name: 'id-transaction', align: 'center' },
+                            { name: 'name', align: 'center' },
+                            { name: 'price', align: 'center' },
+                        ]}
+                        rows={transactionHistory.map((item, index) => ({
+                            number: index + 1,
+                            "id-transaction": (<Typography style={{ fontSize: '14px' }}>T-{item.transaction_id}</Typography>),
+                            name: item.transaction_name,
+                            price: item.price,
+                        }))}
+                    />
+                    {isLoading && <Typography style={{ paddingLeft: '20px' }}>Loading...</Typography>}
+                </Box>
+            </Card>
+        </Box>
+    </Box> */}
+            </Box>
+
+            {/* <Grid item xs={12} md={8}>
                         <Card>
                             <Box display="flex" flexDirection="column" minHeight="100%" width="100%">
                                 <Typography variant="h6" fontWeight="bold" ml={2} mt={2}>
@@ -421,9 +602,7 @@ function DetailEventMyCircle() {
                                 </Box>
                             </Box>
                         </Card>
-                    </Grid>
-                </Grid>
-            </Box>
+                    </Grid> */}
             <div className='body-flex'>
                 <div className="overlay" />
                 <div className="flex">
@@ -487,6 +666,15 @@ function DetailEventMyCircle() {
                                         }
                                     </Form.Group>
                                     <Form.Group className='mb-2' controlId="members">
+                                        {/* Check All Checkbox */}
+                                        <Form.Check
+                                            type="checkbox"
+                                            label="choose all"
+                                            checked={isAllChecked}
+                                            onChange={handleCheckAll}
+                                            style={{ fontSize: '16px', marginBottom: '10px' }}
+                                        />
+
                                         {/* Member Checkboxes */}
                                         {Array.isArray(filteredMembers) && filteredMembers.length > 0 ? (
                                             filteredMembers.map(member => (

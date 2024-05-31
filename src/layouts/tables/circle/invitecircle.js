@@ -10,7 +10,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import TextField from '@mui/material/TextField';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Modal, Form } from "react-bootstrap";
+import { Modal, Button as BootstrapButton, Form, InputGroup } from 'react-bootstrap';
 import "bootstrap/dist/css/bootstrap.min.css";
 import invite from "assets/images/invite.png";
 import Table from "examples/Tables/Table";
@@ -18,6 +18,7 @@ import SoftAvatar from "components/SoftAvatar";
 import cat from "assets/images/avatar-animal/cat.png";
 import SuiBadgeDot from "components/SoftBadge";
 import SuiBox from "components/SoftBox";
+import SearchIcon from '@material-ui/icons/Search';
 
 function InviteCircle() {
   const { id_circle, circle_name } = useParams();
@@ -247,18 +248,22 @@ function InviteCircle() {
         </Card>
       </Box>
       <div className='body-flex'>
-        <div className="overlay" />
-        <div className="flex">
-          <div className="col-15 p-5">
-            <Modal show={showInviteModal} onHide={closeModalInvite} style={{ maxWidth: '1500px', width: '100%' }}>
-              <div className="overlay-icons" />
-              <Modal.Header closeButton>
-                <Modal.Title>Invite Circle</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <Form>
-                  <Form.Group className='mb-5' controlId='exampleForm.ControlInput1'>
-                  <Form.Control
+      <div className="overlay" />
+      <div className="flex">
+        <div className="col-15 p-5">
+          <Modal show={showInviteModal} onHide={closeModalInvite} style={{ maxWidth: '1500px', width: '100%' }}>
+            <div className="overlay-icons" />
+            <Modal.Header closeButton>
+              <Modal.Title>Invite Circle</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Form.Group className='mb-5' controlId='exampleForm.ControlInput1'>
+                  <InputGroup>
+                    <InputGroup.Text>
+                      <SearchIcon />
+                    </InputGroup.Text>
+                    <Form.Control
                       type="text"
                       placeholder='Enter Username'
                       name='searchKeyword'
@@ -268,38 +273,39 @@ function InviteCircle() {
                       }}
                       value={searchKeyword}
                     />
-                    {usernameError && (
-                      <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
-                        {usernameError}
-                      </div>
-                    )}
-                    {Array.isArray(recommendedUsers) && recommendedUsers.map(user => (
-                      <div
-                        key={user.id}
-                        className="user"
-                        onClick={() => handleClickUser(user)}
-                        style={{ cursor: 'pointer', padding: '5px 0', borderBottom: '1px solid #ddd' }}
-                      >
-                        <SoftTypography variant="h6" color="text" style={{ marginRight: '20px' }}>
-                          {user.username}
-                        </SoftTypography>
-                      </div>
-                    ))}
-                  </Form.Group>
-                  <Button variant="contained" type='submit' onClick={handleSubmitInvite}>
-                    Invite
-                  </Button>
-                </Form>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={closeModalInvite}>
-                  Cancel
-                </Button>
-              </Modal.Footer>
-            </Modal>
-          </div>
+                  </InputGroup>
+                  {usernameError && (
+                    <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
+                      {usernameError}
+                    </div>
+                  )}
+                  {Array.isArray(recommendedUsers) && recommendedUsers.map(user => (
+                    <div
+                      key={user.id}
+                      className="user"
+                      onClick={() => handleClickUser(user)}
+                      style={{ cursor: 'pointer', padding: '5px 0', borderBottom: '1px solid #ddd' }}
+                    >
+                      <SoftTypography variant="h6" color="text" style={{ marginRight: '20px' }}>
+                        {user.username}
+                      </SoftTypography>
+                    </div>
+                  ))}
+                </Form.Group>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <BootstrapButton variant="primary" className="px-4" onClick={handleSubmitInvite}>
+                Invite
+              </BootstrapButton>
+              <BootstrapButton type='submit' variant="danger" onClick={closeModalInvite}>
+                Cancel
+              </BootstrapButton>
+            </Modal.Footer>
+          </Modal>
         </div>
       </div>
+    </div>
     </DashboardLayout>
   )
 

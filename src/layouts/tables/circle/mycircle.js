@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Card from "@mui/material/Card";
-import Button from "@mui/material/Button";
+import { Button, TextField } from '@mui/material';
 import AddIcon from "@mui/icons-material/Add";
 import { IconButton } from '@mui/material';
-import { Modal, Form } from "react-bootstrap";
+import { Modal, Button as BootstrapButton, Form } from 'react-bootstrap';
 import "bootstrap/dist/css/bootstrap.min.css";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
@@ -15,6 +15,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
 import Tooltip from "@mui/material/Tooltip";
+import SoftInput from "components/SoftInput";
 import {
     CButton,
     CCard,
@@ -55,6 +56,8 @@ function MyCircle() {
     const [showInviteModal, setShowInviteModal] = useState(false);
     const [username, setUsername] = useState("");
     const [usernameError, setUsernameError] = useState(null);
+    const [original_circle_name, setOriginal_circle_name] = useState("");
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         fetchData();
@@ -72,14 +75,12 @@ function MyCircle() {
             const response = await axios.get('http://152.42.188.210:8080/index.php/api/auth/get_circle', { headers });
             console.log("Response dari server:", response.data);
             response.data.data.forEach(circle => {
-                console.log(circle.creator_username);
+                console.log("Circle:", circle);
             });
             setCircles(response.data.data);
         } catch (error) {
             if (error.response && error.response.data && error.response.data.message) {
                 setError(error.response.data.message);
-                // } else {
-                //   setError("Failed to fetch data. Please try again.");
             }
         } finally {
             setLoading(false);
@@ -110,19 +111,16 @@ function MyCircle() {
             setcircle_nameError(error);
             return;
         }
-        const isCircleExist = circles.some(circle => circle.circle_name === circle_name);
-        if (isCircleExist) {
-            setcircle_nameError('Circle name already exists');
-            return;
-        }
-
+        
         const token = localStorage.getItem('jwtToken');
         const headers = { 'Authorization': `Bearer ${token}` };
         try {
             const response = await axios.post('http://152.42.188.210:8080/index.php/api/auth/create_circle', {
                 circle_name: circle_name,
             }, { headers });
+    
             console.log(response);
+    
             closeModalAdd();
             console.log(circles.creator_username);
             console.log(circles.id_circle);
@@ -138,7 +136,11 @@ function MyCircle() {
                 console.error("Server error response:", error.response.data);
                 console.error("Status code:", error.response.status);
                 console.error("Headers:", error.response.headers);
-                setError("Server error: " + error.response.data.message);
+                if (error.response.status === 400) {
+                    toast.error('circle names are not permitted');
+                } else {
+                    setError("Server error: " + error.response.data.message);
+                }
             } else if (error.request) {
                 // The request was made but no response was received
                 console.error("No response received:", error.request);
@@ -146,11 +148,11 @@ function MyCircle() {
             } else {
                 // Something happened in setting up the request that triggered an Error
                 console.error("Request setup error:", error.message);
-                setError("Request setup error: " + error.message);
             }
         }
     };
-
+    
+    
     const showModalAdd = () => {
         setcircle_name("");
         setShowAddModal(true);
@@ -163,6 +165,7 @@ function MyCircle() {
 
     const showModalUpdate = (data) => {
         setcircle_name(data.circle_name);
+        setOriginal_circle_name(data.circle_name);
         setId_Circle(data.id_circle);
         setShowUpdateModal(true);
     };
@@ -175,6 +178,7 @@ function MyCircle() {
     };
 
     const showModalDelete = (data) => {
+        setOriginal_circle_name(data.circle_name);
         setcircle_name(data.circle_name);
         setId_Circle(data.id_circle);
         setShowDeleteModal(true);
@@ -196,6 +200,8 @@ function MyCircle() {
                 error = 'Circle name is required';
             } else if (circle_name.length < 3) {
                 error = 'Circle name must be at least 3 characters long';
+            } else if (circle_name === original_circle_name) {
+                error = 'No changes detected';
             }
         }
         if (error) {
@@ -268,66 +274,72 @@ function MyCircle() {
             </Tooltip>
         ));
 
-        const handleChangeUsername = (e) => {
-            const { name, value } = e.target;
-            switch (name) {
-              case 'username':
+    const handleChangeUsername = (e) => {
+        const { name, value } = e.target;
+        switch (name) {
+            case 'username':
                 setUsername(value);
                 setUsernameError(value.trim() === '' ? '*Username is required' : '');
                 break;
-              default:
+            default:
                 break;
-            }
-          };
+        }
+    };
 
-          const showModalInvite = (circle) => {
-            setId_Circle(circle.id_circle); // Perbarui nilai id_circle saat tombol undangan diklik
-            setUsername(""); // Reset nilai username
-            setShowInviteModal(true);
-        };
-        
-        const handleSubmitInvite = async (e) => {
-            e.preventDefault();
-            let error = '';
-        
-            if (username === "") {
-                error = 'Username is required';
+    const showModalInvite = (circle) => {
+        setId_Circle(circle.id_circle); // Perbarui nilai id_circle saat tombol undangan diklik
+        setUsername(""); // Reset nilai username
+        setShowInviteModal(true);
+    };
+
+    const handleSubmitInvite = async (e) => {
+        e.preventDefault();
+        let error = '';
+
+        if (username === "") {
+            error = 'Username is required';
+        }
+
+        setUsernameError(error);
+        if (error) {
+            setError(error);
+            return;
+        }
+        const token = localStorage.getItem('jwtToken');
+        const headers = { 'Authorization': `Bearer ${token}` };
+        console.log("id circle :", circles.id_circle)
+        try {
+            const response = await axios.post(`http://152.42.188.210:8080/api/auth/circles/${id_circle}/invite`, {
+                username: username,
+            }, { headers });
+            console.log(`Inviting username ${username} to circle ${id_circle}`);
+            if (response.status === 200) {
+                setUsername('');
+                setError('');
+                closeModalInvite();
+                toast.success('Invite successfully, waiting approve');
+                console.log('Invite successfully, waiting approve');
+            } else {
+                throw new Error('Failed to invite user to circle');
             }
-        
-            setUsernameError(error);
-            if (error) {
-                setError(error);
-                return;
-            }
-            const token = localStorage.getItem('jwtToken');
-            const headers = { 'Authorization': `Bearer ${token}` };
-            console.log("id circle :", circles.id_circle)
-            try {
-                const response = await axios.post(`http://152.42.188.210:8080/api/auth/circles/${id_circle}/invite`, {
-                    username: username,
-                }, { headers });
-                console.log(`Inviting username ${username} to circle ${id_circle}`);
-                if (response.status === 200) {
-                    setUsername('');
-                    setError('');
-                    closeModalInvite();
-                    toast.success('Invite successfully, waiting approve');
-                    console.log('Invite successfully, waiting approve');
-                } else {
-                    throw new Error('Failed to invite user to circle');
-                }
-            } catch (error) {
-                console.error("Error submitting form:", error);
-                setError('Failed to invite. Make sure the username entered is correct');
-                toast.error("Failed to invite");
-            }
-        };
-        
-        
-          const closeModalInvite = () => {
-            setUsername("");
-            setShowInviteModal(false);
-          };
+        } catch (error) {
+            console.error("Error submitting form:", error);
+            setError('Failed to invite. Make sure the username entered is correct');
+            toast.error("Failed to invite");
+        }
+    };
+
+
+    const closeModalInvite = () => {
+        setUsername("");
+        setShowInviteModal(false);
+    };
+
+    const handleSearchChange = (circle) => {
+        const { value } = circle.target;
+        setSearchTerm(value);
+        onSearch(value);
+    };
 
     return (
         <DashboardLayout>
@@ -337,9 +349,12 @@ function MyCircle() {
                 <Card>
                     <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
                         <div>
-                            <SoftTypography variant="h6" fontWeight="bold">
-                                My Circle
-                            </SoftTypography>
+                        <SoftInput
+                    placeholder="Type here..."
+                    icon={{ component: "search", direction: "left" }}
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                />
                         </div>
                         <Button variant="contained" startIcon={<AddIcon />} onClick={showModalAdd}>
                             Create Circle
@@ -364,37 +379,36 @@ function MyCircle() {
                                     columns={[
                                         { name: "image", align: "center" },
                                         { name: "circle", align: "center" },
-                                        { name: "members", align: "center" },
+                                        { name: "forum", align: "center" },
                                         { name: "invite", align: "center" },
                                         { name: "creator", align: "center" },
                                         { name: "action", align: "center" },
                                     ]}
                                     rows={circles.map(circle => ({
                                         image: <SoftAvatar src={team1} />,
-                                        circle: <Link to={`/EventMyCircle/${circle.id_circle}/${circle.circle_name}`}>
+                                        circle: ( <Tooltip title= "view event">
+                                         <Link to={`/EventMyCircle/${circle.id_circle}/${circle.circle_name}`}>
                                             {circle.circle_name}
-                                        </Link>,
-                                        members: (
-                                            <SoftBox display="flex" py={1}>
-                                                {avatars([
-                                                    [jaguar, "member"],
-                                                    [meerkar, "member"],
-                                                    [pandabear, "member"],
-
-                                                ])}
-                                            </SoftBox>
+                                        </Link>
+                                        </Tooltip>),
+                                        forum: (
+                                            <Tooltip title="Go forum">
+                                            <Link to={`/Forum/${circle.id_circle}/${circle.circle_name}`}>
+                                            Forum
+                                        </Link>
+                                        </Tooltip>
                                         ),
                                         invite: (
                                             <Tooltip title="Add User">
                                                 <Link to={`/InviteCircle/${circle.id_circle}/${circle.circle_name}`}>
-                                                    <SuiBadgeDot size="small" badgeContent="Add User" />
+                                                   Add user
                                                 </Link>
                                             </Tooltip>
                                         ),
-
-                                        creator: (<Link to={`/Event/${circle.id_circle}/${circle.circle_name}`}>
-                                            {circle.creator_username}
-                                        </Link>
+                                        creator: (
+                                            <Link to={`/Event/${circle.id_circle}/${circle.circle_name}`}>
+                                                 <SuiBadgeDot size="small" badgeContent={circle.creator_username ? circle.creator_username : "Unknown Creator"}/> 
+                                            </Link>
                                         ),
                                         action: (
                                             <>
@@ -418,10 +432,8 @@ function MyCircle() {
                                                 >
                                                     Delete
                                                 </SoftTypography>
-
                                             </>
                                         ),
-
                                     }))}
                                 />
                                 {loading && <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>}
@@ -430,132 +442,120 @@ function MyCircle() {
                         </SoftBox>
                     </SoftBox>
                 </Card>
-
-                <div className='body-flex'>
-        <div className="overlay" />
-        <div className="flex">
-          <div className="col-15 p-5">
-            <Modal show={showInviteModal} onHide={closeModalInvite} style={{ maxWidth: '1500px', width: '100%' }}>
-              <div className="overlay-icons" />
-              <Modal.Header closeButton>
-                <Modal.Title>Invite Circle</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <Form>
-                  <Form.Group className='mb-5' controlId='exampleForm.ControlInput1'>
-                    <Form.Control
-                      type="text"
-                      placeholder='Enter Username'
-                      name='username'
-                      autoFocus
-                      onChange={handleChangeUsername}
-                      value={username}
-                    />
-                    {usernameError && (
-                      <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
-                        {usernameError}
-                      </div>
-                    )}
-                  </Form.Group>
-                  <Button variant="contained" type='submit' onClick={handleSubmitInvite}>
-                    Invite
-                  </Button>
-                </Form>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={closeModalInvite}>
-                  Cancel
-                </Button>
-              </Modal.Footer>
-            </Modal>
-          </div>
-        </div>
-      </div>
                 <div className='body-flex'>
                     <div className="overlay" />
                     <div className="flex">
                         <div className="col-15 p-5">
-                            <Modal show={showAddModal} onHide={closeModalAdd} style={{ maxWidth: '1500px', width: '100%' }}>
+                            <Modal show={showInviteModal} onHide={closeModalInvite} style={{ maxWidth: '1500px', width: '100%' }}>
                                 <div className="overlay-icons" />
                                 <Modal.Header closeButton>
-                                    <Modal.Title>Create Circle</Modal.Title>
+                                    <Modal.Title>Invite Circle</Modal.Title>
                                 </Modal.Header>
                                 <Modal.Body>
                                     <Form>
                                         <Form.Group className='mb-5' controlId='exampleForm.ControlInput1'>
                                             <Form.Control
                                                 type="text"
-                                                placeholder='Enter Circle Name'
-                                                name='circle_name'
+                                                placeholder='Enter Username'
+                                                name='username'
                                                 autoFocus
-                                                onChange={handleChange}
-                                                value={circle_name}
+                                                onChange={handleChangeUsername}
+                                                value={username}
                                             />
-                                            {circle_nameError && (
+                                            {usernameError && (
                                                 <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
-                                                    {circle_nameError}
+                                                    {usernameError}
                                                 </div>
                                             )}
                                         </Form.Group>
-                                        <Button variant="contained" type='submit' onClick={handleFormSubmit}>
-                                            Save
+                                        <Button variant="contained" type='submit' onClick={handleSubmitInvite}>
+                                            Invite
                                         </Button>
                                     </Form>
                                 </Modal.Body>
                                 <Modal.Footer>
-                                    <Button variant="secondary" onClick={closeModalAdd}>
-                                        Close
+                                    <Button variant="secondary" onClick={closeModalInvite}>
+                                        Cancel
                                     </Button>
                                 </Modal.Footer>
                             </Modal>
                         </div>
                     </div>
                 </div>
-                <div className='body-flex'>
-                    <div className="overlay" />
-                    <div className="flex">
-                        <div className="col-15 p-5">
-                            <Modal show={showUpdateModal} onHide={closeModalUpdate} style={{ maxWidth: '1500px', width: '100%' }}>
-                                <div className="overlay-icons" />
-                                <Modal.Header closeButton>
-                                    <Modal.Title>Update Circle</Modal.Title>
-                                </Modal.Header>
-                                <Modal.Body>
-                                    <Form onSubmit={updatedCircles}>
-                                        <Form.Group className='mb-5' controlId='exampleForm.ControlInput1'>
-                                            <Form.Control
-                                                type="text"
-                                                autoFocus
-                                                onChange={(e) => setcircle_name(e.target.value)}
-                                                value={circle_name}
-                                            />
-                                            {circle_nameError && (
-                                                <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
-                                                    {circle_nameError}
-                                                </div>
-                                            )}
-                                        </Form.Group>
-                                        <Button variant="contained" type='submit' onClick={updatedCircles}>
-                                            Save
-                                        </Button>
-                                    </Form>
-                                </Modal.Body>
-                                <Modal.Footer>
-                                    <Button variant="secondary" onClick={closeModalUpdate}>
-                                        Close
-                                    </Button>
-                                </Modal.Footer>
-                            </Modal>
-                        </div>
-                    </div>
+                <div>
+                    <Modal show={showAddModal} onHide={closeModalAdd} centered>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Create circle</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Form>
+                                <Form.Group className="mb-3" controlId="nameWithTitle">
+                                    <Form.Label>circle name</Form.Label>
+                                    <Form.Control type="text" placeholder="Enter circle name" name='circle_name'
+                                        autoFocus
+                                        onChange={handleChange}
+                                        value={circle_name}
+                                    />
+                                    {circle_nameError && (
+                                        <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
+                                            {circle_nameError}
+                                        </div>
+                                    )}
+                                </Form.Group>
+                            </Form>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="secondary" onClick={closeModalAdd}>
+                                Close
+                            </Button>
+                            <Button variant="contained" onClick={handleFormSubmit}>
+                                Save
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
                 </div>
-                <Modal show={showDeleteModal} onHide={closeModalDelete} style={{ maxWidth: '1500px', width: '100%' }}>
+                <div>
+                    <Modal show={showUpdateModal} onHide={closeModalUpdate} centered>
+                        <Modal.Header closeButton>
+                            <Modal.Title>update circle</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Form>
+                                <Form.Group className="mb-3" controlId="nameWithTitle">
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Enter circle name"
+                                        name='circle_name'
+                                        autoFocus
+                                        onChange={(e) => setcircle_name(e.target.value)}
+                                        value={circle_name}
+                                    />
+                                    {circle_nameError && (
+                                        <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
+                                            {circle_nameError}
+                                        </div>
+                                    )}
+                                </Form.Group>
+                            </Form>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <BootstrapButton type='submit' variant="danger" onClick={closeModalUpdate}>
+                                Close
+                            </BootstrapButton>
+                            <BootstrapButton variant="primary" className="px-4" onClick={updatedCircles}>
+                                Save changes
+                            </BootstrapButton>
+                        </Modal.Footer>
+                    </Modal>
+                </div>
+
+                <Modal show={showDeleteModal} onHide={closeModalDelete} centered>
                     <Modal.Header closeButton>
-                        <Modal.Title>
-                            Are you sure you deleted this data?
-                        </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+                        <div className="alert alert-warning" role="alert">
+                            Warning! The circle data will be permanently deleted.
+                        </div>
                         <div className="col-sm-12">
                             <div className="card">
                                 <div className="card-body">
@@ -572,10 +572,10 @@ function MyCircle() {
                         </div>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button type='submit' color="primary" className="px-4" onClick={DeleteDataCircle}>
+                        <BootstrapButton type='submit' variant="danger" onClick={DeleteDataCircle}>
                             Delete
-                        </Button>
-                        <Button variant="danger" onClick={closeModalDelete}>Cancel</Button>
+                        </BootstrapButton>
+                        <BootstrapButton variant="primary" className="px-4" onClick={closeModalDelete}>Cancel</BootstrapButton>
                     </Modal.Footer>
                 </Modal>
             </SoftBox>

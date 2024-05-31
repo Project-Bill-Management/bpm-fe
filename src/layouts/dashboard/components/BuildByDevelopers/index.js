@@ -27,6 +27,8 @@ import wavesWhite from "assets/images/shapes/waves-white.svg";
 import rocketWhite from "assets/images/illustrations/rocket-white.png";
 
 function BuildByDevelopers() {
+  const username = localStorage.getItem('username');
+
   return (
     <Card>
       <SoftBox p={2}>
@@ -34,11 +36,11 @@ function BuildByDevelopers() {
           <Grid item xs={12} lg={6}>
             <SoftBox display="flex" flexDirection="column" height="100%">
               <SoftBox pt={1} mb={0.5}>
-                <SoftTypography variant="body2" color="text" fontWeight="medium">
-                  Build by developers
+                <SoftTypography variant="h5" fontWeight="bold" gutterBottom>
+                  Hello, {username}!
                 </SoftTypography>
               </SoftBox>
-              <SoftTypography variant="h5" fontWeight="bold" gutterBottom>
+              <SoftTypography variant="body2" color="text" fontWeight="medium">
                 Bill Management
               </SoftTypography>
               <SoftBox mb={6}>
