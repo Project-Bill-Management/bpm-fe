@@ -27,6 +27,7 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import Icon from "@mui/material/Icon";
+import Badge from '@mui/material/Badge';
 
 // Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
@@ -67,6 +68,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator } = controller;
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
+  const [notificationCount, setNotificationCount] = useState(0);
   useEffect(() => {
     // Setting the navbar type
     if (fixedNavbar) {
@@ -101,35 +103,16 @@ function DashboardNavbar({ absolute, light, isMini }) {
   // Render the notifications menu
   const renderMenu = () => (
     <Menu
-      anchorEl={openMenu}
-      anchorReference={null}
-      anchorOrigin={{
-        vertical: "bottom",
-        horizontal: "left",
-      }}
-      open={Boolean(openMenu)}
-      onClose={handleCloseMenu}
-      sx={{ mt: 2 }}
-    >
-
-      {/* <NotificationItem
-        image={<img src={notification} alt="person" />}
-        title={["Notification", "Not found"]}
-        // date="1 day"
-        onClick={handleCloseMenu}
-      /> */}
+    anchorEl={openMenu}
+    anchorReference={null}
+    anchorOrigin={{
+      vertical: "bottom",
+      horizontal: "left",
+    }}
+    open={Boolean(openMenu)}
+    onClose={handleCloseMenu}
+  >
       <ItemNotif/>
-      {/* <NotificationItem
-        color="secondary"
-        image={
-          <Icon fontSize="small" sx={{ color: ({ palette: { white } }) => white.main }}>
-            payment
-          </Icon>
-        }
-        title={["", "Payment successfully completed"]}
-        date="2 days"
-        onClick={handleCloseMenu}
-      /> */}
     </Menu>
   );
 
@@ -146,10 +129,6 @@ function DashboardNavbar({ absolute, light, isMini }) {
         {isMini ? null : (
           <SoftBox sx={(theme) => navbarRow(theme, { isMini })}>
             <SoftBox pr={1}>
-              {/* <SoftInput
-                placeholder="Type here..."
-                icon={{ component: "search", direction: "left" }}
-              /> */}
             </SoftBox>
             <SoftBox color={light ? "white" : "inherit"}>
               {/* <Link to="/authentication/sign-in">
@@ -189,16 +168,16 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 <Icon>settings</Icon>
               </IconButton>
               <IconButton
-                size="small"
-                color="inherit"
-                sx={navbarIconButton}
-                aria-controls="notification-menu"
-                aria-haspopup="true"
-                variant="contained"
-                onClick={handleOpenMenu}
-              >
-                <Icon className={light ? "text-white" : "text-dark"}>notifications</Icon>
-              </IconButton>
+          size="small"
+          color="inherit"
+          aria-controls="notification-menu"
+          aria-haspopup="true"
+          onClick={handleOpenMenu}
+        >
+                 <Badge badgeContent={notificationCount} color="error">
+            <Icon>notifications</Icon>
+          </Badge>
+          </IconButton>
               {renderMenu()}
             </SoftBox>
           </SoftBox>

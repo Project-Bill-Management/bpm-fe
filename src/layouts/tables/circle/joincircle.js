@@ -179,7 +179,7 @@ function JoinCircle() {
                                     }))}
                                 />
                                 {loading && <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>}
-                                {error && <SoftTypography style={{ paddingLeft: '20px' }}>{error} </SoftTypography>}
+                                {error && <SoftTypography style={{ paddingLeft: '20px' }}>Not Found </SoftTypography>}
                             </>
                         </SoftBox>
                     </SoftBox>
