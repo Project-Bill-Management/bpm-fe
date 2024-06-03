@@ -144,37 +144,32 @@ function JoinCircle() {
                                     columns={[
                                         { name: "image", align: "center" },
                                         { name: "circle", align: "center" },
-                                        { name: "member", align:"center"},
-                                        { name: "list", align: "center" },
+                                        { name: "forum", align:"center"},
+                                        { name: "member", align: "center" },
                                         { name: "creator", align: "center" },
                                     ]}
                                     rows={circles.map(circle => ({
                                         image: <SoftAvatar src={team2} />,
-                                        circle: <Link to={`/EventJoin/${circle.id_circle}/${circle.circle_name}`}>
+                                        circle:  ( <Tooltip title= "view event"> 
+                                        <Link to={`/EventJoin/${circle.id_circle}/${circle.circle_name}`}>
                                         {circle.circle_name}
-                                    </Link>,
-                                        status: (
-                                            <SuiBox ml={-1.325}>
-                                                <SuiBadgeDot size="small" badgeContent="circle active" />
-                                            </SuiBox>
+                                    </Link>
+                                    </Tooltip>),
+                                        forum: (
+                                            <Tooltip title="Go forum">
+                                            <Link to={`/Forum/${circle.id_circle}/${circle.circle_name}`}>
+                                            Forum
+                                        </Link>
+                                        </Tooltip>
                                         ),
                                         member: (
-                                            <SoftBox display="flex" py={1}>
-                                                {avatars([
-                                                    [cat, "member"],
-                                                    [deer, "member"],
-                                                    [jaguar, "member"],
-                                                ])}
-                                            </SoftBox>
-                                        ),
-                                        list: (
-                                            <Tooltip title="">
+                                            <Tooltip title="view member">
                                                 <Link to={`/MemberCircle/${circle.id_circle}/${circle.circle_name}`}>
-                                                    <SuiBadgeDot size="small" badgeContent="List member" />
+                                                   Member
                                                 </Link>
                                             </Tooltip>
                                         ),
-                                        creator: circle.creator_username,
+                                        creator:  <SuiBadgeDot size="small" badgeContent={circle.creator_username ? circle.creator_username : "Unknown Creator"}/> 
                                         
                                     }))}
                                 />

@@ -406,9 +406,7 @@ function MyCircle() {
                                             </Tooltip>
                                         ),
                                         creator: (
-                                            <Link to={`/Event/${circle.id_circle}/${circle.circle_name}`}>
                                                  <SuiBadgeDot size="small" badgeContent={circle.creator_username ? circle.creator_username : "Unknown Creator"}/> 
-                                            </Link>
                                         ),
                                         action: (
                                             <>

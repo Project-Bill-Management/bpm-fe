@@ -164,6 +164,7 @@ const routes = [
     component: <SignUp />,
     noCollapse: true,
   },
+  
 ];
 
 export default routes;

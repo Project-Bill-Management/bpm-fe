@@ -244,6 +244,10 @@ function DetailEventMyCircle() {
             }, { headers });
             console.log(response);
             console.log("id:", id_circle);
+            setTransactions(prevTransactions => [...prevTransactions, response.data.data]);
+            fetchData();
+            GetTransaction();
+            GetHistoryTransaction();
             closeModalTransaksi();
             setTransactions([...transactions, response.data.data]);
             toast.success('Transaction created successfully');
@@ -412,7 +416,7 @@ function DetailEventMyCircle() {
                                                 }))}
                                             />
                                             {isLoading && <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>}
-                                {error && <SoftTypography style={{ paddingLeft: '20px',fontSize: '14px'  }}>Not Found </SoftTypography>}
+                               
                                         </Box>
                                     </Box>
                                 </Card>
