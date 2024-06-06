@@ -100,6 +100,9 @@ function EventJoin() {
             }
         }
     };
+    const truncateEventName = (nama_event) => {
+        return nama_event.length > 6 ? nama_event.substring(0, 6) + '...' : nama_event;
+    }
 
     return (
         <DashboardLayout>
@@ -129,7 +132,7 @@ function EventJoin() {
                                         <SoftBox display="flex" justifyContent="space-between" pt={3} px={3}>
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                                 <SoftTypography variant="h5" fontWeight="bold" style={{ marginLeft: '15px', marginRight: '20px' }}>
-                                                    Event {item.nama_event}
+                                                    Event {truncateEventName(item.nama_event)}
                                                 </SoftTypography>
                                                 <img src={time} alt="time" style={{ marginLeft: '20px', marginRight: '15px', width: '100px', height: '100px' }} />
                                             </div>
