@@ -41,6 +41,7 @@ import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
 import Cube from "examples/Icons/Cube";
+import CreditCard from "examples/Icons/CreditCard";
 // Soft UI Dashboard React icons
 import Shop from "examples/Icons/Shop";
 import Office from "examples/Icons/Office";
@@ -58,6 +59,8 @@ import DetailEventMyCircle from "layouts/tables/event/DetailEventMyCircle";
 import EventJoin from "layouts/tables/event/EventJoin";
 import FaQ from "layouts/tables/faq/faq";
 import Notification from "layouts/tables/notificationn/notif";
+import Bill from "layouts/tables/bill/bill";
+import Chat from "layouts/tables/forum/forum";
 
 const routes = [
   {
@@ -129,6 +132,24 @@ const routes = [
     route: "/Notification",
     icon: <Cube size="12px" />,
     component: <Notification />,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "Bill",
+    key: "Bill",
+    route: "/Bill",
+    icon: <CreditCard size="12px" />,
+    component: <Bill />,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "Chat",
+    key: "Chat",
+    route: "/Chat",
+    icon: <Cube size="12px" />,
+    component: <Chat />,
     noCollapse: true,
   },
   { type: "title", title: "Account Pages", key: "account-pages" },

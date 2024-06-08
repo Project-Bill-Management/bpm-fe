@@ -7,10 +7,9 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import axios from 'axios';
 import AddIcon from "@mui/icons-material/Add";
 import "bootstrap/dist/css/bootstrap.min.css";
-import TextField from '@mui/material/TextField';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Modal, Button as BootstrapButton, Form, InputGroup } from 'react-bootstrap';
+import { Button as BootstrapButton } from 'react-bootstrap';
 import "bootstrap/dist/css/bootstrap.min.css";
 import invite from "assets/images/invite.png";
 import Table from "examples/Tables/Table";
@@ -18,7 +17,20 @@ import SoftAvatar from "components/SoftAvatar";
 import cat from "assets/images/avatar-animal/cat.png";
 import SuiBadgeDot from "components/SoftBadge";
 import SuiBox from "components/SoftBox";
-import SearchIcon from '@material-ui/icons/Search';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  FormControl,
+  List,
+  ListItem,
+  ListItemText,
+  CircularProgress,
+  ListItemAvatar,
+  Avatar
+} from '@mui/material';
 
 function InviteCircle() {
   const { id_circle, circle_name } = useParams();
@@ -30,9 +42,10 @@ function InviteCircle() {
   const [circles, setCircles] = useState([]);
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleChangeUsername = (e) => {
+  const handleChangeUsername = async (e) => {
     const { name, value } = e.target;
     switch (name) {
       case 'username':
@@ -42,11 +55,36 @@ function InviteCircle() {
       default:
         break;
     }
+
+    if (name === 'username' && value.trim() !== '') {
+      setSearchLoading(true);
+      const token = localStorage.getItem('jwtToken');
+      const headers = { 'Authorization': `Bearer ${token}` };
+
+      try {
+        const response = await axios.post(`http://152.42.188.210:8080/api/auth/search_user/${id_circle}`, { keyword: value }, { headers });
+        if (response.status === 200) {
+          const filteredUsers = response.data.data.filter(user => user.username.toLowerCase().startsWith(value.toLowerCase()));
+          setRecommendedUsers(filteredUsers);
+        } else {
+          throw new Error('Failed to fetch search results');
+        }
+      } catch (error) {
+        console.error("Error searching users:", error);
+        toast.error("Failed to fetch search results");
+      } finally {
+        setSearchLoading(false);
+      }
+    } else {
+      setRecommendedUsers([]);
+    }
   };
+
   const showModalInvite = () => {
     setUsername("");
     setShowInviteModal(true);
   };
+
   const handleSubmitInvite = async (e) => {
     e.preventDefault();
     let error = '';
@@ -118,32 +156,6 @@ function InviteCircle() {
 
   useEffect(() => {
     fetchData();
-  }, []);
-
-  const handleSearch = async () => {
-    try {
-      const token = localStorage.getItem('jwtToken');
-      const headers = { 'Authorization': `Bearer ${token}` };
-
-      if (searchKeyword.trim() !== "") {
-        const response = await axios.post(`http://152.42.188.210:8080/api/auth/search_user/${id_circle}`, { keyword: searchKeyword }, { headers });
-        if (response.status === 200) {
-          const filteredUsers = response.data.data.filter(user => user.username.toLowerCase().startsWith(searchKeyword.toLowerCase()));
-          setRecommendedUsers(filteredUsers);
-        } else {
-          throw new Error('Failed to fetch search results');
-        }
-      } else {
-        setRecommendedUsers([]);
-      }
-    } catch (error) {
-      console.error("Error searching users:", error);
-      toast.error("Failed to fetch search results");
-    }
-  };
-
-  useEffect(() => {
-    handleSearch();
   }, []);
 
   const handleClickUser = (user) => {
@@ -247,68 +259,43 @@ function InviteCircle() {
           </SoftBox>
         </Card>
       </Box>
-      <div className='body-flex'>
-      <div className="overlay" />
-      <div className="flex">
-        <div className="col-15 p-5">
-          <Modal show={showInviteModal} onHide={closeModalInvite} style={{ maxWidth: '1500px', width: '100%' }}>
-            <div className="overlay-icons" />
-            <Modal.Header closeButton>
-              <Modal.Title>Invite Circle</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Form>
-                <Form.Group className='mb-5' controlId='exampleForm.ControlInput1'>
-                  <InputGroup>
-                    <InputGroup.Text>
-                      <SearchIcon />
-                    </InputGroup.Text>
-                    <Form.Control
-                      type="text"
-                      placeholder='Enter Username'
-                      name='searchKeyword'
-                      onChange={(e) => {
-                        setSearchKeyword(e.target.value);
-                        handleSearch();
-                      }}
-                      value={searchKeyword}
-                    />
-                  </InputGroup>
-                  {usernameError && (
-                    <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
-                      {usernameError}
-                    </div>
-                  )}
-                  {Array.isArray(recommendedUsers) && recommendedUsers.map(user => (
-                    <div
-                      key={user.id}
-                      className="user"
-                      onClick={() => handleClickUser(user)}
-                      style={{ cursor: 'pointer', padding: '5px 0', borderBottom: '1px solid #ddd' }}
-                    >
-                      <SoftTypography variant="h6" color="text" style={{ marginRight: '20px' }}>
-                        {user.username}
-                      </SoftTypography>
-                    </div>
-                  ))}
-                </Form.Group>
-              </Form>
-            </Modal.Body>
-            <Modal.Footer>
-              <BootstrapButton variant="primary" className="px-4" onClick={handleSubmitInvite}>
+      <Dialog open={showInviteModal} onClose={closeModalInvite} maxWidth="md" fullWidth>
+                    <DialogTitle>Invite Circle</DialogTitle>
+                    <DialogContent>
+                        <FormControl fullWidth margin="normal">
+                            <TextField
+                                type="text"
+                                placeholder="Enter Username"
+                                name="username"
+                                autoFocus
+                                onChange={handleChangeUsername}
+                                value={username}
+                                error={Boolean(usernameError)}
+                                helperText={usernameError}
+                            />
+                        </FormControl>
+                        {searchLoading && <CircularProgress />}
+                        <List>
+                          {recommendedUsers.map((user) => (
+                            <ListItem button key={user.id} onClick={() => handleClickUser(user)}>
+                              <ListItemAvatar>
+                                <Avatar>{user.username.charAt(0).toUpperCase()}</Avatar>
+                              </ListItemAvatar>
+                              <ListItemText primary={user.username} />
+                            </ListItem>
+                          ))}
+                        </List>
+                    </DialogContent>
+                    <DialogActions>
+                    <BootstrapButton variant="primary" className="px-4" onClick={handleSubmitInvite}>
                 Invite
               </BootstrapButton>
               <BootstrapButton type='submit' variant="danger" onClick={closeModalInvite}>
                 Cancel
               </BootstrapButton>
-            </Modal.Footer>
-          </Modal>
-        </div>
-      </div>
-    </div>
+                    </DialogActions>
+                </Dialog>
     </DashboardLayout>
   )
-
-
 }
 export default InviteCircle;

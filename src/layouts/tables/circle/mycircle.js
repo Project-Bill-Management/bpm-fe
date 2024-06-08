@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Card from "@mui/material/Card";
-import { Button, TextField } from '@mui/material';
 import AddIcon from "@mui/icons-material/Add";
 import { IconButton } from '@mui/material';
 import { Modal, Button as BootstrapButton, Form } from 'react-bootstrap';
@@ -16,18 +14,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
 import Tooltip from "@mui/material/Tooltip";
 import SoftInput from "components/SoftInput";
-import {
-    CButton,
-    CCard,
-    CCardBody,
-    CCardHeader,
-    CTable,
-    CTableBody,
-    CTableDataCell,
-    CTableHead,
-    CTableHeaderCell,
-    CTableRow,
-} from "@coreui/react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import SuiBadgeDot from "components/SoftBadge";
@@ -35,12 +21,18 @@ import SuiBox from "components/SoftBox";
 import Table from "examples/Tables/Table";
 import SoftAvatar from "components/SoftAvatar";
 import team1 from "assets/images/team1.jpg";
-import cat from "assets/images/avatar-animal/cat.png";
-import deer from "assets/images/avatar-animal/deer.png";
-import jaguar from "assets/images/avatar-animal/jaguar.png";
-import meerkar from "assets/images/avatar-animal/meerkat.png";
-import pandabear from "assets/images/avatar-animal/pandabear.png"
-import turtle from "assets/images/avatar-animal/turtle.png";
+import {
+    Box,
+    Card,
+    Typography,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button,
+    TextField,
+    FormControl
+} from '@mui/material';
 import { useParams } from 'react-router-dom';
 
 function MyCircle() {
@@ -440,142 +432,83 @@ function MyCircle() {
                         </SoftBox>
                     </SoftBox>
                 </Card>
-                <div className='body-flex'>
-                    <div className="overlay" />
-                    <div className="flex">
-                        <div className="col-15 p-5">
-                            <Modal show={showInviteModal} onHide={closeModalInvite} style={{ maxWidth: '1500px', width: '100%' }}>
-                                <div className="overlay-icons" />
-                                <Modal.Header closeButton>
-                                    <Modal.Title>Invite Circle</Modal.Title>
-                                </Modal.Header>
-                                <Modal.Body>
-                                    <Form>
-                                        <Form.Group className='mb-5' controlId='exampleForm.ControlInput1'>
-                                            <Form.Control
-                                                type="text"
-                                                placeholder='Enter Username'
-                                                name='username'
-                                                autoFocus
-                                                onChange={handleChangeUsername}
-                                                value={username}
-                                            />
-                                            {usernameError && (
-                                                <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
-                                                    {usernameError}
-                                                </div>
-                                            )}
-                                        </Form.Group>
-                                        <Button variant="contained" type='submit' onClick={handleSubmitInvite}>
-                                            Invite
-                                        </Button>
-                                    </Form>
-                                </Modal.Body>
-                                <Modal.Footer>
-                                    <Button variant="secondary" onClick={closeModalInvite}>
-                                        Cancel
-                                    </Button>
-                                </Modal.Footer>
-                            </Modal>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <Modal show={showAddModal} onHide={closeModalAdd} centered>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Create circle</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <Form>
-                                <Form.Group className="mb-3" controlId="nameWithTitle">
-                                    <Form.Label>circle name</Form.Label>
-                                    <Form.Control type="text" placeholder="Enter circle name" name='circle_name'
-                                        autoFocus
-                                        onChange={handleChange}
-                                        value={circle_name}
-                                    />
-                                    {circle_nameError && (
-                                        <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
-                                            {circle_nameError}
-                                        </div>
-                                    )}
-                                </Form.Group>
-                            </Form>
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button variant="secondary" onClick={closeModalAdd}>
-                                Close
-                            </Button>
-                            <Button variant="contained" onClick={handleFormSubmit}>
-                                Save
-                            </Button>
-                        </Modal.Footer>
-                    </Modal>
-                </div>
-                <div>
-                    <Modal show={showUpdateModal} onHide={closeModalUpdate} centered>
-                        <Modal.Header closeButton>
-                            <Modal.Title>update circle</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <Form>
-                                <Form.Group className="mb-3" controlId="nameWithTitle">
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Enter circle name"
-                                        name='circle_name'
-                                        autoFocus
-                                        onChange={(e) => setcircle_name(e.target.value)}
-                                        value={circle_name}
-                                    />
-                                    {circle_nameError && (
-                                        <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
-                                            {circle_nameError}
-                                        </div>
-                                    )}
-                                </Form.Group>
-                            </Form>
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <BootstrapButton type='submit' variant="danger" onClick={closeModalUpdate}>
+                {/* Create Circle Dialog */}
+                <Dialog open={showAddModal} onClose={closeModalAdd} centered maxWidth="md" fullWidth>
+                    <DialogTitle>Create Circle</DialogTitle>
+                    <DialogContent>
+                        <FormControl fullWidth margin="normal">
+                            <TextField
+                                type="text"
+                                placeholder="Enter circle name"
+                                name="circle_name"
+                                autoFocus
+                                onChange={handleChange}
+                                value={circle_name}
+                                error={Boolean(circle_nameError)}
+                                helperText={circle_nameError}
+                            />
+                        </FormControl>
+                    </DialogContent>
+                    <DialogActions>
+                    <BootstrapButton type='submit' variant="danger" onClick={closeModalAdd}>
+                            Cancel
+                        </BootstrapButton>
+                        <BootstrapButton variant="primary" className="px-4" onClick={handleFormSubmit}>Save</BootstrapButton>
+                    </DialogActions>
+                </Dialog>
+
+                {/* Update Circle Dialog */}
+                <Dialog open={showUpdateModal} onClose={closeModalUpdate} centered maxWidth="md" fullWidth>
+                    <DialogTitle>Update Circle</DialogTitle>
+                    <DialogContent>
+                        <FormControl fullWidth margin="normal">
+                            <TextField
+                                type="text"
+                                placeholder="Enter circle name"
+                                name="circle_name"
+                                autoFocus
+                                onChange={(e) => setcircle_name(e.target.value)}
+                                value={circle_name}
+                                error={Boolean(circle_nameError)}
+                                helperText={circle_nameError}
+                            />
+                        </FormControl>
+                    </DialogContent>
+                    <DialogActions>
+                    <BootstrapButton type='submit' variant="danger" onClick={closeModalUpdate}>
                                 Close
                             </BootstrapButton>
                             <BootstrapButton variant="primary" className="px-4" onClick={updatedCircles}>
                                 Save changes
                             </BootstrapButton>
-                        </Modal.Footer>
-                    </Modal>
-                </div>
+                    </DialogActions>
+                </Dialog>
 
-                <Modal show={showDeleteModal} onHide={closeModalDelete} centered>
-                    <Modal.Header closeButton>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <div className="alert alert-warning" role="alert">
+                {/* Delete Circle Dialog */}
+                <Dialog open={showDeleteModal} onClose={closeModalDelete} centered maxWidth="md" fullWidth>
+                    <DialogTitle>Delete Data</DialogTitle>
+                    <DialogContent>
+                        <Box className="alert alert-warning" role="alert">
                             Warning! The circle data will be permanently deleted.
-                        </div>
-                        <div className="col-sm-12">
-                            <div className="card">
-                                <div className="card-body">
-                                    <div className="row">
-                                        <p className="col-4 card-text">
-                                            Circle Name
-                                        </p>
-                                        <p className="col-6 card-text">
-                                            : {circle_name}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <BootstrapButton type='submit' variant="danger" onClick={DeleteDataCircle}>
+                        </Box>
+                        <Box className="col-sm-12">
+                            <Box className="card">
+                                <Box className="card-body">
+                                    <Box className="row">
+                                        <Typography className="col-4 card-text">Circle Name</Typography>
+                                        <Typography className="col-6 card-text">: {circle_name}</Typography>
+                                    </Box>
+                                </Box>
+                            </Box>
+                        </Box>
+                    </DialogContent>
+                    <DialogActions>
+                    <BootstrapButton type='submit' variant="danger" onClick={DeleteDataCircle}>
                             Delete
                         </BootstrapButton>
                         <BootstrapButton variant="primary" className="px-4" onClick={closeModalDelete}>Cancel</BootstrapButton>
-                    </Modal.Footer>
-                </Modal>
+                    </DialogActions>
+                </Dialog>
             </SoftBox>
         </DashboardLayout>
     )
