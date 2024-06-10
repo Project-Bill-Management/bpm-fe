@@ -10,6 +10,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function Notification() {
     const [notifications, setNotifications] = useState([]);
+    const [unreadCount, setUnreadCount] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const { userId } = useParams();

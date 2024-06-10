@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, CircularProgress  } from '@mui/material';
+import { Card, CircularProgress } from '@mui/material';
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import { Modal, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Modal, Button as BootstrapButton, Form } from 'react-bootstrap';
 import axios from 'axios';
-import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
-import TextField from '@mui/material/TextField';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { ToastContainer, toast } from 'react-toastify';
@@ -18,6 +16,15 @@ import Icon from '@mui/material/Icon';
 import time from "assets/images/time.png";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Grid } from '@mui/material';
+import {
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button,
+    TextField,
+    FormControl
+} from '@mui/material';
 
 function EventMyCircle() {
     const [isLoading, setIsLoading] = useState(true);
@@ -193,174 +200,172 @@ function EventMyCircle() {
     }
 
     return (
-<DashboardLayout>
-      <ToastContainer />
-      <Card>
-        <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
-          <div>
-            <SoftTypography variant="h6" fontWeight="bold">
-              Circle {circle_name}
-            </SoftTypography>
-          </div>
-          <Button variant="contained" startIcon={<AddIcon />} onClick={showModalEvent}>
-            Create Event
-          </Button>
-        </SoftBox>
-        <SoftBox pb={3} />
-      </Card>
-      <SoftBox pb={2} />
-      {isLoading ? (
-        <Grid display="flex" justifyContent="center" alignItems="center" height="100px">
-           {isLoading && <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>}
-        </Grid>
-      ) : (
-        <Grid container spacing={2}>
-          {events && events.length > 0 ? (
-            events.map((item) => (
-              <Grid item xs={12} sm={6} md={4} key={item.id_event}>
-                <Card style={{ marginBottom: '20px' }}>
-                  <SoftBox display="flex" justifyContent="space-between" pt={3} px={3}>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <SoftTypography variant="h5" fontWeight="bold" style={{ marginLeft: '15px', marginRight: '20px' }}>
-                        Event {truncateEventName(item.nama_event)}
-                      </SoftTypography>
-                      <img src={time} alt="time" style={{ marginLeft: '20px', marginRight: '15px', width: '100px', height: '100px' }} />
+        <DashboardLayout>
+            <ToastContainer />
+            <Card>
+                <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
+                    <div>
+                        <SoftTypography variant="h6" fontWeight="bold">
+                            Circle {circle_name}
+                        </SoftTypography>
                     </div>
-                  </SoftBox>
-                  <SoftBox pb={2} />
-                  <div style={{ borderBottom: '1px solid #ccc', width: '100%' }}></div>
-                  <SoftBox pb={1} />
-                  <SoftBox px={3} pb={3}>
-                    <Link to={`/DetailEventMyCircle/${id_circle}/${item.id_event}`}>
-                      <SoftTypography
-                        component="span"
-                        variant="button"
-                        color="text"
-                        fontWeight="medium"
-                        sx={{
-                          mt: "auto",
-                          mr: "auto",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          cursor: "pointer",
-                          "& .material-icons-round": {
-                            fontSize: "1.125rem",
-                            transform: `translate(2px, -0.5px)`,
-                            transition: "transform 0.2s cubic-bezier(0.34,1.61,0.7,1.3)",
-                          },
-                          "&:hover .material-icons-round, &:focus  .material-icons-round": {
-                            transform: `translate(6px, -0.5px)`,
-                          },
-                        }}
-                      >
-                        View Detail
-                        <ArrowForwardIcon sx={{ fontWeight: "bold" }} />
-                      </SoftTypography>
-                    </Link>
-                  </SoftBox>
-                </Card>
-              </Grid>
-            ))
-          ): (
-            <Grid item xs={12}>
-                <SoftBox display="flex" justifyContent="center" alignItems="center" height="100px">
-                    <SoftTypography variant="h6" color="text" fontWeight="medium">
-                        No events found
-                    </SoftTypography>
+                    <Button variant="contained" startIcon={<AddIcon />} onClick={showModalEvent}>
+                        Create Event
+                    </Button>
                 </SoftBox>
-            </Grid>
-        )}
-    </Grid>
-)}
+                <SoftBox pb={3} />
+            </Card>
+            <SoftBox pb={2} />
+            {isLoading ? (
+                <Grid display="flex" justifyContent="center" alignItems="center" height="100px">
+                    {isLoading && <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>}
+                </Grid>
+            ) : (
+                <Grid container spacing={2}>
+                    {events && events.length > 0 ? (
+                        events.map((item) => (
+                            <Grid item xs={12} sm={6} md={4} key={item.id_event}>
+                                <Card style={{ marginBottom: '20px' }}>
+                                    <SoftBox display="flex" justifyContent="space-between" pt={3} px={3}>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <SoftTypography variant="h5" fontWeight="bold" style={{ marginLeft: '15px', marginRight: '20px' }}>
+                                                Event {truncateEventName(item.nama_event)}
+                                            </SoftTypography>
+                                            <img src={time} alt="time" style={{ marginLeft: '20px', marginRight: '15px', width: '100px', height: '100px' }} />
+                                        </div>
+                                    </SoftBox>
+                                    <SoftBox pb={2} />
+                                    <div style={{ borderBottom: '1px solid #ccc', width: '100%' }}></div>
+                                    <SoftBox pb={1} />
+                                    <SoftBox px={3} pb={3}>
+                                        <Link to={`/DetailEventMyCircle/${id_circle}/${item.id_event}`}>
+                                            <SoftTypography
+                                                component="span"
+                                                variant="button"
+                                                color="text"
+                                                fontWeight="medium"
+                                                sx={{
+                                                    mt: "auto",
+                                                    mr: "auto",
+                                                    display: "inline-flex",
+                                                    alignItems: "center",
+                                                    cursor: "pointer",
+                                                    "& .material-icons-round": {
+                                                        fontSize: "1.125rem",
+                                                        transform: `translate(2px, -0.5px)`,
+                                                        transition: "transform 0.2s cubic-bezier(0.34,1.61,0.7,1.3)",
+                                                    },
+                                                    "&:hover .material-icons-round, &:focus  .material-icons-round": {
+                                                        transform: `translate(6px, -0.5px)`,
+                                                    },
+                                                }}
+                                            >
+                                                View Detail
+                                                <ArrowForwardIcon sx={{ fontWeight: "bold" }} />
+                                            </SoftTypography>
+                                        </Link>
+                                    </SoftBox>
+                                </Card>
+                            </Grid>
+                        ))
+                    ) : (
+                        <Grid item xs={12}>
+                            <SoftBox display="flex" justifyContent="center" alignItems="center" height="100px">
+                                <SoftTypography variant="h6" color="text" fontWeight="medium">
+                                    No events found
+                                </SoftTypography>
+                            </SoftBox>
+                        </Grid>
+                    )}
+                </Grid>
+            )}
             <SoftBox pb={3} />
             <div className='body-flex'>
-                <div className="overlay" />
-                <div className="flex">
-                    <div className="col-15 p-5">
-                        <Modal show={showEventModal} onHide={closeModalEvent}>
-                            <Modal.Header closeButton>
-                                <Modal.Title>Create Event</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <Form>
-                                    <Form.Group className='mb-4' controlId="formEventName">
-                                        <Form.Control
-                                            type="text"
-                                            placeholder='Enter event name'
-                                            rows={1}
-                                            name='nama_event'
-                                            value={nama_event}
-                                            onChange={handleChange}
-                                        />
-                                        {nama_eventError && (
+            <div className="overlay" />
+            <div className="flex">
+                <div className="col-15 p-5">
+                    <Dialog open={showEventModal} onClose={closeModalEvent}>
+                        <DialogTitle>Create Event</DialogTitle>
+                        <DialogContent>
+                            <Form>
+                                <Form.Group className='mb-4' controlId="formEventName">
+                                    <Form.Control
+                                        type="text"
+                                        placeholder='Enter event name'
+                                        rows={1}
+                                        name='nama_event'
+                                        value={nama_event}
+                                        onChange={handleChange}
+                                    />
+                                       {nama_eventError && (
                                             <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
                                                 {nama_eventError}
                                             </div>
                                         )}
-                                    </Form.Group>
-                                    <Form.Group className='mb-4' controlId="formEventDescription">
-                                        <Form.Control
-                                            as="textarea"
-                                            placeholder='Enter Description Event'
-                                            rows={3}
-                                            name="deskripsi"
-                                            value={deskripsi}
-                                            onChange={handleChange}
-                                        />
-                                        {deskripsiError && (
+                                </Form.Group>
+                                <Form.Group className='mb-4' controlId="formEventDescription">
+                                    <Form.Control
+                                        as="textarea"
+                                        placeholder='Enter Description Event'
+                                        rows={3}
+                                        name="deskripsi"
+                                        value={deskripsi}
+                                        onChange={handleChange}
+                                    />
+                                       {deskripsiError && (
                                             <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
                                                 {deskripsiError}
                                             </div>
                                         )}
-                                    </Form.Group>
-                                    <Form.Group className='mb-2' controlId="formStartEvent" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                                        <div>
-                                            <TextField
-                                                label="Start Event"
-                                                type="datetime-local"
-                                                value={start_event}
-                                                onChange={handleStartDateChange}
-                                                InputLabelProps={{
-                                                    shrink: true,
-                                                }}
-                                            />
-                                            {start_eventErr && (
+                                </Form.Group>
+                                <Form.Group className='mb-2' controlId="formStartEvent" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                    <div>
+                                        <TextField
+                                            label="Start Event"
+                                            type="datetime-local"
+                                            value={start_event}
+                                            onChange={handleStartDateChange}
+                                            InputLabelProps={{
+                                                shrink: true,
+                                            }}
+                                        />
+                                           {start_eventErr && (
                                                 <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
                                                     {start_eventErr}
                                                 </div>
                                             )}
-                                        </div>
-                                        <div>
-                                            <TextField
-                                                label="End Event"
-                                                type="datetime-local"
-                                                value={end_event}
-                                                onChange={handleEndDataChange}
-                                                InputLabelProps={{
-                                                    shrink: true,
-                                                }}
-                                            />
-                                            {end_eventError && (
+                                    </div>
+                                    <div>
+                                        <TextField
+                                            label="End Event"
+                                            type="datetime-local"
+                                            value={end_event}
+                                            onChange={handleEndDataChange}
+                                            InputLabelProps={{
+                                                shrink: true,
+                                            }}
+                                        />
+                                           {end_eventError && (
                                                 <div className="errorMsg" style={{ fontSize: 'smaller', color: 'red' }}>
                                                     {end_eventError}
                                                 </div>
                                             )}
-                                        </div>
-                                    </Form.Group>
-                                </Form>
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button variant="secondary" onClick={closeModalEvent}>
-                                    Close
-                                </Button>
-                                <Button variant="contained" type='submit' onClick={handleFormSubmit}>
-                                    Save
-                                </Button>
-                            </Modal.Footer>
-                        </Modal>
-                    </div>
+                                    </div>
+                                </Form.Group>
+                            </Form>
+                        </DialogContent>
+                        <DialogActions>
+                            <BootstrapButton type='submit' variant="danger" onClick={closeModalEvent}>
+                                Close
+                            </BootstrapButton>
+                            <BootstrapButton  variant="primary" className="px-4" onClick={handleFormSubmit}>
+                                Save
+                            </BootstrapButton>
+                        </DialogActions>
+                    </Dialog>
                 </div>
             </div>
+        </div>
         </DashboardLayout>
     );
 }

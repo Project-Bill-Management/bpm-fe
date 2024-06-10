@@ -50,6 +50,7 @@ function MyCircle() {
     const [usernameError, setUsernameError] = useState(null);
     const [original_circle_name, setOriginal_circle_name] = useState("");
     const [searchTerm, setSearchTerm] = useState('');
+    const [filteredCircles, setFilteredCircles] = useState([]);
 
     useEffect(() => {
         fetchData();
@@ -70,6 +71,7 @@ function MyCircle() {
                 console.log("Circle:", circle);
             });
             setCircles(response.data.data);
+            setFilteredCircles(response.data.data);
         } catch (error) {
             if (error.response && error.response.data && error.response.data.message) {
                 setError(error.response.data.message);
@@ -78,6 +80,7 @@ function MyCircle() {
             setLoading(false);
         }
     };
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -327,33 +330,58 @@ function MyCircle() {
         setShowInviteModal(false);
     };
 
-    const handleSearchChange = (circle) => {
-        const { value } = circle.target;
-        setSearchTerm(value);
-        onSearch(value);
+    const handleSearchChange = async (event) => {
+        const searchTerm = event.target.value;
+        setSearchTerm(searchTerm);
+        setLoading(true);
+
+        try {
+            const token = localStorage.getItem('jwtToken');
+            const headers = { 'Authorization': `Bearer ${token}` };
+
+            if (searchTerm.trim() !== '') {
+                // Jika search term tidak kosong, lakukan pencarian berdasarkan keyword
+                const response = await axios.get(`http://152.42.188.210:8080/api/auth/search_circle`, {
+                    headers,
+                    params: { search_query: searchTerm }
+                });
+                setFilteredCircles(response.data.data);
+                setError('');
+            } else {
+                // Jika search term kosong, kembalikan ke data asli
+                setFilteredCircles(circles);
+                setError('');
+            }
+        } catch (error) {
+            console.error("Failed to search circles:", error);
+            setFilteredCircles([]);
+            // setError('Failed to search circles');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
         <DashboardLayout>
-            <DashboardNavbar />
-            <ToastContainer />
-            <SoftBox py={3}>
-                <Card>
-                    <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
-                        <div>
+        <DashboardNavbar />
+        <ToastContainer />
+        <SoftBox py={3}>
+            <Card>
+                <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
+                    <div>
                         <SoftInput
-                    placeholder="Type here..."
-                    icon={{ component: "search", direction: "left" }}
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                />
-                        </div>
-                        <Button variant="contained" startIcon={<AddIcon />} onClick={showModalAdd}>
-                            Create Circle
-                        </Button>
-                    </SoftBox>
-                    <SoftBox pb={3} />
-                    <SoftBox>
+                            placeholder="Type here..."
+                            icon={{ component: "search", direction: "left" }}
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                        />
+                    </div>
+                    <Button variant="contained" startIcon={<AddIcon />} onClick={showModalAdd}>
+                        Create Circle
+                    </Button>
+                </SoftBox>
+                <SoftBox pb={3} />
+                <SoftBox>
                         <SoftBox
                             sx={{
                                 "& .MuiTableRow-root:not(:last-child)": {
@@ -364,74 +392,81 @@ function MyCircle() {
                                 },
                             }}
                         >
-
                             <>
-
-                                <Table
-                                    columns={[
-                                        { name: "image", align: "center" },
-                                        { name: "circle", align: "center" },
-                                        { name: "forum", align: "center" },
-                                        { name: "invite", align: "center" },
-                                        { name: "creator", align: "center" },
-                                        { name: "action", align: "center" },
-                                    ]}
-                                    rows={circles.map(circle => ({
-                                        image: <SoftAvatar src={team1} />,
-                                        circle: ( <Tooltip title= "view event">
-                                         <Link to={`/EventMyCircle/${circle.id_circle}/${circle.circle_name}`}>
-                                            {circle.circle_name}
-                                        </Link>
-                                        </Tooltip>),
-                                        forum: (
-                                            <Tooltip title="Go forum">
-                                            <Link to={`/Forum/${circle.id_circle}/${circle.circle_name}`}>
-                                            Forum
-                                        </Link>
-                                        </Tooltip>
-                                        ),
-                                        invite: (
-                                            <Tooltip title="Add User">
-                                                <Link to={`/InviteCircle/${circle.id_circle}/${circle.circle_name}`}>
-                                                   Add user
-                                                </Link>
-                                            </Tooltip>
-                                        ),
-                                        creator: (
-                                                 <SuiBadgeDot size="small" badgeContent={circle.creator_username ? circle.creator_username : "Unknown Creator"}/> 
-                                        ),
-                                        action: (
-                                            <>
-                                                <SoftTypography
-                                                    component="a"
-                                                    variant="caption"
-                                                    color="secondary"
-                                                    fontWeight="medium"
-                                                    style={{ marginRight: '8px', cursor: 'pointer' }}
-                                                    onClick={() => showModalUpdate(circle)}
-                                                >
-                                                    Edit
-                                                </SoftTypography>
-                                                <SoftTypography
-                                                    component="a"
-                                                    variant="caption"
-                                                    color="secondary"
-                                                    fontWeight="medium"
-                                                    style={{ cursor: 'pointer' }}
-                                                    onClick={() => showModalDelete(circle)}
-                                                >
-                                                    Delete
-                                                </SoftTypography>
-                                            </>
-                                        ),
-                                    }))}
-                                />
-                                {loading && <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>}
-                                {error && <SoftTypography style={{ paddingLeft: '20px' }}>Not Found </SoftTypography>}
-                            </>
-                        </SoftBox>
+                                {loading ? (
+                                    <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>
+                                ) : (
+                                    filteredCircles.length > 0 ? (
+                                        <Table
+                                            columns={[
+                                                { name: "image", align: "center" },
+                                                { name: "circle", align: "center" },
+                                                { name: "forum", align: "center" },
+                                                { name: "invite", align: "center" },
+                                                { name: "creator", align: "center" },
+                                                { name: "action", align: "center" },
+                                            ]}
+                                            rows={filteredCircles.map(circle => ({
+                                                image: <SoftAvatar src={team1} />,
+                                                circle: (
+                                                    <Tooltip title="view event">
+                                                        <Link to={`/EventMyCircle/${circle.id_circle}/${circle.circle_name}`}>
+                                                            {circle.circle_name}
+                                                        </Link>
+                                                    </Tooltip>
+                                                ),
+                                                forum: (
+                                                    <Tooltip title="Go forum">
+                                                        <Link to={`/Forum/${circle.id_circle}/${circle.circle_name}`}>
+                                                            Forum
+                                                        </Link>
+                                                    </Tooltip>
+                                                ),
+                                                invite: (
+                                                    <Tooltip title="Add User">
+                                                        <Link to={`/InviteCircle/${circle.id_circle}/${circle.circle_name}`}>
+                                                            Add user
+                                                        </Link>
+                                                    </Tooltip>
+                                                ),
+                                                creator: (
+                                                    <SuiBadgeDot size="small" badgeContent={circle.creator_username ? circle.creator_username : "Unknown Creator"} />
+                                                ),
+                                                action: (
+                                                    <>
+                                                        <SoftTypography
+                                                            component="a"
+                                                            variant="caption"
+                                                            color="secondary"
+                                                            fontWeight="medium"
+                                                            style={{ marginRight: '8px', cursor: 'pointer' }}
+                                                            onClick={() => showModalUpdate(circle)}
+                                                        >
+                                                            Edit
+                                                        </SoftTypography>
+                                                        <SoftTypography
+                                                            component="a"
+                                                            variant="caption"
+                                                            color="secondary"
+                                                            fontWeight="medium"
+                                                            style={{ cursor: 'pointer' }}
+                                                            onClick={() => showModalDelete(circle)}
+                                                        >
+                                                            Delete
+                                                        </SoftTypography>
+                                                    </>
+                                                ),
+                                            }))}
+                                        />
+                                    ) : (
+                                        <SoftTypography style={{ paddingLeft: '20px' }}>Circle not found</SoftTypography>
+                                    )
+                                )}
+                                {error && <SoftTypography style={{ paddingLeft: '20px' }}>{error}</SoftTypography>}
+                        </>
                     </SoftBox>
-                </Card>
+                </SoftBox>
+            </Card>
                 {/* Create Circle Dialog */}
                 <Dialog open={showAddModal} onClose={closeModalAdd} centered maxWidth="md" fullWidth>
                     <DialogTitle>Create Circle</DialogTitle>

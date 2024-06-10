@@ -4,7 +4,8 @@ import { Card, Button, Box, Grid, Typography } from '@mui/material';
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import { Modal, Form, InputGroup, FormControl } from "react-bootstrap";
+import { Form, InputGroup } from "react-bootstrap";
+import { Button as BootstrapButton } from 'react-bootstrap';
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from 'axios';
 import AddIcon from "@mui/icons-material/Add";
@@ -23,6 +24,16 @@ import Table from "examples/Tables/Table";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
+import {
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    TextField,
+    FormControl
+} from '@mui/material';
+import UploadIcon from "@mui/icons-material/Upload";
+import { Tooltip } from '@mui/material';
 
 function DetailEventMyCircle() {
     const { id_circle, id_event } = useParams();
@@ -45,6 +56,8 @@ function DetailEventMyCircle() {
     const [searchTerm, setSearchTerm] = useState('');
     const [checkedMembers, setCheckedMembers] = useState([]);
     const [isAllChecked, setIsAllChecked] = useState(false);
+    const [showUploadModal, setShowUploadModal] = useState(false);
+    const [file, setFile] = useState(null);
 
     console.log("id_circle:", id_circle);
     console.log("id_event:", id_event);
@@ -212,6 +225,14 @@ function DetailEventMyCircle() {
         setShowTransaksiModal(false);
     };
 
+    const openModalUpload = () => {
+        setShowUploadModal(true);
+    };
+
+    const closeModalUpload = () => {
+        setShowUploadModal(false);
+    };
+
     const handleFormSubmit = async (e) => {
         e.preventDefault();
 
@@ -288,6 +309,11 @@ function DetailEventMyCircle() {
         fetchUserSplit();
     }, [id_event]);
 
+    const handleFileUpload = (event) => {
+        const uploadedFile = event.target.files[0];
+        setFile(uploadedFile);
+    };
+
 
     return (
         <DashboardLayout>
@@ -346,16 +372,21 @@ function DetailEventMyCircle() {
                                         <Box display="flex" flexDirection="column" ml={2} mt={2} mb={2} pr={2}>
                                             {isLoading && <Typography style={{ paddingLeft: '20px' }}>Loading...</Typography>}
                                             {details && details.data && details.data.users ? (
-                                                <div>
-                                                    {details.data.users.map((user, index) => (
-                                                        <Box display="flex" key={index} width="100%">
-                                                            <Typography variant="h6" color="text" fontWeight="medium" style={{ flex: 1, borderBottom: '1px solid #000', paddingBottom: '5px' }}>
-                                                                {user.username}:
-                                                            </Typography>
-                                                            <Typography variant="h6" color="text" fontWeight="medium" style={{ flex: 1, textAlign: 'right', borderBottom: '1px solid #000', paddingBottom: '5px', marginLeft: '10px' }}>
-                                                                {user.total_price_split}
-                                                            </Typography>
-                                                        </Box>
+                                                 <div>
+                                                 {details.data.users.map((user, index) => (
+                                                     <Box display="flex" key={index} width="100%">
+                                                         <Typography variant="h6" color="text" fontWeight="medium" style={{ flex: 1, borderBottom: '1px solid #000', paddingBottom: '5px' }}>
+                                                             {user.username}:
+                                                         </Typography>
+                                                         <Box display="flex" alignItems="center" justifyContent="flex-end" style={{ flex: 1, borderBottom: '1px solid #000', paddingBottom: '5px', marginLeft: '10px' }}>
+                                                <Typography variant="h6" color="text" fontWeight="medium" style={{ marginRight: '5px' }}>
+                                                    {user.total_price_split}
+                                                </Typography>
+                                                <Tooltip title="upload payment">
+                                                <UploadIcon onClick={openModalUpload} />
+                                                </Tooltip>
+                                            </Box>
+                                                     </Box>
                                                     ))}
                                                     {details.data.total_transaksi !== undefined && details.data.total_transaksi !== null ? (
                                                         <Box display="flex" mt={1} width="100%">
@@ -416,7 +447,7 @@ function DetailEventMyCircle() {
                                                 }))}
                                             />
                                             {isLoading && <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>}
-                               
+
                                         </Box>
                                     </Box>
                                 </Card>
@@ -503,115 +534,116 @@ function DetailEventMyCircle() {
                     </Box>
                 </Box>
             </Box>
-            <div className='body-flex'>
-                <div className="overlay" />
-                <div className="flex">
-                    <div className="col-15 p-5">
-                        <Modal show={showTransaksiModal} onHide={closeModalTransaksi} style={{ maxWidth: '1500px', width: '100%' }}>
-                            <div className="overlay-icons" />
-                            <Modal.Header closeButton>
-                                <Modal.Title>Transaction</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <Form>
-                                    <Form.Group className='mb-2' controlId="transaction_name">
-                                        {/* <Form.Label>Transaction Name</Form.Label> */}
+            <Dialog open={showTransaksiModal} onClose={closeModalTransaksi} fullWidth maxWidth="md">
+                <DialogTitle>Transaction</DialogTitle>
+                <DialogContent>
+                    <Form>
+                        <Form.Group className='mb-2' controlId="transaction_name">
+                            <Form.Control
+                                type="text"
+                                name="transaction_name"
+                                placeholder="Enter transaction name"
+                                value={transaction_name}
+                                onChange={handleChange}
+                                isInvalid={!!transaction_nameError}
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                {transaction_nameError}
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                        <Form.Group className='mb-2' controlId="price">
+                            <Form.Control
+                                type="text"
+                                name="price"
+                                value={price}
+                                placeholder="Enter price"
+                                onChange={handleChange}
+                                isInvalid={!!priceError}
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                {priceError}
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                        <InputGroup className="mb-3">
+                                        <InputGroup.Text id="search-addon">
+                                            <SearchIcon />
+                                        </InputGroup.Text>
                                         <Form.Control
                                             type="text"
-                                            name="transaction_name"
-                                            placeholder="Enter transaction name"
-                                            value={transaction_name}
-                                            onChange={handleChange}
-                                            isInvalid={!!transaction_nameError}
+                                            placeholder="Search Members"
+                                            value={searchTerm}
+                                            onChange={handleSearchChange}
                                         />
-                                        <Form.Control.Feedback type="invalid">
-                                            {transaction_nameError}
-                                        </Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group className='mb-2' controlId="price">
-                                        {/* <Form.Label>Price</Form.Label> */}
-                                        <Form.Control
-                                            type="text"
-                                            name="price"
-                                            value={price}
-                                            placeholder="Enter price"
-                                            onChange={handleChange}
-                                            isInvalid={!!priceError}
-                                        />
-                                        <Form.Control.Feedback type="invalid">
-                                            {priceError}
-                                        </Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group className='mb-2' controlId="search_member">
-                                        {/* Search Input */}
+                                    </InputGroup>
+                        <Form.Group className='mt-2'>
+                            {userSplit.length > 0 &&
+                                userSplit.map(user => (
+                                    <div key={user.user_id}>{user.username}: {user.split}</div>
+                                ))
+                            }
+                        </Form.Group>
+                        <Form.Group className='mb-2' controlId="members">
+                            <Form.Check
+                                type="checkbox"
+                                label="choose all"
+                                checked={isAllChecked}
+                                onChange={handleCheckAll}
+                                style={{ fontSize: '16px', marginBottom: '10px' }}
+                            />
+                            {Array.isArray(filteredMembers) && filteredMembers.length > 0 ? (
+                                filteredMembers.map(member => (
+                                    <Form.Check
+                                        key={member.user_id}
+                                        type="checkbox"
+                                        label={member.username}
+                                        value={member.user_id}
+                                        checked={checkedMembers[member.user_id]}
+                                        onChange={handleMemberSelect}
+                                        style={{ fontSize: '16px' }}
+                                    />
+                                ))
+                            ) : (
+                                <div>
+                                    <SoftTypography variant="h6" color="error">
+                                        No member available
+                                    </SoftTypography>
+                                </div>
+                            )}
+                        </Form.Group>
+                    </Form>
+                </DialogContent>
+                <DialogActions>
+                    <BootstrapButton type='submit' variant="danger" onClick={closeModalTransaksi}>
+                        Close
+                    </BootstrapButton>
+                    <BootstrapButton variant="primary" className="px-4" onClick={handleFormSubmit}>
+                        Save Changes
+                    </BootstrapButton>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={showUploadModal} onClose={closeModalUpload} fullWidth maxWidth="md">
+    <DialogTitle>upload payment</DialogTitle>
+    <DialogContent>
+    <Box className="alert alert-warning" role="alert">
+    The proof of upload will be validated, so make sure your payment is correct.
+                        </Box>
+        <Form>
+            <Form.Group className='mb-2' controlId="upload_file">
+                <Form.Control type="file" onChange={handleFileUpload} />
+            </Form.Group>
+        </Form>
+    </DialogContent>
+    <DialogActions>
+        <BootstrapButton type='submit' variant="danger" onClick={closeModalUpload}>
+            Close
+        </BootstrapButton>
+        <BootstrapButton variant="primary" className="px-4" onClick={handleFormSubmit}>
+            Save Changes
+        </BootstrapButton>
+    </DialogActions>
+</Dialog>
 
-                                        <InputGroup>
-                                            <InputGroup.Text>
-                                                <SearchIcon />
-                                            </InputGroup.Text>
-                                            <FormControl
-                                                type="text"
-                                                value={searchTerm}
-                                                onChange={handleSearchChange}
-                                                placeholder="Search by username"
-                                            />
-                                        </InputGroup>
-                                    </Form.Group>
-                                    <Form.Group className='mt-2'>
-                                        {/* Display User Split Data */}
-                                        {userSplit.length > 0 &&
-                                            userSplit.map(user => (
-                                                <div key={user.user_id}>{user.username}: {user.split}</div>
-                                            ))
-                                        }
-                                    </Form.Group>
-                                    <Form.Group className='mb-2' controlId="members">
-                                        {/* Check All Checkbox */}
-                                        <Form.Check
-                                            type="checkbox"
-                                            label="choose all"
-                                            checked={isAllChecked}
-                                            onChange={handleCheckAll}
-                                            style={{ fontSize: '16px', marginBottom: '10px' }}
-                                        />
 
-                                        {/* Member Checkboxes */}
-                                        {Array.isArray(filteredMembers) && filteredMembers.length > 0 ? (
-                                            filteredMembers.map(member => (
-                                                <Form.Check
-                                                    key={member.user_id}
-                                                    type="checkbox"
-                                                    label={member.username}
-                                                    value={member.user_id}
-                                                    checked={checkedMembers[member.user_id]} // Menggunakan status dari state checkedMembers
-                                                    onChange={handleMemberSelect}
-                                                    style={{ fontSize: '16px' }}
-                                                />
-                                            ))
-                                        ) : (
-                                            <div>
-                                                <SoftTypography variant="h6" color="error">
-                                                    No member available
-                                                </SoftTypography>
-                                            </div>
-                                        )}
-                                    </Form.Group>
-                                </Form>
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button variant="secondary" onClick={closeModalTransaksi}>
-                                    Close
-                                </Button>
-                                <Button variant="primary" onClick={handleFormSubmit}
-                                // disabled={!isFormValid} style={{ backgroundColor: isFormValid ? 'blue' : 'grey' }}
-                                >
-                                    Save Changes
-                                </Button>
-                            </Modal.Footer>
-                        </Modal>
-                    </div>
-                </div>
-            </div>
         </DashboardLayout >
     );
 }
