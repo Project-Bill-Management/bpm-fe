@@ -122,6 +122,7 @@ function MyCircle() {
             toast.success('Circle created successfully');
             const newCircle = { id_circle: response.data.id_circle, circle_name: circle_name };
             setCircles([...circles, newCircle]);
+            fetchData();
         } catch (error) {
             console.error("Error submitting form:", error);
             // Handle error here
@@ -417,7 +418,7 @@ function MyCircle() {
                                                 ),
                                                 forum: (
                                                     <Tooltip title="Go forum">
-                                                        <Link to={`/Forum/${circle.id_circle}/${circle.circle_name}`}>
+                                                        <Link to={`/Chat/${circle.id_circle}/${circle.circle_name}`}>
                                                             Forum
                                                         </Link>
                                                     </Tooltip>
@@ -518,7 +519,6 @@ function MyCircle() {
                             </BootstrapButton>
                     </DialogActions>
                 </Dialog>
-
                 {/* Delete Circle Dialog */}
                 <Dialog open={showDeleteModal} onClose={closeModalDelete} centered maxWidth="md" fullWidth>
                     <DialogTitle>Delete Data</DialogTitle>

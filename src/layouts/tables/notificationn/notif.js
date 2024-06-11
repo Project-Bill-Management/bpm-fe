@@ -10,10 +10,9 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function Notification() {
     const [notifications, setNotifications] = useState([]);
-    const [unreadCount, setUnreadCount] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const { userId } = useParams();
+    const { userId, circleId } = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -25,11 +24,9 @@ function Notification() {
                 if (!token) {
                     throw new Error("Token not found. Please login again.");
                 }
-
                 const response = await axios.get(`http://152.42.188.210:8080/api/auth/notifications/${userId}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-
                 if (response.status === 200) {
                     setNotifications(response.data.notifications);
                 } else {
@@ -42,39 +39,38 @@ function Notification() {
                 setLoading(false);
             }
         };
-
         fetchNotifications();
     }, [userId]);
 
-    const handleApprove = async (notificationId) => {
+    const handleApprove = async () => {
         try {
             const token = localStorage.getItem('jwtToken');
             if (!token) {
                 throw new Error("Token not found. Please login again.");
             }
 
-            await axios.post(`http://152.42.188.210:8080/api/auth/notifications/${notificationId}/approve`, {}, {
+            await axios.post(`http://152.42.188.210:8080/api/auth/invitation/accept/${circleId}`, {}, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            setNotifications(notifications.filter(notification => notification.id !== notificationId));
+            setNotifications(notifications.filter(notification => notification.id !== notification));
         } catch (error) {
             console.error("Error approving notification:", error);
             setError("Failed to approve notification. Please try again.");
         }
     };
 
-    const handleDecline = async (notificationId) => {
+    const handleDecline = async () => {
         try {
             const token = localStorage.getItem('jwtToken');
             if (!token) {
                 throw new Error("Token not found. Please login again.");
             }
 
-            await axios.post(`http://152.42.188.210:8080/api/auth/notifications/${notificationId}/decline`, {}, {
+            await axios.post(`http://152.42.188.210:8080/api/auth/decline-invitation/${circleId}`, {}, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
-            setNotifications(notifications.filter(notification => notification.id !== notificationId));
+            setNotifications(notifications.filter(notification => notification.id !== notification));
         } catch (error) {
             console.error("Error declining notification:", error);
             setError("Failed to decline notification. Please try again.");

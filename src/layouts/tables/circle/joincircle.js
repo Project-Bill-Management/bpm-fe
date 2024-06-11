@@ -186,13 +186,13 @@ function JoinCircle() {
                                         {circle.circle_name}
                                     </Link>
                                     </Tooltip>),
-                                        forum: (
-                                            <Tooltip title="Go forum">
-                                            <Link to={`/Forum/${circle.id_circle}/${circle.circle_name}`}>
-                                            Forum
-                                        </Link>
-                                        </Tooltip>
-                                        ),
+forum: (
+    <Tooltip title="Go forum">
+        <Link to={`/Chat/${circle.id_circle}/${circle.circle_name}`}>
+            Forum
+        </Link>
+    </Tooltip>
+),
                                         member: (
                                             <Tooltip title="view member">
                                                 <Link to={`/MemberCircle/${circle.id_circle}/${circle.circle_name}`}>

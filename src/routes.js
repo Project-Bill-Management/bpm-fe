@@ -147,7 +147,7 @@ const routes = [
     type: "collapse",
     name: "Chat",
     key: "Chat",
-    route: "/Chat",
+    route: "/Chat/:circleId/:circle_name",
     icon: <Cube size="12px" />,
     component: <Chat />,
     noCollapse: true,

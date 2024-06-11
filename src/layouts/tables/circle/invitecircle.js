@@ -31,6 +31,9 @@ import {
   ListItemAvatar,
   Avatar
 } from '@mui/material';
+import SearchIcon from '@material-ui/icons/Search';
+import { InputAdornment } from '@mui/material';
+
 
 function InviteCircle() {
   const { id_circle, circle_name } = useParams();
@@ -44,6 +47,7 @@ function InviteCircle() {
   const [loading, setLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [error, setError] = useState('');
+  const [statuses, setStatuses] = useState([]);
 
   const handleChangeUsername = async (e) => {
     const { name, value } = e.target;
@@ -88,11 +92,11 @@ function InviteCircle() {
   const handleSubmitInvite = async (e) => {
     e.preventDefault();
     let error = '';
-  
+
     if (username === "") {
       error = 'Username is required';
     }
-  
+
     setUsernameError(error);
     if (error) {
       setError(error);
@@ -122,7 +126,7 @@ function InviteCircle() {
       toast.error("Failed to invite");
     }
   };
-  
+
   const closeModalInvite = () => {
     setUsername("");
     setShowInviteModal(false);
@@ -162,6 +166,30 @@ function InviteCircle() {
     setUsername(user.username);
     setSearchKeyword(user.username);
     setRecommendedUsers([]);
+  };
+
+  const Status = async () => {
+    const token = localStorage.getItem('jwtToken');
+    if (!token) {
+      setError("Token not found. Please login again.");
+      setLoading(false);
+      return;
+    }
+    const headers = { 'Authorization': `Bearer ${token}` };
+    setLoading(true);
+    try {
+      const response = await axios.get(`http://152.42.188.210:8080/api/auth/circle/${id_circle}/member`, { headers });
+      console.log("Response dari server:", response.data);
+      setMembers(response.data.data);
+      setLoading(false);
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Failed to fetch data. Please try again.");
+      }
+      setLoading(false);
+    }
   };
 
   return (
@@ -238,63 +266,70 @@ function InviteCircle() {
                 <Table
                   columns={[
                     { name: "image", align: "center" },
-                    { name: "status", align: "center"},
+                    { name: "status", align: "center" },
                     { name: "name", align: "center" },
                   ]}
-                  
-                  rows={members.map(item => ({
+
+                  rows={members.map((item, index) => ({
                     image: <SoftAvatar src={cat} sx={{ width: '32px', height: '32px' }} />,
                     status: (
                       <SuiBox ml={-1.325}>
-                          <SuiBadgeDot size="small" badgeContent="member active" />
+                        <SuiBadgeDot size="small" badgeContent="member active" />
                       </SuiBox>
-                  ),
+                    ),
                     name: item.invited_username,
                   }))}
                 />
-                 {loading && <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>}
-                {error && <SoftTypography style={{ paddingLeft: '20px' }}>{error} </SoftTypography>}
+                {loading && <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>}
               </>
             </SoftBox>
           </SoftBox>
         </Card>
       </Box>
       <Dialog open={showInviteModal} onClose={closeModalInvite} maxWidth="md" fullWidth>
-                    <DialogTitle>Invite Circle</DialogTitle>
-                    <DialogContent>
-                        <FormControl fullWidth margin="normal">
-                            <TextField
-                                type="text"
-                                placeholder="Enter Username"
-                                name="username"
-                                autoFocus
-                                onChange={handleChangeUsername}
-                                value={username}
-                                error={Boolean(usernameError)}
-                                helperText={usernameError}
-                            />
-                        </FormControl>
-                        {searchLoading && <CircularProgress />}
-                        <List>
-                          {recommendedUsers.map((user) => (
-                            <ListItem button key={user.id} onClick={() => handleClickUser(user)}>
-                              <ListItemAvatar>
-                                <Avatar>{user.username.charAt(0).toUpperCase()}</Avatar>
-                              </ListItemAvatar>
-                              <ListItemText primary={user.username} />
-                            </ListItem>
-                          ))}
-                        </List>
-                    </DialogContent>
-                    <DialogActions>
-                    <BootstrapButton variant="primary" className="px-4" onClick={handleSubmitInvite}>
-                Invite
-              </BootstrapButton>
-              <BootstrapButton type='submit' variant="danger" onClick={closeModalInvite}>
-                Cancel
-              </BootstrapButton>
-                    </DialogActions>
-                </Dialog>
+        <DialogTitle>Invite Circle</DialogTitle>
+        <DialogContent>
+        <FormControl fullWidth margin="normal">
+  <TextField
+    type="text"
+    placeholder="Enter Username"
+    name="username"
+    autoFocus
+    onChange={handleChangeUsername}
+    value={username}
+    error={Boolean(usernameError)}
+    helperText={usernameError}
+    InputProps={{
+      startAdornment: (
+        <InputAdornment position="start">
+          <SearchIcon />
+        </InputAdornment>
+      ),
+    }}
+  />
+</FormControl>
+
+          {searchLoading && <CircularProgress />}
+          <List>
+            {recommendedUsers.map((user) => (
+              <ListItem button key={user.id} onClick={() => handleClickUser(user)}>
+                <ListItemAvatar>
+                  <Avatar>{user.username.charAt(0).toUpperCase()}</Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={user.username} />
+              </ListItem>
+            ))}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <BootstrapButton variant="primary" className="px-4" onClick={handleSubmitInvite}>
+            Invite
+          </BootstrapButton>
+          <BootstrapButton type='submit' variant="danger" onClick={closeModalInvite}>
+            Cancel
+          </BootstrapButton>
+        </DialogActions>
+      </Dialog>
     </DashboardLayout>
   )
 }

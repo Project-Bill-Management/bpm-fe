@@ -314,7 +314,6 @@ function DetailEventMyCircle() {
         setFile(uploadedFile);
     };
 
-
     return (
         <DashboardLayout>
             <Box display="flex" flexDirection="column" minHeight="100vh" width="100%">

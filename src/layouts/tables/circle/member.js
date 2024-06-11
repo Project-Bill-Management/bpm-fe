@@ -59,11 +59,6 @@ function MemberCircle() {
               <Typography variant="h6" color="text" style={{ marginLeft: '8px' }}>Back</Typography>
             </Box>
           <Box py={5} px={5}>
-            {/* <Box display="flex" flexDirection="column" alignItems="center" width="100%" height="80%">
-              <Typography variant="h6" fontWeight="bold">
-                Member Circle {circle_name}
-              </Typography>
-            </Box> */}
           </Box>
           <SoftBox>
             <SoftBox
@@ -93,7 +88,6 @@ function MemberCircle() {
                 }))}
               />
               {loading && <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>}
-              {error && <SoftTypography style={{ paddingLeft: '20px' }}>Not Found</SoftTypography>}
             </SoftBox>
           </SoftBox>
         </Card>
