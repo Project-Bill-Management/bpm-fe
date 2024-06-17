@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.bed647fe.css",
-    "main.js": "/static/js/main.3b69cb98.js",
+    "main.js": "/static/js/main.a9a1caeb.js",
     "static/media/home-decor-3.jpg": "/static/media/home-decor-3.74d13fcbd3c631fc7908.jpg",
     "static/media/home-decor-2.jpg": "/static/media/home-decor-2.b4e5397c9846645ba275.jpg",
     "static/media/home-decor-1.jpg": "/static/media/home-decor-1.05e218fd495ccc65c99d.jpg",
@@ -15,14 +15,9 @@
     "static/media/bootstrap-icons.woff2?": "/static/media/bootstrap-icons.b7bcc075b395c14ce8c2.woff2",
     "static/media/ivancik.jpg": "/static/media/ivancik.442b474727c414bb3b85.jpg",
     "static/media/white-curved.jpeg": "/static/media/white-curved.a5b7db662b0b14ab5534.jpeg",
-    "static/media/turtle.png": "/static/media/turtle.63aa63efc8fb64348a2e.png",
-    "static/media/deer.png": "/static/media/deer.f3b6f4eacbe971cc0e71.png",
     "static/media/team-1.jpg": "/static/media/team-1.c821a2730a9c8e3f68eb.jpg",
     "static/media/kal-visuals-square.jpg": "/static/media/kal-visuals-square.22829a59e2c6afb94b7a.jpg",
-    "static/media/pandabear.png": "/static/media/pandabear.de1697b9105026ffab09.png",
-    "static/media/jaguar.png": "/static/media/jaguar.bf1f494d5f00d86b9b04.png",
     "static/media/team-3.jpg": "/static/media/team-3.b75146da5bfdf9d8ae61.jpg",
-    "static/media/meerkat.png": "/static/media/meerkat.8864cfe4fdf2268dcf23.png",
     "static/media/time.png": "/static/media/time.27fefd635c0900cca6bb.png",
     "static/media/megaphone.png": "/static/media/megaphone.03e9f4fe967b9ceef2ac.png",
     "static/media/team1.jpg": "/static/media/team1.d591d15f3ae5bb912f85.jpg",
@@ -47,6 +42,6 @@
   },
   "entrypoints": [
     "static/css/main.bed647fe.css",
-    "static/js/main.3b69cb98.js"
+    "static/js/main.a9a1caeb.js"
   ]
 }

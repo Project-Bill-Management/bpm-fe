@@ -34,13 +34,10 @@ import SuiBox from "components/SoftBox";
 import Table from "examples/Tables/Table";
 import SoftAvatar from "components/SoftAvatar";
 import team2 from "assets/images/team2.jpg";
-import cat from "assets/images/avatar-animal/cat.png";
-import deer from "assets/images/avatar-animal/deer.png";
-import jaguar from "assets/images/avatar-animal/jaguar.png";
-import meerkar from "assets/images/avatar-animal/meerkat.png";
-import pandabear from "assets/images/avatar-animal/pandabear.png"
-import turtle from "assets/images/avatar-animal/turtle.png";
 import Tooltip from "@mui/material/Tooltip";
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import ChatIcon from '@mui/icons-material/Chat';
+import GroupIcon from '@mui/icons-material/Group';
 
 function JoinCircle() {
     const [circles, setCircles] = useState([]);
@@ -82,59 +79,59 @@ function JoinCircle() {
 
     const avatars = (members) =>
         members.map(([image, name]) => (
-          <Tooltip key={name} title={name} placeholder="bottom">
-            <SoftAvatar
-              src={image}
-              alt="name"
-              size="xs"
-              sx={{
-                border: ({ borders: { borderWidth }, palette: { white } }) =>
-                  `${borderWidth[2]} solid ${white.main}`,
-                cursor: "pointer",
-                position: "relative",
-    
-                "&:not(:first-of-type)": {
-                  ml: -1.25,
-                },
-    
-                "&:hover, &:focus": {
-                  zIndex: "10",
-                },
-              }}
-            />
-          </Tooltip>
+            <Tooltip key={name} title={name} placeholder="bottom">
+                <SoftAvatar
+                    src={image}
+                    alt="name"
+                    size="xs"
+                    sx={{
+                        border: ({ borders: { borderWidth }, palette: { white } }) =>
+                            `${borderWidth[2]} solid ${white.main}`,
+                        cursor: "pointer",
+                        position: "relative",
+
+                        "&:not(:first-of-type)": {
+                            ml: -1.25,
+                        },
+
+                        "&:hover, &:focus": {
+                            zIndex: "10",
+                        },
+                    }}
+                />
+            </Tooltip>
         ));
 
-        const handleSearchChange = async (event) => {
-            const searchTerm = event.target.value;
-            setSearchTerm(searchTerm);
-            setLoading(true);
-    
-            try {
-                const token = localStorage.getItem('jwtToken');
-                const headers = { 'Authorization': `Bearer ${token}` };
-    
-                if (searchTerm.trim() !== '') {
-                    // Jika search term tidak kosong, lakukan pencarian berdasarkan keyword
-                    const response = await axios.get(`http://152.42.188.210:8080/api/auth/search_circle`, {
-                        headers,
-                        params: { search_query: searchTerm }
-                    });
-                    setFilteredCircles(response.data.data);
-                    setError('');
-                } else {
-                    // Jika search term kosong, kembalikan ke data asli
-                    setFilteredCircles(circles);
-                    setError('');
-                }
-            } catch (error) {
-                console.error("Failed to search circles:", error);
-                setFilteredCircles([]);
-                // setError('Failed to search circles');
-            } finally {
-                setLoading(false);
+    const handleSearchChange = async (event) => {
+        const searchTerm = event.target.value;
+        setSearchTerm(searchTerm);
+        setLoading(true);
+
+        try {
+            const token = localStorage.getItem('jwtToken');
+            const headers = { 'Authorization': `Bearer ${token}` };
+
+            if (searchTerm.trim() !== '') {
+                // Jika search term tidak kosong, lakukan pencarian berdasarkan keyword
+                const response = await axios.get(`http://152.42.188.210:8080/api/auth/search_circle`, {
+                    headers,
+                    params: { search_query: searchTerm }
+                });
+                setFilteredCircles(response.data.data);
+                setError('');
+            } else {
+                // Jika search term kosong, kembalikan ke data asli
+                setFilteredCircles(circles);
+                setError('');
             }
-        };
+        } catch (error) {
+            console.error("Failed to search circles:", error);
+            setFilteredCircles([]);
+            // setError('Failed to search circles');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <DashboardLayout>
@@ -142,78 +139,82 @@ function JoinCircle() {
             <ToastContainer />
             <SoftBox py={3}>
                 <Card>
-                <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
-                <SoftTypography variant="h6" fontWeight="bold">
-                                Circle Join
-                            </SoftTypography>
-                <div>
-                <SoftInput
-                            placeholder="Type here..."
-                            icon={{ component: "search", direction: "left" }}
-                            value={searchTerm}
-                            onChange={handleSearchChange}
-                        />
+                    <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
+                        <SoftTypography variant="h6" fontWeight="bold">
+                            Circle Join
+                        </SoftTypography>
+                        <div>
+                            <SoftInput
+                                placeholder="Type here..."
+                                icon={{ component: "search", direction: "left" }}
+                                value={searchTerm}
+                                onChange={handleSearchChange}
+                            />
                         </div>
                     </SoftBox>
-                   
+
                     <SoftBox pb={3} />
                     <SoftBox>
                         <SoftBox
-                            sx={{"& .MuiTableRow-root:not(:last-child)": {
-                                    "& td": {borderBottom: ({ borders: { borderWidth, borderColor } }) =>`${borderWidth[1]} solid ${borderColor}`,
+                            sx={{
+                                "& .MuiTableRow-root:not(:last-child)": {
+                                    "& td": {
+                                        borderBottom: ({ borders: { borderWidth, borderColor } }) => `${borderWidth[1]} solid ${borderColor}`,
                                     },
                                 },
                             }}
                         >
 
                             <>
-                            {loading ? (
+                                {loading ? (
                                     <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>
                                 ) : (
                                     filteredCircles.length > 0 ? (
-                                <Table
-                                    columns={[
-                                        { name: "image", align: "center" },
-                                        { name: "circle", align: "center" },
-                                        { name: "forum", align:"center"},
-                                        { name: "member", align: "center" },
-                                        { name: "creator", align: "center" },
-                                    ]}
-                                    rows={filteredCircles.map(circle => ({
-                                        image: <SoftAvatar src={team2} />,
-                                        circle:  ( <Tooltip title= "view event"> 
-                                        <Link to={`/EventJoin/${circle.id_circle}/${circle.circle_name}`}>
-                                        {circle.circle_name}
-                                    </Link>
-                                    </Tooltip>),
-forum: (
+                                        <Table
+                                            columns={[
+                                                { name: "image", align: "center" },
+                                                { name: "circle", align: "center" },
+                                                { name: "creator", align: "center" },
+                                                { name: "forum", align: "center" },
+                                                { name: "member", align: "center" },
+                                            ]}
+                                            rows={filteredCircles.map(circle => ({
+                                                image: <SoftAvatar src={team2} />,
+                                                circle: (<Tooltip title="view event">
+                                                    <Link to={`/EventJoin/${circle.id_circle}/${circle.circle_name}`}>
+                                                        {circle.circle_name}
+                                                    </Link>
+                                                </Tooltip>),
+                                                  creator: <SuiBadgeDot size="small" badgeContent={circle.creator_username ? circle.creator_username : "Unknown Creator"} />
+                                                  ,
+  forum: (
     <Tooltip title="Go forum">
-        <Link to={`/Chat/${circle.id_circle}/${circle.circle_name}`}>
-            Forum
-        </Link>
-    </Tooltip>
+    <Link to={`/Chat/${circle.id_circle}/${circle.circle_name}`}>
+    <ChatIcon fontSize="medium" />
+    </Link>
+</Tooltip>
 ),
-                                        member: (
-                                            <Tooltip title="view member">
-                                                <Link to={`/MemberCircle/${circle.id_circle}/${circle.circle_name}`}>
-                                                   Member
-                                                </Link>
-                                            </Tooltip>
-                                        ),
-                                        creator:  <SuiBadgeDot size="small" badgeContent={circle.creator_username ? circle.creator_username : "Unknown Creator"}/> 
-                                        
-                                    }))}
-                                    />
-                                ) : (
-                                    <SoftTypography style={{ paddingLeft: '20px' }}>Circle not found</SoftTypography>
-                                )
-                            )}
-                            {error && <SoftTypography style={{ paddingLeft: '20px' }}>{error}</SoftTypography>}
-                    </>
+                                                member: (
+                                                    <Tooltip title="view member">
+                                                        <Link to={`/MemberCircle/${circle.id_circle}/${circle.circle_name}`}>
+                                                            <GroupIcon fontSize="medium"/>
+                                                        </Link>
+                                                    </Tooltip>
+                                                ),
+                                              
+
+                                            }))}
+                                        />
+                                    ) : (
+                                        <SoftTypography style={{ paddingLeft: '20px' }}>Circle not found</SoftTypography>
+                                    )
+                                )}
+                                {error && <SoftTypography style={{ paddingLeft: '20px' }}>{error}</SoftTypography>}
+                            </>
                         </SoftBox>
                     </SoftBox>
                 </Card>
-                           </SoftBox>
+            </SoftBox>
         </DashboardLayout>
     )
 }

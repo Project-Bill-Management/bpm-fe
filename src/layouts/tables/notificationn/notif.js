@@ -7,12 +7,13 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import megaphone from 'assets/images/megaphone.png';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { ToastContainer, toast } from 'react-toastify';
 
 function Notification() {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const { userId, circleId } = useParams();
+    const { userId } = useParams(); 
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -42,43 +43,69 @@ function Notification() {
         fetchNotifications();
     }, [userId]);
 
-    const handleApprove = async () => {
+    const handleApprove = async (notification) => {
+        const { id: notificationId, circleId } = notification;
+        console.log(`circleId: ${circleId}, notificationId: ${notificationId}`);
+        if (circleId === null) {
+            setError("circleId is null. Cannot approve invitation.");
+            toast.error("circleId is null. Cannot approve invitation.");
+            return;
+        }
         try {
             const token = localStorage.getItem('jwtToken');
             if (!token) {
                 throw new Error("Token not found. Please login again.");
             }
-
-            await axios.post(`http://152.42.188.210:8080/api/auth/invitation/accept/${circleId}`, {}, {
+            const response = await axios.post(`http://152.42.188.210:8080/api/auth/invitation/accept/${circleId}/${notificationId}`, {}, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            setNotifications(notifications.filter(notification => notification.id !== notification));
+            if (response.status === 200) {
+                console.log(response.data.message);
+                setNotifications(notifications.filter(notification => notification.id !== notificationId));
+                toast.success('Successfully accepted the invitation');
+            } else {
+                throw new Error('Failed to accept invitation');
+            }
         } catch (error) {
-            console.error("Error approving notification:", error);
-            setError("Failed to approve notification. Please try again.");
+            console.error("Error accepting invitation:", error);
+            setError("Failed to accept invitation. Please try again.");
+            toast.error("Failed to accept invitation. Please try again.");
         }
     };
 
-    const handleDecline = async () => {
+    const handleDecline = async (notification) => {
+        const { id: notificationId, circleId } = notification;
+        console.log(`circleId: ${circleId}, notificationId: ${notificationId}`);
+        if (circleId === null) {
+            setError("circleId is null. Cannot decline invitation.");
+            toast.error("circleId is null. Cannot decline invitation.");
+            return;
+        }
         try {
             const token = localStorage.getItem('jwtToken');
             if (!token) {
                 throw new Error("Token not found. Please login again.");
             }
-
-            await axios.post(`http://152.42.188.210:8080/api/auth/decline-invitation/${circleId}`, {}, {
+            const response = await axios.post(`http://152.42.188.210:8080/api/auth/decline-invitation/${circleId}/${notificationId}`, {}, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-
-            setNotifications(notifications.filter(notification => notification.id !== notification));
+            if (response.status === 200) {
+                console.log(response.data.message);
+                setNotifications(notifications.filter(notification => notification.id !== notificationId));
+                toast.success('Successfully declined the invitation');
+            } else {
+                throw new Error('Failed to decline invitation');
+            }
         } catch (error) {
-            console.error("Error declining notification:", error);
-            setError("Failed to decline notification. Please try again.");
+            console.error("Error declining invitation:", error);
+            setError("Failed to decline invitation. Please try again.");
+            toast.error("Failed to decline invitation. Please try again.");
         }
     };
 
     return (
         <DashboardLayout>
+              <ToastContainer />
             <Box display="flex" flexDirection="column" width="100%">
                 <Card>
                     <Box p={2} display="flex" alignItems="center" style={{ cursor: 'pointer' }} onClick={() => navigate(-1)}>
@@ -103,8 +130,8 @@ function Notification() {
                                             <SoftTypography variant="description" color="text" style={{ fontSize: '15px' }}>{item.message}</SoftTypography>
                                         </Box>
                                         <Box>
-                                            <BootstrapButton ariant="primary" className="px-4" onClick={() => handleApprove(item.id)} style={{ marginRight: '8px' }}>Approve</BootstrapButton>
-                                            <BootstrapButton type='submit' variant="danger" onClick={() => handleDecline(item.id)}>Decline</BootstrapButton>
+                                            <BootstrapButton variant="primary" className="px-4" onClick={() => handleApprove(item)} style={{ marginRight: '8px' }}>Approve</BootstrapButton>
+                                            <BootstrapButton type='submit' variant="danger" onClick={() => handleDecline(item)}>Decline</BootstrapButton>
                                         </Box>
                                     </Box>
                                 ))}

@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
+import React, { useState,useRef, useEffect } from 'react';
 import { Card, Button, Box, Grid, Typography } from '@mui/material';
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
@@ -34,9 +34,13 @@ import {
 } from '@mui/material';
 import UploadIcon from "@mui/icons-material/Upload";
 import { Tooltip } from '@mui/material';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { Link } from 'react-router-dom';
+import PendingIcon from '@mui/icons-material/Pending';
 
 function DetailEventMyCircle() {
     const { id_circle, id_event } = useParams();
+    const fileInputRef = useRef(null);
     const navigate = useNavigate();
     const [showTransaksiModal, setShowTransaksiModal] = useState(false);
     const [transaction_name, setTransaction_name] = useState("");
@@ -308,11 +312,55 @@ function DetailEventMyCircle() {
     useEffect(() => {
         fetchUserSplit();
     }, [id_event]);
+    const handleFileUpload = async () => {
+        if (!file) {
+            console.error('No file selected');
+            return;
+        }
 
-    const handleFileUpload = (event) => {
-        const uploadedFile = event.target.files[0];
-        setFile(uploadedFile);
+        const formData = new FormData();
+        formData.append('file', file);
+    
+        const token = localStorage.getItem('jwtToken');
+        const headers = { 'Authorization': `Bearer ${token}` };
+    
+        try {
+            const response = await axios.post(`http://152.42.188.210:8080/api/auth/payment-proof/upload/${id_circle}`, formData, {
+                headers: {
+                    ...headers,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            console.log(response.data);
+            toast.success('File uploaded successfully');
+            closeModalUpload();
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            toast.error('Failed to upload file');
+        }
     };
+
+    const GetPayment = async (id_circle) => {
+        try {
+            const token = localStorage.getItem('jwtToken');
+            if (!token) {
+                throw new Error("Token not found. Please login again.");
+            }
+            const headers = { 'Authorization': `Bearer ${token}` };
+            const response = await axios.get(`http://152.42.188.210:8080/api/auth/payment-proofs/${id_circle}`, { headers });
+            console.log("payment:", response.data.payment_proofs);
+
+        } catch (error) {
+            console.error("Error fetching payment proofs:", error);
+            throw new Error("Failed to fetch payment proofs. Please try again.");
+        }
+    };
+
+    useEffect(() => {
+        GetPayment(id_circle);
+    }, [id_circle]);
+    
+    
 
     return (
         <DashboardLayout>
@@ -365,9 +413,17 @@ function DetailEventMyCircle() {
                             <Box flex="2" marginRight="10px">
                                 <Card style={{ maxHeight: '400px', overflow: 'auto' }}>
                                     <Box display="flex" flexDirection="column" minHeight="100%" width="100%">
-                                        <Typography variant="h6" fontWeight="bold" ml={2} mt={2}>
-                                            Split Bill <PaymentIcon style={{ marginRight: 8 }} />
-                                        </Typography>
+                                    <Box display="flex" alignItems="center">
+    <Typography variant="h6" fontWeight="bold" ml={2} mt={2}>
+        Split Bill <PaymentIcon style={{ marginRight: 8 }} />
+    </Typography>
+    <Link to={`/Bill/${id_circle}`}>
+    <SoftTypography variant="h6" fontWeight="medium" color="text" ml={2} mt={2} style={{ cursor: 'pointer', marginRight: 'auto' }}>
+        View Payment    <ArrowForwardIcon sx={{ fontWeight: "bold" }} />
+        </SoftTypography>
+        </Link>
+</Box>
+
                                         <Box display="flex" flexDirection="column" ml={2} mt={2} mb={2} pr={2}>
                                             {isLoading && <Typography style={{ paddingLeft: '20px' }}>Loading...</Typography>}
                                             {details && details.data && details.data.users ? (
@@ -381,10 +437,17 @@ function DetailEventMyCircle() {
                                                 <Typography variant="h6" color="text" fontWeight="medium" style={{ marginRight: '5px' }}>
                                                     {user.total_price_split}
                                                 </Typography>
-                                                <Tooltip title="upload payment">
-                                                <UploadIcon onClick={openModalUpload} />
-                                                </Tooltip>
-                                            </Box>
+                                                {user.status === 'pending' && (
+                            <Tooltip title="Pending">
+                                <PendingIcon />
+                            </Tooltip>
+                        )}
+                        {user.status !== 'pending' && (
+                            <Tooltip title="Upload Payment">
+                                <UploadIcon onClick={openModalUpload} />
+                            </Tooltip>
+                        )}
+                    </Box>
                                                      </Box>
                                                     ))}
                                                     {details.data.total_transaksi !== undefined && details.data.total_transaksi !== null ? (
@@ -621,28 +684,26 @@ function DetailEventMyCircle() {
                 </DialogActions>
             </Dialog>
             <Dialog open={showUploadModal} onClose={closeModalUpload} fullWidth maxWidth="md">
-    <DialogTitle>upload payment</DialogTitle>
-    <DialogContent>
-    <Box className="alert alert-warning" role="alert">
-    The proof of upload will be validated, so make sure your payment is correct.
-                        </Box>
-        <Form>
-            <Form.Group className='mb-2' controlId="upload_file">
-                <Form.Control type="file" onChange={handleFileUpload} />
-            </Form.Group>
-        </Form>
-    </DialogContent>
-    <DialogActions>
-        <BootstrapButton type='submit' variant="danger" onClick={closeModalUpload}>
-            Close
-        </BootstrapButton>
-        <BootstrapButton variant="primary" className="px-4" onClick={handleFormSubmit}>
-            Save Changes
-        </BootstrapButton>
-    </DialogActions>
-</Dialog>
-
-
+            <DialogTitle>upload payment</DialogTitle>
+            <DialogContent>
+                <Box className="alert alert-warning" role="alert">
+                    The proof of upload will be validated, so make sure your payment is correct.
+                </Box>
+                <Form>
+                    <Form.Group controlId="upload_file">
+                        <Form.Control type="file" ref={fileInputRef} onChange={(e) => setFile(e.target.files[0])} />
+                    </Form.Group>
+                </Form>
+            </DialogContent>
+            <DialogActions>
+                <BootstrapButton variant="danger" onClick={closeModalUpload}>
+                    Close
+                </BootstrapButton>
+                <BootstrapButton variant="primary" className="px-4" onClick={handleFileUpload}>
+                    Save Changes
+                </BootstrapButton>
+            </DialogActions>
+        </Dialog>
         </DashboardLayout >
     );
 }

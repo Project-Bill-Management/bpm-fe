@@ -48,6 +48,10 @@ function InviteCircle() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [error, setError] = useState('');
   const [statuses, setStatuses] = useState([]);
+  const [creator, setCreator] = useState('');
+
+  console.log("circleId:", id_circle);
+  const circleId = id_circle;
 
   const handleChangeUsername = async (e) => {
     const { name, value } = e.target;
@@ -116,7 +120,7 @@ function InviteCircle() {
         closeModalInvite();
         toast.success('Invite successfully');
         console.log('Invite successfully');
-        fetchData();
+        fetchMemberInvite();
       } else {
         throw new Error('Failed to invite user to circle');
       }
@@ -132,7 +136,13 @@ function InviteCircle() {
     setShowInviteModal(false);
   };
 
-  const fetchData = async () => {
+  const handleClickUser = (user) => {
+    setUsername(user.username);
+    setSearchKeyword(user.username);
+    setRecommendedUsers([]);
+  };
+
+  const fetchCreator = async () => {
     const token = localStorage.getItem('jwtToken');
     if (!token) {
       setError("Token not found. Please login again.");
@@ -142,11 +152,39 @@ function InviteCircle() {
     const headers = { 'Authorization': `Bearer ${token}` };
     setLoading(true);
     try {
-      const response = await axios.get(`http://152.42.188.210:8080/api/auth/circles/${id_circle}/members`, { headers });
+      const response = await axios.get(`http://152.42.188.210:8080/index.php/api/auth/get_circle`, { headers });
       console.log("Response dari server:", response.data);
+      if (response.data.success && response.data.data.length > 0) {
+        setCreator(response.data.data[0].creator_username);
+      } else {
+        setError("Failed to fetch creator information.");
+      }
+      setLoading(false);
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Failed to fetch data. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchMemberInvite = async () => {
+    const token = localStorage.getItem('jwtToken');
+    if (!token) {
+      setError("Token not found. Please login again.");
+      setLoading(false);
+      return;
+    }
+    const headers = { 'Authorization': `Bearer ${token}` };
+    setLoading(true);
+    try {
+      const response = await axios.get(`http://152.42.188.210:8080/api/auth/circle/${circleId}/member`, { headers });
+      console.log("response member invite:", response.data);
       setMembers(response.data.data);
       setLoading(false);
-
     } catch (error) {
       if (error.response && error.response.data && error.response.data.message) {
         setError(error.response.data.message);
@@ -159,38 +197,10 @@ function InviteCircle() {
   };
 
   useEffect(() => {
-    fetchData();
+    fetchCreator();
+    fetchMemberInvite();
   }, []);
 
-  const handleClickUser = (user) => {
-    setUsername(user.username);
-    setSearchKeyword(user.username);
-    setRecommendedUsers([]);
-  };
-
-  const Status = async () => {
-    const token = localStorage.getItem('jwtToken');
-    if (!token) {
-      setError("Token not found. Please login again.");
-      setLoading(false);
-      return;
-    }
-    const headers = { 'Authorization': `Bearer ${token}` };
-    setLoading(true);
-    try {
-      const response = await axios.get(`http://152.42.188.210:8080/api/auth/circle/${id_circle}/member`, { headers });
-      console.log("Response dari server:", response.data);
-      setMembers(response.data.data);
-      setLoading(false);
-    } catch (error) {
-      if (error.response && error.response.data && error.response.data.message) {
-        setError(error.response.data.message);
-      } else {
-        setError("Failed to fetch data. Please try again.");
-      }
-      setLoading(false);
-    }
-  };
 
   return (
     <DashboardLayout>
@@ -249,6 +259,11 @@ function InviteCircle() {
                   </SoftTypography>
                 </div>
               </Box>
+              <Box display="flex" textAlign="center" mb={2}>
+                <SoftTypography variant="h6">
+                  Creator: {creator}
+                </SoftTypography>
+              </Box>
             </Box>
           </Box>
           <SoftBox>
@@ -269,15 +284,12 @@ function InviteCircle() {
                     { name: "status", align: "center" },
                     { name: "name", align: "center" },
                   ]}
-
-                  rows={members.map((item, index) => ({
+                  rows={members.map((member) => ({
                     image: <SoftAvatar src={cat} sx={{ width: '32px', height: '32px' }} />,
                     status: (
-                      <SuiBox ml={-1.325}>
-                        <SuiBadgeDot size="small" badgeContent="member active" />
-                      </SuiBox>
+                            <p>{member.status || 'unknown'}</p>
                     ),
-                    name: item.invited_username,
+                    name: member.username_invite,
                   }))}
                 />
                 {loading && <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>}
@@ -289,25 +301,25 @@ function InviteCircle() {
       <Dialog open={showInviteModal} onClose={closeModalInvite} maxWidth="md" fullWidth>
         <DialogTitle>Invite Circle</DialogTitle>
         <DialogContent>
-        <FormControl fullWidth margin="normal">
-  <TextField
-    type="text"
-    placeholder="Enter Username"
-    name="username"
-    autoFocus
-    onChange={handleChangeUsername}
-    value={username}
-    error={Boolean(usernameError)}
-    helperText={usernameError}
-    InputProps={{
-      startAdornment: (
-        <InputAdornment position="start">
-          <SearchIcon />
-        </InputAdornment>
-      ),
-    }}
-  />
-</FormControl>
+          <FormControl fullWidth margin="normal">
+            <TextField
+              type="text"
+              placeholder="Enter Username"
+              name="username"
+              autoFocus
+              onChange={handleChangeUsername}
+              value={username}
+              error={Boolean(usernameError)}
+              helperText={usernameError}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </FormControl>
 
           {searchLoading && <CircularProgress />}
           <List>

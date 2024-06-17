@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Card, Grid, Button, CircularProgress } from '@mui/material';
+import { Card, Grid } from '@mui/material';
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -9,6 +9,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import time from "assets/images/time.png";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import Button from 'react-bootstrap/Button';
 
 function EventJoin() {
     const [isLoading, setIsLoading] = useState(false);
@@ -20,6 +21,7 @@ function EventJoin() {
     const fetchData = async () => {
         setIsLoading(true);
         const token = localStorage.getItem('jwtToken');
+        const username = localStorage.getItem('username');
         if (!token) {
             setError("Token not found. Please login again.");
             setIsLoading(false);
@@ -28,7 +30,32 @@ function EventJoin() {
         const headers = { 'Authorization': `Bearer ${token}` };
         try {
             const response = await axios.get(`http://152.42.188.210:8080/index.php/api/auth/get_events/${id_circle}`, { headers });
-            setEvents(response.data.data);
+            const eventsData = response.data.data;
+
+            const userJoinedEventsPromises = eventsData.map(async (event) => {
+                try {
+                    const membersResponse = await axios.get(`http://152.42.188.210:8080/api/auth/events/${event.id_event}/members`, { headers });
+                    const members = membersResponse.data ? membersResponse.data.data : [];
+
+                    console.log(`Members of event ${event.id_event}:`, members); // Debugging log
+
+                    // Additional log to check each member username
+                    members.forEach(member => {
+                        console.log(`Member username: ${member.username}`);
+                    });
+
+                    return members.some(member => member.username === username) ? event.id_event : null;
+                } catch (error) {
+                    console.error(`Error fetching members for event ${event.id_event}:`, error);
+                    return null;
+                }
+            });
+
+            const userJoinedEventsResults = await Promise.all(userJoinedEventsPromises);
+            console.log("User joined events:", userJoinedEventsResults); // Debugging log
+
+            setUserJoinedEvents(userJoinedEventsResults.filter(id_event => id_event !== null));
+            setEvents(eventsData);
         } catch (error) {
             if (error.response && error.response.data && error.response.data.message) {
                 setError(error.response.data.message);
@@ -44,53 +71,20 @@ function EventJoin() {
         fetchData();
     }, [id_circle]);
 
-    useEffect(() => {
-        const checkUserJoinedEvents = async () => {
-            const joinedEvents = [];
-            for (const event of events) {
-                const isJoined = await isUserJoined(event.id_event);
-                if (isJoined) {
-                    joinedEvents.push(event.id_event);
-                }
-            }
-            setUserJoinedEvents(joinedEvents);
-        };
-        checkUserJoinedEvents();
-    }, [events]);
-    
-    const isUserJoined = async (id_event) => {
-        const token = localStorage.getItem('jwtToken');
-        const headers = { 'Authorization': `Bearer ${token}` };
-        try {
-            const response = await axios.get(`http://152.42.188.210:8080/api/auth/events/${id_event}/members`, { headers });
-            const members = response.data.data;
-            const currentUser = localStorage.getItem('userId');
-            console.log('Current user:', currentUser); // Tambahkan log ini untuk memeriksa nilai currentUser
-            console.log('Members:', members); // Tambahkan log ini untuk memeriksa nilai members
-            return members.some(member => member.user_id === currentUser);
-        } catch (error) {
-            console.error("Error checking user join status:", error);
-            return false;
-        }
-    };
-    
+
     const handleJoinEvent = async (id_event) => {
         const token = localStorage.getItem('jwtToken');
         const headers = { 'Authorization': `Bearer ${token}` };
         try {
             await axios.post(`http://152.42.188.210:8080/api/auth/join-event/${id_event}`, {}, { headers });
             toast.success('Successfully joined the event');
-            setUserJoinedEvents(prev => [...prev, id_event]); // Update userJoinedEvents state
+            setUserJoinedEvents([...userJoinedEvents, id_event]);
         } catch (error) {
             console.error("Error joining event:", error);
             if (error.response) {
                 console.error("Status code:", error.response.status);
                 console.error("Response data:", error.response.data);
-                if (error.response.status === 400 && error.response.data.message === "User already joined the event") {
-                    toast.error('Failed to join the event because you have already joined.');
-                } else {
-                    toast.error('You have already joined this event');
-                }
+                toast.error('Failed to join the event');
             } else if (error.request) {
                 console.error("No response received:", error.request);
                 toast.error('Failed to join the event');
@@ -100,9 +94,33 @@ function EventJoin() {
             }
         }
     };
+
+    const handleCancelEvent = async (id_event) => {
+        const token = localStorage.getItem('jwtToken');
+        const headers = { 'Authorization': `Bearer ${token}` };
+        try {
+            await axios.post(`http://152.42.188.210:8080/api/auth/event/${id_event}/cancel`, {}, { headers });
+            toast.success('Successfully cancelled the event');
+            setUserJoinedEvents(userJoinedEvents.filter(eventId => eventId !== id_event));
+        } catch (error) {
+            console.error("Error cancelling event:", error);
+            if (error.response) {
+                console.error("Status code:", error.response.status);
+                console.error("Response data:", error.response.data);
+                toast.error('Failed to cancel the event');
+            } else if (error.request) {
+                console.error("No response received:", error.request);
+                toast.error('Failed to cancel the event');
+            } else {
+                console.error("Request setup error:", error.message);
+                toast.error('Failed to cancel the event');
+            }
+        }
+    };
+
     const truncateEventName = (nama_event) => {
         return nama_event.length > 6 ? nama_event.substring(0, 6) + '...' : nama_event;
-    }
+    };
 
     return (
         <DashboardLayout>
@@ -120,7 +138,7 @@ function EventJoin() {
             <SoftBox pb={2} />
             {isLoading ? (
                 <Grid display="flex" justifyContent="center" alignItems="center" height="100px">
-                   {isLoading && <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>}
+                    {isLoading && <SoftTypography style={{ paddingLeft: '20px' }}>Loading...</SoftTypography>}
                 </Grid>
             ) : (
                 <Grid container spacing={2}>
@@ -142,23 +160,26 @@ function EventJoin() {
                                         <SoftBox pb={1} />
                                     </div>
                                     <SoftBox px={3} pb={3} display="flex" justifyContent="space-between">
-                                        {userJoinedEvents.includes(item.id_event) ? (
-                                            <Button variant="outlined" disabled>
-                                                Joined
-                                            </Button>
-                                        ) : (
-                                            <Button variant="secondary" color="primary" onClick={() => handleJoinEvent(item.id_event)}>
+                                        {!userJoinedEvents.includes(item.id_event) ? (
+                                            <Button variant="primary" className="px-4"
+
+                                                onClick={() => handleJoinEvent(item.id_event)}
+                                            >
                                                 Join
                                             </Button>
+                                        ) : (
+                                            <Button variant="primary" className="px-4"
+                                                onClick={() => handleCancelEvent(item.id_event)}
+                                            >
+                                                Cancel
+                                            </Button>
                                         )}
-                                        {isUserJoined(item.id_event) && (
-                                            <Link to={`/DetailEventMyCircle/${id_circle}/${item.id_event}`}>
-                                                <Button variant="secondary" color="primary">
-                                                    View Detail
-                                                    <ArrowForwardIcon style={{ marginLeft: '5px' }} />
-                                                </Button>
-                                            </Link>
-                                        )}
+                                        <Link to={`/DetailEventMyCircle/${id_circle}/${item.id_event}`}>
+                                            <Button variant="contained" color="primary" style={{ marginLeft: '8px' }}>
+                                                View Detail
+                                                <ArrowForwardIcon style={{ marginLeft: '5px' }} />
+                                            </Button>
+                                        </Link>
                                     </SoftBox>
                                 </Card>
                             </Grid>

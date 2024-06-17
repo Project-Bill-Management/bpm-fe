@@ -34,6 +34,8 @@ import {
     FormControl
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import ChatIcon from '@mui/icons-material/Chat';
 
 function MyCircle() {
     const [circles, setCircles] = useState([]);
@@ -51,10 +53,6 @@ function MyCircle() {
     const [original_circle_name, setOriginal_circle_name] = useState("");
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredCircles, setFilteredCircles] = useState([]);
-
-    useEffect(() => {
-        fetchData();
-    }, []);
 
     const fetchData = async () => {
         const token = localStorage.getItem('jwtToken');
@@ -212,6 +210,7 @@ function MyCircle() {
             }, { headers });
             closeModalUpdate();
             toast.success('Circle updated successfully');
+            fetchData();
             const updatedData = circles.map(circle =>
                 circle.id_circle === id_circle ? { ...circle, circle_name: circle_name } : circle
             );
@@ -236,6 +235,7 @@ function MyCircle() {
             );
             console.log(deleteData.data);
             closeModalDelete();
+            fetchData();
             toast.success('Circle delete successfully');
             const updatedData = circles.filter(circle => circle.id_circle !== id_circle);
             setCircles(updatedData);
@@ -244,6 +244,9 @@ function MyCircle() {
             console.error("Error delete circle:", error);
         }
     };
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     const avatars = (members) =>
         members.map(([image, name]) => (
@@ -402,9 +405,9 @@ function MyCircle() {
                                             columns={[
                                                 { name: "image", align: "center" },
                                                 { name: "circle", align: "center" },
+                                                { name: "creator", align: "center" },
                                                 { name: "forum", align: "center" },
                                                 { name: "invite", align: "center" },
-                                                { name: "creator", align: "center" },
                                                 { name: "action", align: "center" },
                                             ]}
                                             rows={filteredCircles.map(circle => ({
@@ -416,22 +419,22 @@ function MyCircle() {
                                                         </Link>
                                                     </Tooltip>
                                                 ),
+                                                creator: (
+                                                    <SuiBadgeDot size="small" badgeContent={circle.creator_username ? circle.creator_username : "Unknown Creator"} />
+                                                ),
                                                 forum: (
                                                     <Tooltip title="Go forum">
-                                                        <Link to={`/Chat/${circle.id_circle}/${circle.circle_name}`}>
-                                                            Forum
-                                                        </Link>
-                                                    </Tooltip>
+                                                    <Link to={`/Chat/${circle.id_circle}/${circle.circle_name}`}>
+                                                    <ChatIcon fontSize="medium" />
+                                                    </Link>
+                                                </Tooltip>
                                                 ),
                                                 invite: (
                                                     <Tooltip title="Add User">
-                                                        <Link to={`/InviteCircle/${circle.id_circle}/${circle.circle_name}`}>
-                                                            Add user
-                                                        </Link>
-                                                    </Tooltip>
-                                                ),
-                                                creator: (
-                                                    <SuiBadgeDot size="small" badgeContent={circle.creator_username ? circle.creator_username : "Unknown Creator"} />
+        <Link to={`/InviteCircle/${circle.id_circle}/${circle.circle_name}`}>
+            <PersonAddIcon fontSize="medium" />
+        </Link>
+    </Tooltip>
                                                 ),
                                                 action: (
                                                     <>
@@ -463,7 +466,7 @@ function MyCircle() {
                                         <SoftTypography style={{ paddingLeft: '20px' }}>Circle not found</SoftTypography>
                                     )
                                 )}
-                                {error && <SoftTypography style={{ paddingLeft: '20px' }}>{error}</SoftTypography>}
+                                
                         </>
                     </SoftBox>
                 </SoftBox>

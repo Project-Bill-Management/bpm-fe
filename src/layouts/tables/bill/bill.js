@@ -5,59 +5,42 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import SoftTypography from "components/SoftTypography";
-
-// Mock function to generate dummy data with payment status
-const generateDummyBills = () => {
-    return [
-        {
-            id: 1,
-            eventName: 'Music Festival',
-            amount: 50.000,
-            dueDate: '2024-07-01',
-            paid: true
-        },
-        {
-            id: 2,
-            eventName: 'Art Exhibition',
-            amount: 30.000,
-            dueDate: '2024-07-10',
-            paid: false
-        },
-        {
-            id: 3,
-            eventName: 'Tech Conference',
-            amount: 100.000,
-            dueDate: '2024-07-15',
-            paid: true
-        }
-    ];
-};
+import axios from 'axios';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import { PDFViewer, Document, Page } from '@react-pdf/renderer';
 
 function Bill() {
-    const [bills, setBills] = useState([]);
+    const [paymentProofs, setPaymentProofs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [selectedBill, setSelectedBill] = useState(null); // State to manage selected bill for dialog
-    const { circleId } = useParams();
+    const [selectedBill, setSelectedBill] = useState(null);
+    const { id_circle } = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchBills = async () => {
+        const fetchPaymentProofs = async () => {
+            const token = localStorage.getItem('jwtToken');
+            if (!token) {
+                setError("Token not found. Please login again.");
+                setLoading(false);
+                return;
+            }
+            const headers = { 'Authorization': `Bearer ${token}` };
             try {
                 setLoading(true);
-                // Simulating an API call with dummy data
-                const dummyBills = generateDummyBills();
-                setBills(dummyBills);
+                const response = await axios.get(`http://152.42.188.210:8080/api/auth/payment-proofs/${id_circle}`, { headers });
+                setPaymentProofs(response.data.payment_proofs);
             } catch (error) {
-                console.error("Error fetching bills:", error);
-                setError("Failed to fetch bills. Please try again.");
+                console.error("Error fetching payment proofs:", error);
+                setError("Failed to fetch payment proofs. Please try again.");
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchBills();
-    }, [circleId]);
+
+        fetchPaymentProofs();
+    }, [id_circle]);
 
     const handleClickOpen = (bill) => {
         setSelectedBill(bill);
@@ -66,6 +49,8 @@ function Bill() {
     const handleClose = () => {
         setSelectedBill(null);
     };
+
+    console.log("kesel, pengen bakar-bakar");
 
     return (
         <DashboardLayout>
@@ -84,25 +69,25 @@ function Bill() {
                             <Box p={2} textAlign="center">
                                 <SoftTypography color="error">{error}</SoftTypography>
                             </Box>
-                        ) : bills.length === 0 ? (
+                        ) : paymentProofs.length === 0 ? (
                             <Box p={2} textAlign="center">
-                                <SoftTypography>No event bills</SoftTypography>
+                                <SoftTypography>No payment proofs found</SoftTypography>
                             </Box>
                         ) : (
                             <Box>
-                                {bills.map(bill => (
-                                    <Box key={bill.id} p={2} borderBottom="1px solid #ddd" display="flex" alignItems="center" justifyContent="space-between" style={{ cursor: 'pointer' }}>
-                                        <Box display="flex" alignItems="center" onClick={() => handleClickOpen(bill)}>
+                                {paymentProofs.map(proof => (
+                                    <Box key={proof.id} p={2} borderBottom="1px solid #ddd" display="flex" alignItems="center" justifyContent="space-between" style={{ cursor: 'pointer' }}>
+                                        <Box display="flex" alignItems="center" onClick={() => handleClickOpen(proof)}>
                                             <CreditCardIcon style={{ marginRight: '8px' }} />
                                             <Box>
-                                                <Typography variant="h6">{bill.eventName}</Typography>
-                                                <Typography variant="body1">Amount: Rp{bill.amount}</Typography>
-                                                <Typography variant="body2" color="textSecondary">Due Date: {new Date(bill.dueDate).toLocaleDateString()}</Typography>
+                                                <Typography variant="h6" fontWeight="bold">username : {proof.user.username}</Typography>
+                                                <SoftTypography variant="h6"  fontWeight="medium" color="text">status : {proof.status}</SoftTypography>
                                             </Box>
                                         </Box>
-                                        <Typography variant="body1" color={bill.paid ? 'green' : 'red'}>
-                                            {bill.paid ? 'Paid off' : 'Not paid'}
+                                        <Typography variant="body1" color={proof.paid ? 'green' : 'red'}>
+                                            {proof.paid ? 'Paid off' : <PictureAsPdfIcon onClick={() => handleClickOpen(proof)} />}
                                         </Typography>
+
                                     </Box>
                                 ))}
                             </Box>
@@ -110,29 +95,35 @@ function Bill() {
                     </Box>
                 </Card>
 
-                <Dialog 
-                    open={!!selectedBill} 
-                    onClose={handleClose} 
+                <Dialog
+                    open={!!selectedBill}
+                    onClose={handleClose}
                     maxWidth="md"
                     fullWidth
                 >
-                    <DialogTitle>Bill Details</DialogTitle>
+                    <DialogTitle>status kehidupan</DialogTitle>
                     <DialogContent dividers>
                         {selectedBill && (
                             <Box>
-                                <Typography variant="h6">{selectedBill.eventName}</Typography>
-                                <Typography variant="body1">Amount: ${selectedBill.amount}</Typography>
-                                <Typography variant="body2" color="textSecondary">Due Date: {new Date(selectedBill.dueDate).toLocaleDateString()}</Typography>
+                                {/* <Typography variant="h6">{selectedBill.user.username}</Typography> */}
+                                <Typography variant="body1">kesel banget eg, pengen resign</Typography>
+                                {/* <Typography variant="body2" color="textSecondary">Due Date: {new Date(selectedBill.status).toLocaleDateString()}</Typography>
                                 <Typography variant="body1" color={selectedBill.paid ? 'green' : 'red'}>
-                                    {selectedBill.paid ? 'Sudah Dibayar' : 'Belum Dibayar'}
-                                </Typography>
+                                    {selectedBill.paid ? 'Paid off' : (
+                                        <Box>
+                                            <embed src={`http://152.42.188.210:8080${selectedBill.file_url}`} type="application/pdf" width="100%" height="600px" />
+                                        </Box>
+                                    )}
+                                </Typography> */}
                             </Box>
                         )}
                     </DialogContent>
+
                     <DialogActions>
                         <Button onClick={handleClose} color="primary">Close</Button>
                     </DialogActions>
                 </Dialog>
+
             </Box>
         </DashboardLayout>
     );
