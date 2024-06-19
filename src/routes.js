@@ -138,7 +138,7 @@ const routes = [
     type: "collapse",
     name: "Bill",
     key: "Bill",
-    route: "/Bill/:id_circle",
+    route: "/Bill/:id_circle/:id_event",
     icon: <CreditCard size="12px" />,
     component: <Bill />,
     noCollapse: true,

@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import React, { useState,useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Card, Button, Box, Grid, Typography } from '@mui/material';
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
@@ -320,12 +320,12 @@ function DetailEventMyCircle() {
 
         const formData = new FormData();
         formData.append('file', file);
-    
+
         const token = localStorage.getItem('jwtToken');
         const headers = { 'Authorization': `Bearer ${token}` };
-    
+
         try {
-            const response = await axios.post(`http://152.42.188.210:8080/api/auth/payment-proof/upload/${id_circle}`, formData, {
+            const response = await axios.post(`http://152.42.188.210:8080/index.php/api/auth/circles/${id_circle}/events/${id_event}/payment-proof`, formData, {
                 headers: {
                     ...headers,
                     'Content-Type': 'multipart/form-data'
@@ -340,14 +340,14 @@ function DetailEventMyCircle() {
         }
     };
 
-    const GetPayment = async (id_circle) => {
+    const GetPayment = async () => {
         try {
             const token = localStorage.getItem('jwtToken');
             if (!token) {
                 throw new Error("Token not found. Please login again.");
             }
             const headers = { 'Authorization': `Bearer ${token}` };
-            const response = await axios.get(`http://152.42.188.210:8080/api/auth/payment-proofs/${id_circle}`, { headers });
+            const response = await axios.get(`http://152.42.188.210:8080/index.php/api/auth/circles/${id_circle}/events/${id_event}/payment-proofs`, { headers });
             console.log("payment:", response.data.payment_proofs);
 
         } catch (error) {
@@ -357,10 +357,8 @@ function DetailEventMyCircle() {
     };
 
     useEffect(() => {
-        GetPayment(id_circle);
-    }, [id_circle]);
-    
-    
+        GetPayment();
+    }, [id_circle, id_event]);
 
     return (
         <DashboardLayout>
@@ -413,42 +411,42 @@ function DetailEventMyCircle() {
                             <Box flex="2" marginRight="10px">
                                 <Card style={{ maxHeight: '400px', overflow: 'auto' }}>
                                     <Box display="flex" flexDirection="column" minHeight="100%" width="100%">
-                                    <Box display="flex" alignItems="center">
-    <Typography variant="h6" fontWeight="bold" ml={2} mt={2}>
-        Split Bill <PaymentIcon style={{ marginRight: 8 }} />
-    </Typography>
-    <Link to={`/Bill/${id_circle}`}>
-    <SoftTypography variant="h6" fontWeight="medium" color="text" ml={2} mt={2} style={{ cursor: 'pointer', marginRight: 'auto' }}>
-        View Payment    <ArrowForwardIcon sx={{ fontWeight: "bold" }} />
-        </SoftTypography>
-        </Link>
-</Box>
+                                        <Box display="flex" alignItems="center">
+                                            <Typography variant="h6" fontWeight="bold" ml={2} mt={2}>
+                                                Split Bill <PaymentIcon style={{ marginRight: 8 }} />
+                                            </Typography>
+                                            <Link to={`/Bill/${id_circle}/${id_event}`}>
+                                                <SoftTypography variant="h6" fontWeight="medium" color="text" ml={2} mt={2} style={{ cursor: 'pointer', marginRight: 'auto' }}>
+                                                    View Payment    <ArrowForwardIcon sx={{ fontWeight: "bold" }} />
+                                                </SoftTypography>
+                                            </Link>
+                                        </Box>
 
                                         <Box display="flex" flexDirection="column" ml={2} mt={2} mb={2} pr={2}>
                                             {isLoading && <Typography style={{ paddingLeft: '20px' }}>Loading...</Typography>}
                                             {details && details.data && details.data.users ? (
-                                                 <div>
-                                                 {details.data.users.map((user, index) => (
-                                                     <Box display="flex" key={index} width="100%">
-                                                         <Typography variant="h6" color="text" fontWeight="medium" style={{ flex: 1, borderBottom: '1px solid #000', paddingBottom: '5px' }}>
-                                                             {user.username}:
-                                                         </Typography>
-                                                         <Box display="flex" alignItems="center" justifyContent="flex-end" style={{ flex: 1, borderBottom: '1px solid #000', paddingBottom: '5px', marginLeft: '10px' }}>
-                                                <Typography variant="h6" color="text" fontWeight="medium" style={{ marginRight: '5px' }}>
-                                                    {user.total_price_split}
-                                                </Typography>
-                                                {user.status === 'pending' && (
-                            <Tooltip title="Pending">
-                                <PendingIcon />
-                            </Tooltip>
-                        )}
-                        {user.status !== 'pending' && (
-                            <Tooltip title="Upload Payment">
-                                <UploadIcon onClick={openModalUpload} />
-                            </Tooltip>
-                        )}
-                    </Box>
-                                                     </Box>
+                                                <div>
+                                                    {details.data.users.map((user, index) => (
+                                                        <Box display="flex" key={index} width="100%">
+                                                            <Typography variant="h6" color="text" fontWeight="medium" style={{ flex: 1, borderBottom: '1px solid #000', paddingBottom: '5px' }}>
+                                                                {user.username}:
+                                                            </Typography>
+                                                            <Box display="flex" alignItems="center" justifyContent="flex-end" style={{ flex: 1, borderBottom: '1px solid #000', paddingBottom: '5px', marginLeft: '10px' }}>
+                                                                <Typography variant="h6" color="text" fontWeight="medium" style={{ marginRight: '5px' }}>
+                                                                    {user.total_price_split}
+                                                                </Typography>
+                                                                {user.status === 'pending' && (
+                                                                    <Tooltip title="Pending">
+                                                                        <PendingIcon />
+                                                                    </Tooltip>
+                                                                )}
+                                                                {user.status !== 'pending' && (
+                                                                    <Tooltip title="Upload Payment">
+                                                                        <UploadIcon onClick={openModalUpload} />
+                                                                    </Tooltip>
+                                                                )}
+                                                            </Box>
+                                                        </Box>
                                                     ))}
                                                     {details.data.total_transaksi !== undefined && details.data.total_transaksi !== null ? (
                                                         <Box display="flex" mt={1} width="100%">
@@ -627,16 +625,16 @@ function DetailEventMyCircle() {
                             </Form.Control.Feedback>
                         </Form.Group>
                         <InputGroup className="mb-3">
-                                        <InputGroup.Text id="search-addon">
-                                            <SearchIcon />
-                                        </InputGroup.Text>
-                                        <Form.Control
-                                            type="text"
-                                            placeholder="Search Members"
-                                            value={searchTerm}
-                                            onChange={handleSearchChange}
-                                        />
-                                    </InputGroup>
+                            <InputGroup.Text id="search-addon">
+                                <SearchIcon />
+                            </InputGroup.Text>
+                            <Form.Control
+                                type="text"
+                                placeholder="Search Members"
+                                value={searchTerm}
+                                onChange={handleSearchChange}
+                            />
+                        </InputGroup>
                         <Form.Group className='mt-2'>
                             {userSplit.length > 0 &&
                                 userSplit.map(user => (
@@ -684,26 +682,26 @@ function DetailEventMyCircle() {
                 </DialogActions>
             </Dialog>
             <Dialog open={showUploadModal} onClose={closeModalUpload} fullWidth maxWidth="md">
-            <DialogTitle>upload payment</DialogTitle>
-            <DialogContent>
-                <Box className="alert alert-warning" role="alert">
-                    The proof of upload will be validated, so make sure your payment is correct.
-                </Box>
-                <Form>
-                    <Form.Group controlId="upload_file">
-                        <Form.Control type="file" ref={fileInputRef} onChange={(e) => setFile(e.target.files[0])} />
-                    </Form.Group>
-                </Form>
-            </DialogContent>
-            <DialogActions>
-                <BootstrapButton variant="danger" onClick={closeModalUpload}>
-                    Close
-                </BootstrapButton>
-                <BootstrapButton variant="primary" className="px-4" onClick={handleFileUpload}>
-                    Save Changes
-                </BootstrapButton>
-            </DialogActions>
-        </Dialog>
+                <DialogTitle>upload payment</DialogTitle>
+                <DialogContent>
+                    <Box className="alert alert-warning" role="alert">
+                        The proof of upload will be validated, so make sure your payment is correct.
+                    </Box>
+                    <Form>
+                        <Form.Group controlId="upload_file">
+                            <Form.Control type="file" ref={fileInputRef} onChange={(e) => setFile(e.target.files[0])} />
+                        </Form.Group>
+                    </Form>
+                </DialogContent>
+                <DialogActions>
+                    <BootstrapButton variant="danger" onClick={closeModalUpload}>
+                        Close
+                    </BootstrapButton>
+                    <BootstrapButton variant="primary" className="px-4" onClick={handleFileUpload}>
+                        Save Changes
+                    </BootstrapButton>
+                </DialogActions>
+            </Dialog>
         </DashboardLayout >
     );
 }
