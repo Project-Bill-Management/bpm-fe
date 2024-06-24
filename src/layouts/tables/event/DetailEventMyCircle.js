@@ -62,6 +62,9 @@ function DetailEventMyCircle() {
     const [isAllChecked, setIsAllChecked] = useState(false);
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [file, setFile] = useState(null);
+    const [paymentProofs, setPaymentProofs] = useState([]);
+    const [selectedUser, setSelectedUser] = useState(null);
+
 
     console.log("id_circle:", id_circle);
     console.log("id_event:", id_event);
@@ -120,6 +123,7 @@ function DetailEventMyCircle() {
         try {
             const response = await axios.get(`http://152.42.188.210:8080/api/auth/get_detail/${id_event}`, { headers });
             console.log("Response dari server:", response.data);
+            console.log("Creator Event:", response.data.data.creator_event);
             setDetails(response.data);
         } catch (error) {
             if (error.response && error.response.data && error.response.data.message) {
@@ -131,7 +135,8 @@ function DetailEventMyCircle() {
             setIsLoading(false);
         }
     };
-
+    console.log("details:", details);
+    console.log("localStorage username:", localStorage.getItem('username'));
     useEffect(() => {
         GetTransaction();
     }, [id_event]);
@@ -312,6 +317,7 @@ function DetailEventMyCircle() {
     useEffect(() => {
         fetchUserSplit();
     }, [id_event]);
+
     const handleFileUpload = async () => {
         if (!file) {
             console.error('No file selected');
@@ -334,6 +340,8 @@ function DetailEventMyCircle() {
             console.log(response.data);
             toast.success('File uploaded successfully');
             closeModalUpload();
+            GetPayment();
+            getUserPaymentStatus();
         } catch (error) {
             console.error('Error uploading file:', error);
             toast.error('Failed to upload file');
@@ -349,14 +357,21 @@ function DetailEventMyCircle() {
             const headers = { 'Authorization': `Bearer ${token}` };
             const response = await axios.get(`http://152.42.188.210:8080/index.php/api/auth/circles/${id_circle}/events/${id_event}/payment-proofs`, { headers });
             console.log("payment:", response.data.payment_proofs);
-
+            setPaymentProofs(response.data.payment_proofs);
+            getUserPaymentStatus();
         } catch (error) {
             console.error("Error fetching payment proofs:", error);
             throw new Error("Failed to fetch payment proofs. Please try again.");
         }
     };
 
+    const getUserPaymentStatus = (username) => {
+        const userPayment = paymentProofs.find(proof => proof.username === username);
+        return userPayment ? userPayment.status : 'Not Paid';
+    };
+
     useEffect(() => {
+        getUserPaymentStatus();
         GetPayment();
     }, [id_circle, id_event]);
 
@@ -411,15 +426,22 @@ function DetailEventMyCircle() {
                             <Box flex="2" marginRight="10px">
                                 <Card style={{ maxHeight: '400px', overflow: 'auto' }}>
                                     <Box display="flex" flexDirection="column" minHeight="100%" width="100%">
+
                                         <Box display="flex" alignItems="center">
                                             <Typography variant="h6" fontWeight="bold" ml={2} mt={2}>
-                                                Split Bill <PaymentIcon style={{ marginRight: 8 }} />
+                                                {details.data && details.data.creator_event === localStorage.getItem('username') ? (
+                                                    <>
+                                                        Split Bill <PaymentIcon style={{ marginRight: 8 }} />
+                                                        <Link to={`/Bill/${id_circle}/${id_event}`}>
+                                                            <SoftTypography variant="h6" fontWeight="medium" color="text" ml={2} mt={2} style={{ cursor: 'pointer', marginRight: 'auto' }}>
+                                                                View Payment <ArrowForwardIcon sx={{ fontWeight: "bold" }} />
+                                                            </SoftTypography>
+                                                        </Link>
+                                                    </>
+                                                ) : (
+                                                    "Split Bill"
+                                                )}
                                             </Typography>
-                                            <Link to={`/Bill/${id_circle}/${id_event}`}>
-                                                <SoftTypography variant="h6" fontWeight="medium" color="text" ml={2} mt={2} style={{ cursor: 'pointer', marginRight: 'auto' }}>
-                                                    View Payment    <ArrowForwardIcon sx={{ fontWeight: "bold" }} />
-                                                </SoftTypography>
-                                            </Link>
                                         </Box>
 
                                         <Box display="flex" flexDirection="column" ml={2} mt={2} mb={2} pr={2}>
@@ -435,15 +457,28 @@ function DetailEventMyCircle() {
                                                                 <Typography variant="h6" color="text" fontWeight="medium" style={{ marginRight: '5px' }}>
                                                                     {user.total_price_split}
                                                                 </Typography>
-                                                                {user.status === 'pending' && (
-                                                                    <Tooltip title="Pending">
-                                                                        <PendingIcon />
-                                                                    </Tooltip>
-                                                                )}
-                                                                {user.status !== 'pending' && (
-                                                                    <Tooltip title="Upload Payment">
-                                                                        <UploadIcon onClick={openModalUpload} />
-                                                                    </Tooltip>
+                                                                {user.username === localStorage.getItem('username') ? (
+                                                                    <Typography
+                                                                        key={index}
+                                                                        variant="h6"
+                                                                        color="text"
+                                                                        fontWeight="medium"
+                                                                        style={{ marginLeft: '10px', cursor: 'pointer', color: getUserPaymentStatus(user.username) === 'Not Paid' ? 'red' : 'inherit' }}
+                                                                        onClick={() => getUserPaymentStatus(user.username) === 'Not Paid' && openModalUpload()}
+                                                                    >
+                                                                        {getUserPaymentStatus(user.username)}
+                                                                    </Typography>
+                                                                ) : (
+                                                                    <Typography
+                                                                        key={index}
+                                                                        variant="h6"
+                                                                        color="text"
+                                                                        fontWeight="medium"
+                                                                        style={{ marginLeft: '10px', cursor: 'pointer', color: 'inherit' }}
+                                                                        onClick={() => toast.error('Uploading proof of payment cannot be represented!')}
+                                                                    >
+                                                                        {getUserPaymentStatus(user.username)}
+                                                                    </Typography>
                                                                 )}
                                                             </Box>
                                                         </Box>
@@ -682,7 +717,7 @@ function DetailEventMyCircle() {
                 </DialogActions>
             </Dialog>
             <Dialog open={showUploadModal} onClose={closeModalUpload} fullWidth maxWidth="md">
-                <DialogTitle>upload payment</DialogTitle>
+                <DialogTitle>Upload Payment</DialogTitle>
                 <DialogContent>
                     <Box className="alert alert-warning" role="alert">
                         The proof of upload will be validated, so make sure your payment is correct.

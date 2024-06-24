@@ -135,8 +135,8 @@ const routes = [
     noCollapse: true,
   },
   {
-    type: "collapse",
-    name: "Bill",
+    // type: "collapse",
+    // name: "Bill",
     key: "Bill",
     route: "/Bill/:id_circle/:id_event",
     icon: <CreditCard size="12px" />,

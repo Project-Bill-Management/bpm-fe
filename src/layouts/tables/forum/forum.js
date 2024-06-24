@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Card, Typography, TextField, List, ListItem, ListItemText } from '@mui/material';
+import React, { useState, useEffect, useRef } from 'react';
+import { Box, Card, Typography, TextField, Avatar } from '@mui/material';
 import SoftTypography from "components/SoftTypography";
 import SoftBox from 'components/SoftBox';
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import axios from 'axios';
 import { Button as BootstrapButton } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
-import { Avatar } from '@mui/material';
 import AvatarGroup from 'assets/images/avatar-animal/avatarGroup.png';
+import Pusher from "pusher-js";
 
 function Chat() {
     const [isLoading, setIsLoading] = useState(true);
@@ -17,6 +17,7 @@ function Chat() {
     const [members, setMembers] = useState([]);
     const username = localStorage.getItem('username');
     const [messageText, setMessageText] = useState('');
+    const messagesEndRef = useRef(null);
 
     const fetchMessages = async () => {
         const token = localStorage.getItem('jwtToken');
@@ -43,14 +44,18 @@ function Chat() {
 
     useEffect(() => {
         fetchMessages();
-        window.Echo.private(`circle.${circleId}`)
-            .listen('MessageSent', (e) => {
-                setMessages((messages) => [...messages, e.message]);
-            });
-        return () => {
-            window.Echo.leave(`circle.${circleId}`);
-        };
+        const intervalId = setInterval(fetchMessages, 5000);
+
+        return () => clearInterval(intervalId);
     }, [circleId]);
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
 
     const DataMember = async () => {
         const token = localStorage.getItem('jwtToken');
@@ -171,6 +176,7 @@ function Chat() {
                     renderMessages()
                 )}
                 {error && <SoftTypography color="error">{error}</SoftTypography>}
+                <div ref={messagesEndRef} />
             </SoftBox>
             <Box
                 mt={2}

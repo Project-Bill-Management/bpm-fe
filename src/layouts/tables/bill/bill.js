@@ -2,18 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Box, Card, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import CreditCardIcon from '@mui/icons-material/CreditCard';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import SoftTypography from "components/SoftTypography";
 import axios from 'axios';
-import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import SoftBox from "components/SoftBox";
-import business from "assets/images/business.png";
-import cat from "assets/images/avatar-animal/cat.png";
-import clipboard from "assets/images/avatar-animal/clipboard.png";
-import group from "assets/images/avatar-animal/group.png";
-import time from "assets/images/time.png";
 import { Button as BootstrapButton } from 'react-bootstrap';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Bill() {
     const [paymentProofs, setPaymentProofs] = useState([]);
@@ -58,8 +54,49 @@ function Bill() {
         setSelectedBill(null);
     };
 
+    const handleAccept = async (paymentProofId) => {
+        try {
+            const token = localStorage.getItem('jwtToken');
+            if (!token) {
+                throw new Error("Token not found. Please login again.");
+            }
+
+            const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+            const response = await axios.put(`http://152.42.188.210:8080/index.php/api/auth/payment-proofs/${paymentProofId}/status`, { status: 'accepted' }, { headers });
+
+            console.log(response.data);
+            toast.success('Status updated to accepted');
+            handleClose();
+            setPaymentProofs((prevProofs) => prevProofs.map((proof) => (proof.id === paymentProofId ? { ...proof, status: 'accepted' } : proof)));
+        } catch (error) {
+            console.error('Error updating status to accepted:', error);
+            toast.error('Failed to update status');
+        }
+    };
+
+    const handleReject = async (paymentProofId) => {
+        try {
+            const token = localStorage.getItem('jwtToken');
+            if (!token) {
+                throw new Error("Token not found. Please login again.");
+            }
+
+            const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+            const response = await axios.put(`http://152.42.188.210:8080/index.php/api/auth/payment-proofs/${paymentProofId}/status`, { status: 'rejected' }, { headers });
+
+            console.log(response.data);
+            toast.success('Status updated to rejected');
+            handleClose();
+            setPaymentProofs((prevProofs) => prevProofs.map((proof) => (proof.id === paymentProofId ? { ...proof, status: 'rejected' } : proof)));
+        } catch (error) {
+            console.error('Error updating status to rejected:', error);
+            toast.error('Failed to update status');
+        }
+    };
+
     return (
         <DashboardLayout>
+            <ToastContainer />
             <Box display="flex" flexDirection="column" width="100%">
                 <Card>
                     <Box p={2} display="flex" alignItems="center" style={{ cursor: 'pointer' }} onClick={() => navigate(-1)}>
@@ -84,9 +121,8 @@ function Bill() {
                                 {paymentProofs.map(proof => (
                                     <Box key={proof.id} p={2} borderBottom="1px solid #ddd" display="flex" alignItems="center" justifyContent="space-between" style={{ cursor: 'pointer' }}>
                                         <Box display="flex" alignItems="center" onClick={() => handleClickOpen(proof)}>
-                                            <img src={business} style={{ width: '30px', height: '30px', marginLeft: '10px', marginRight: "10px" }} />
                                             <Box>
-                                                <Typography variant="h6" fontWeight="bold">Hi, your friend makes payment circle from {proof.circle_name} check and and approves!</Typography>
+                                                <Typography variant="h6" fontWeight="bold">Hi, your friend makes payment circle from {proof.circle_name} check and approve!</Typography>
                                                 <SoftTypography variant="description" color="text" style={{ fontSize: '15px' }}>{proof.username} - {proof.status}</SoftTypography>
                                             </Box>
                                         </Box>
@@ -113,34 +149,43 @@ function Bill() {
                         {selectedBill && (
                             <Box>
                                 <SoftTypography variant="body1" color={selectedBill.paid ? 'green' : 'red'}>
-                                    <SoftBox pb={3} />
                                     {selectedBill.paid ? 'Paid off' : (
-                                        <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                            <Box>
-                                            <SoftTypography variant="description" color="text" style={{ fontSize: '15px' }}>
-                                            <img src={group} style={{ width: '30px', height: '30px', marginBottom: '10px', marginLeft: '10px', marginRight: "10px" }} />
-                                            circle : {selectedBill.circle_name}
-                                            </SoftTypography>
-                                            <SoftTypography variant="description" color="text" style={{ fontSize: '15px' }}>
-                                            <img src={time} style={{ width: '30px', height: '30px', marginBottom: '10px', marginLeft: '10px', marginRight: "10px" }} />
-                                            event : {selectedBill.event_name}
-                                         
-                                            </SoftTypography>
-                                            </Box>
-                                            <Box>
-                                                <SoftTypography variant="description" color="text" style={{ fontSize: '15px' }}>
-                                                    <img src={cat} style={{ width: '30px', height: '30px', marginBottom: '10px', marginLeft: '10px', marginRight: "10px" }} />
-                                                    from : {selectedBill.username}</SoftTypography>
-                                                <SoftTypography variant="description" color="text" style={{ fontSize: '15px' }}>
-                                                    <img src={clipboard} style={{ width: '30px', height: '30px', marginLeft: '10px', marginRight: "10px" }} />status : {selectedBill.status}</SoftTypography>
-                                            </Box>
+                                        <Box display="flex" flexDirection="column" alignItems="flex-start" width="100%" p={2}>
                                             <embed src={`http://152.42.188.210:8080${selectedBill.file_url}`} type="application/pdf" width="100%" height="600px" />
                                             <Box>
-                                            <BootstrapButton variant="danger" style={{ marginBottom: '10px', marginTop: '10px', marginLeft: '10px' }}>
-                                                rejected
+                                                <SoftTypography variant="description" color="text" style={{ fontSize: '15px', textAlign: 'right' }}>
+                                                    Circle: {selectedBill.circle_name}
+                                                </SoftTypography>
+                                            </Box>
+                                            <Box>
+                                                <SoftTypography variant="description" color="text" style={{ fontSize: '15px', textAlign: 'right' }}>
+                                                    Event: {selectedBill.event_name}
+                                                </SoftTypography>
+                                            </Box>
+                                            <Box>
+                                                <SoftTypography variant="description" color="text" style={{ fontSize: '15px', textAlign: 'right' }}>
+                                                    From: {selectedBill.username}
+                                                </SoftTypography>
+                                            </Box>
+                                            <Box>
+                                                <SoftTypography variant="description" color="text" style={{ fontSize: '15px', textAlign: 'right' }}>
+                                                    Status: {selectedBill.status}
+                                                </SoftTypography>
+                                            </Box>
+                                            <Box>
+                                                <BootstrapButton
+                                                    variant="danger"
+                                                    style={{ marginBottom: '10px', marginTop: '10px', marginLeft: '10px' }}
+                                                    onClick={() => handleReject(selectedBill.id)}
+                                                >
+                                                    Rejected
                                                 </BootstrapButton>
-                                                <BootstrapButton variant="primary" style={{ marginBottom: '10px', marginTop: '10px', marginLeft: '10px' }}>
-                                                accepted
+                                                <BootstrapButton
+                                                    variant="primary"
+                                                    style={{ marginBottom: '10px', marginTop: '10px', marginLeft: '10px' }}
+                                                    onClick={() => handleAccept(selectedBill.id)}
+                                                >
+                                                    Accepted
                                                 </BootstrapButton>
                                             </Box>
                                             <Box className="alert alert-warning" role="alert">
@@ -153,7 +198,9 @@ function Bill() {
                         )}
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleClose} color="primary">Close</Button>
+                        <Button onClick={handleClose} color="primary">
+                            Close
+                        </Button>
                     </DialogActions>
                 </Dialog>
             </Box>

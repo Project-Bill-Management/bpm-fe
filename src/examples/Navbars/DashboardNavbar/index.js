@@ -1,66 +1,29 @@
-/**
-=========================================================
-* Soft UI Dashboard React - v4.0.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useState, useEffect } from "react";
-
-// react-router components
-import { useLocation, Link } from "react-router-dom";
-
-// prop-types is a library for typechecking of props.
+import axios from "axios";
+import { useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
-
-// @material-ui core components
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import Icon from "@mui/material/Icon";
 import Badge from '@mui/material/Badge';
-
-// Soft UI Dashboard React components
+import Avatar from '@mui/material/Avatar'; // Import Avatar
 import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftInput from "components/SoftInput";
-
-// Soft UI Dashboard React examples
 import Breadcrumbs from "examples/Breadcrumbs";
-import NotificationItem from "examples/Items/NotificationItem";
-
-// Custom styles for DashboardNavbar
-import {
-  navbar,
-  navbarContainer,
-  navbarRow,
-  navbarIconButton,
-  navbarMobileMenu,
-} from "examples/Navbars/DashboardNavbar/styles";
-
-// Soft UI Dashboard React context
+import ItemNotif from "layouts/tables/notificationn/item";
 import {
   useSoftUIController,
   setTransparentNavbar,
   setMiniSidenav,
   setOpenConfigurator,
 } from "context";
-
-// Images
-import team3 from "assets/images/team3.png";
-import notification from "assets/images/notification.png";
-import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
-
-import ItemNotif from "layouts/tables/notificationn/item";
+import {
+  navbar,
+  navbarContainer,
+  navbarRow,
+  navbarMobileMenu,
+} from "examples/Navbars/DashboardNavbar/styles";
 
 function DashboardNavbar({ absolute, light, isMini }) {
   const [navbarType, setNavbarType] = useState();
@@ -69,52 +32,77 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
   const [notificationCount, setNotificationCount] = useState(0);
+  const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
+
+  // Ganti ini dengan user ID yang sesuai
+  const userId = localStorage.getItem('userId');
+  const username = localStorage.getItem('username');
+
   useEffect(() => {
-    // Setting the navbar type
     if (fixedNavbar) {
       setNavbarType("sticky");
     } else {
       setNavbarType("static");
     }
 
-    // A function that sets the transparent state of the navbar.
     function handleTransparentNavbar() {
       setTransparentNavbar(dispatch, (fixedNavbar && window.scrollY === 0) || !fixedNavbar);
     }
 
-    /** 
-     The event listener that's calling the handleTransparentNavbar function when 
-     scrolling the window.
-    */
     window.addEventListener("scroll", handleTransparentNavbar);
-
-    // Call the handleTransparentNavbar function to set the state with the initial value.
     handleTransparentNavbar();
 
-    // Remove event listener on cleanup
     return () => window.removeEventListener("scroll", handleTransparentNavbar);
   }, [dispatch, fixedNavbar]);
+
+  useEffect(() => {
+    const fetchNotificationCount = async () => {
+      try {
+        const response = await axios.get(`http://152.42.188.210:8080/api/auth/notifications/${userId}`);
+        setNotificationCount(response.data.count);
+      } catch (error) {
+        console.error('Error fetching notification count', error);
+      }
+    };
+
+    fetchNotificationCount();
+  }, [userId]);
 
   const handleMiniSidenav = () => setMiniSidenav(dispatch, !miniSidenav);
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
   const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
   const handleCloseMenu = () => setOpenMenu(false);
 
-  // Render the notifications menu
+  const handleNotificationClick = (event) => {
+    setNotificationAnchorEl(event.currentTarget);
+    setOpenMenu(true);
+  };
+
+  const handleNotificationClose = () => {
+    setNotificationAnchorEl(null);
+    setOpenMenu(false);
+  };
+
   const renderMenu = () => (
     <Menu
-    anchorEl={openMenu}
-    anchorReference={null}
-    anchorOrigin={{
-      vertical: "bottom",
-      horizontal: "left",
-    }}
-    open={Boolean(openMenu)}
-    onClose={handleCloseMenu}
-  >
-      <ItemNotif/>
+      anchorEl={notificationAnchorEl}
+      anchorReference={null}
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "left",
+      }}
+      open={Boolean(openMenu)}
+      onClose={handleNotificationClose}
+    >
+      <ItemNotif />
     </Menu>
   );
+
+  const notificationCountStyle = {
+    fontSize: '12px',
+    color: 'red',
+    marginLeft: '8px',
+  };
 
   return (
     <AppBar
@@ -131,24 +119,6 @@ function DashboardNavbar({ absolute, light, isMini }) {
             <SoftBox pr={1}>
             </SoftBox>
             <SoftBox color={light ? "white" : "inherit"}>
-              {/* <Link to="/authentication/sign-in">
-                <IconButton sx={navbarIconButton} size="small">
-                  <Icon
-                    sx={({ palette: { dark, white } }) => ({
-                      color: light ? white.main : dark.main,
-                    })}
-                  >
-                    account_circle
-                  </Icon>
-                  <SoftTypography
-                    variant="button"
-                    fontWeight="medium"
-                    color={light ? "white" : "dark"}
-                  >
-                    Account
-                  </SoftTypography>
-                </IconButton>
-              </Link> */}
               <IconButton
                 size="small"
                 color="inherit"
@@ -159,25 +129,26 @@ function DashboardNavbar({ absolute, light, isMini }) {
                   {miniSidenav ? "menu_open" : "menu"}
                 </Icon>
               </IconButton>
-              <IconButton
-                size="small"
-                color="inherit"
-                sx={navbarIconButton}
-                onClick={handleConfiguratorOpen}
-              >
-                <Icon>settings</Icon>
-              </IconButton>
-              <IconButton
-          size="small"
-          color="inherit"
-          aria-controls="notification-menu"
-          aria-haspopup="true"
-          onClick={handleOpenMenu}
-        >
-                 <Badge badgeContent={notificationCount} color="error">
-            <Icon>notifications</Icon>
-          </Badge>
-          </IconButton>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Avatar 
+                  alt={username} 
+                  src="/path/to/default/avatar.png" 
+                  sx={{ width: 35, height: 35 }} // Mengatur ukuran avatar menjadi lebih kecil
+                />
+                <span style={{ marginLeft: '5px', color: light ? 'white' : 'inherit', fontSize: '0.875rem' }}>Hi, {username}</span>
+                <IconButton
+                  size="small"
+                  color="inherit"
+                  aria-controls="notification-menu"
+                  aria-haspopup="true"
+                  onClick={handleNotificationClick}
+                  sx={{ marginLeft: '10px' }}
+                >
+                  <Badge badgeContent={notificationCount} color="error">
+                    <Icon sx={{ fontSize: '1.5rem' }}>notifications</Icon> 
+                  </Badge>
+                </IconButton>
+              </div>
               {renderMenu()}
             </SoftBox>
           </SoftBox>
@@ -187,14 +158,12 @@ function DashboardNavbar({ absolute, light, isMini }) {
   );
 }
 
-// Setting default values for the props of DashboardNavbar
 DashboardNavbar.defaultProps = {
   absolute: false,
   light: false,
   isMini: false,
 };
 
-// Typechecking props for the DashboardNavbar
 DashboardNavbar.propTypes = {
   absolute: PropTypes.bool,
   light: PropTypes.bool,
