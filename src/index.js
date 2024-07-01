@@ -15,8 +15,8 @@ window.Pusher = Pusher;
 
 window.Echo = new Echo({
   broadcaster: 'pusher',
-  key: '92d0b93bdd5aa3b20b75', // Ganti dengan kunci Pusher Anda
-  cluster: 'ap1', // Ganti dengan cluster Pusher Anda
+  key: '92d0b93bdd5aa3b20b75', 
+  cluster: 'ap1',
   forceTLS: true
 });
 

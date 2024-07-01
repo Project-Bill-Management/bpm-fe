@@ -37,6 +37,9 @@ import { Tooltip } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Link } from 'react-router-dom';
 import PendingIcon from '@mui/icons-material/Pending';
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip as ChartTooltip, Legend } from 'chart.js';
+
 
 function DetailEventMyCircle() {
     const { id_circle, id_event } = useParams();
@@ -64,6 +67,9 @@ function DetailEventMyCircle() {
     const [file, setFile] = useState(null);
     const [paymentProofs, setPaymentProofs] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
+
+    const [paymentStatusCounts, setPaymentStatusCounts] = useState({ accepted: 0, pending: 0, rejected: 0 });
+
 
 
     console.log("id_circle:", id_circle);
@@ -356,24 +362,63 @@ function DetailEventMyCircle() {
             }
             const headers = { 'Authorization': `Bearer ${token}` };
             const response = await axios.get(`http://152.42.188.210:8080/index.php/api/auth/circles/${id_circle}/events/${id_event}/payment-proofs`, { headers });
-            console.log("payment:", response.data.payment_proofs);
+            console.log("payment proofs:", response.data.payment_proofs);
             setPaymentProofs(response.data.payment_proofs);
-            getUserPaymentStatus();
+
+            const statusCounts = response.data.payment_proofs.reduce((acc, proof) => {
+                if (proof.status === 'accepted') {
+                    acc.accepted += 1;
+                }
+                //  else if (proof.status === 'not paid') {
+                //     acc.notPaid += 1;
+                // }
+                else if (proof.status === 'pending') {
+                    acc.pending += 1;
+                } else if (proof.status === 'rejected') {
+                    acc.rejected += 1;
+                }
+                return acc;
+            }, { accepted: 0, notPaid: 0, pending: 0, rejected: 0 });
+
+            console.log("statusCounts:", statusCounts);
+            setPaymentStatusCounts(statusCounts);
         } catch (error) {
             console.error("Error fetching payment proofs:", error);
             throw new Error("Failed to fetch payment proofs. Please try again.");
         }
     };
-
     const getUserPaymentStatus = (username) => {
         const userPayment = paymentProofs.find(proof => proof.username === username);
         return userPayment ? userPayment.status : 'Not Paid';
     };
 
     useEffect(() => {
-        getUserPaymentStatus();
         GetPayment();
     }, [id_circle, id_event]);
+
+
+    const data = {
+        labels: ['Accepted', 'Pending', 'Rejected'],
+        datasets: [{
+            label: 'Payment Status',
+            data: [paymentStatusCounts.accepted, paymentStatusCounts.pending, paymentStatusCounts.rejected],
+            backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56', '#FF9F40'],
+            hoverBackgroundColor: ['#36A2EB', '#FF6384', '#FFCE56', '#FF9F40']
+        }]
+    };
+
+    const options = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Payment Status Distribution',
+            },
+        },
+    };
 
     return (
         <DashboardLayout>
@@ -432,6 +477,7 @@ function DetailEventMyCircle() {
                                                 {details.data && details.data.creator_event === localStorage.getItem('username') ? (
                                                     <>
                                                         Split Bill <PaymentIcon style={{ marginRight: 8 }} />
+                                                        <Pie data={data} options={options} />
                                                         <Link to={`/Bill/${id_circle}/${id_event}`}>
                                                             <SoftTypography variant="h6" fontWeight="medium" color="text" ml={2} mt={2} style={{ cursor: 'pointer', marginRight: 'auto' }}>
                                                                 View Payment <ArrowForwardIcon sx={{ fontWeight: "bold" }} />
@@ -463,8 +509,8 @@ function DetailEventMyCircle() {
                                                                         variant="h6"
                                                                         color="text"
                                                                         fontWeight="medium"
-                                                                        style={{ marginLeft: '10px', cursor: 'pointer', color: getUserPaymentStatus(user.username) === 'Not Paid' ? 'red' : 'inherit' }}
-                                                                        onClick={() => getUserPaymentStatus(user.username) === 'Not Paid' && openModalUpload()}
+                                                                        style={{ marginLeft: '10px', cursor: 'pointer', color: getUserPaymentStatus(user.username) === 'Not Paid' || getUserPaymentStatus(user.username) === 'rejected' ? 'red' : 'inherit' }}
+                                                                        onClick={() => (getUserPaymentStatus(user.username) === 'Not Paid' || getUserPaymentStatus(user.username) === 'rejected') && openModalUpload()}
                                                                     >
                                                                         {getUserPaymentStatus(user.username)}
                                                                     </Typography>
@@ -506,7 +552,6 @@ function DetailEventMyCircle() {
                                                 </Typography>
                                             )}
                                         </Box>
-
                                     </Box>
                                 </Card>
                             </Box>
