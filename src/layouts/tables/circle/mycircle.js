@@ -234,14 +234,12 @@ function MyCircle() {
                 { headers }
             );
             console.log(deleteData.data);
+            toast.success('Circle deleted successfully');
             closeModalDelete();
-            fetchData();
-            toast.success('Circle delete successfully');
-            const updatedData = circles.filter(circle => circle.id_circle !== id_circle);
-            setCircles(updatedData);
+            fetchData(); 
         } catch (error) {
             toast.error("Failed to delete");
-            console.error("Error delete circle:", error);
+            console.error("Error deleting circle:", error);
         }
     };
     useEffect(() => {

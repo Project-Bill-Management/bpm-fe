@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import React, { useState, useRef, useEffect } from 'react';
-import { Card, Button, Box, Grid, Typography } from '@mui/material';
+import { Card, Button, Box, Typography } from '@mui/material';
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -21,22 +21,14 @@ import InfoIcon from '@mui/icons-material/Info';
 import PaymentIcon from '@mui/icons-material/Payment';
 import SearchIcon from '@material-ui/icons/Search';
 import Table from "examples/Tables/Table";
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
 import {
     Dialog,
     DialogTitle,
     DialogContent,
     DialogActions,
-    TextField,
-    FormControl
 } from '@mui/material';
-import UploadIcon from "@mui/icons-material/Upload";
-import { Tooltip } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Link } from 'react-router-dom';
-import PendingIcon from '@mui/icons-material/Pending';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip as ChartTooltip, Legend } from 'chart.js';
 
@@ -297,32 +289,32 @@ function DetailEventMyCircle() {
         setIsFormValid(transaction_name.trim() !== '' && price.trim() !== '' && selected_users.length > 0);
     }, [transaction_name, price, selected_users]);
 
-    const fetchUserSplit = async () => {
-        const token = localStorage.getItem('jwtToken');
-        if (!token) {
-            setError("Token not found. Please login again.");
-            setIsLoading(false);
-            return;
-        }
-        const headers = { 'Authorization': `Bearer ${token}` };
-        try {
-            const response = await axios.get(`http://152.42.188.210:8080/api/auth/user_split/${id_event}`, { headers });
-            console.log("User split data:", response.data.data);
-            setUserSplit(response.data.data);
-        } catch (error) {
-            if (error.response && error.response.data && error.response.data.message) {
-                setError(error.response.data.message);
-            } else {
-                setError("Failed to fetch user split data. Please try again.");
-            }
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    // const fetchUserSplit = async () => {
+    //     const token = localStorage.getItem('jwtToken');
+    //     if (!token) {
+    //         setError("Token not found. Please login again.");
+    //         setIsLoading(false);
+    //         return;
+    //     }
+    //     const headers = { 'Authorization': `Bearer ${token}` };
+    //     try {
+    //         const response = await axios.get(`http://152.42.188.210:8080/api/auth/user_split/${id_event}`, { headers });
+    //         console.log("User split data:", response.data.data);
+    //         setUserSplit(response.data.data);
+    //     } catch (error) {
+    //         if (error.response && error.response.data && error.response.data.message) {
+    //             setError(error.response.data.message);
+    //         } else {
+    //             setError("Failed to fetch user split data. Please try again.");
+    //         }
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // };
 
-    useEffect(() => {
-        fetchUserSplit();
-    }, [id_event]);
+    // useEffect(() => {
+    //     fetchUserSplit();
+    // }, [id_event]);
 
     const handleFileUpload = async () => {
         if (!file) {
@@ -368,17 +360,13 @@ function DetailEventMyCircle() {
             const statusCounts = response.data.payment_proofs.reduce((acc, proof) => {
                 if (proof.status === 'accepted') {
                     acc.accepted += 1;
-                }
-                //  else if (proof.status === 'not paid') {
-                //     acc.notPaid += 1;
-                // }
-                else if (proof.status === 'pending') {
+                } else if (proof.status === 'pending') {
                     acc.pending += 1;
                 } else if (proof.status === 'rejected') {
                     acc.rejected += 1;
                 }
                 return acc;
-            }, { accepted: 0, notPaid: 0, pending: 0, rejected: 0 });
+            }, { accepted: 0, pending: 0, rejected: 0 });
 
             console.log("statusCounts:", statusCounts);
             setPaymentStatusCounts(statusCounts);
@@ -387,6 +375,7 @@ function DetailEventMyCircle() {
             throw new Error("Failed to fetch payment proofs. Please try again.");
         }
     };
+
     const getUserPaymentStatus = (username) => {
         const userPayment = paymentProofs.find(proof => proof.username === username);
         return userPayment ? userPayment.status : 'Not Paid';
@@ -396,14 +385,13 @@ function DetailEventMyCircle() {
         GetPayment();
     }, [id_circle, id_event]);
 
-
     const data = {
         labels: ['Accepted', 'Pending', 'Rejected'],
         datasets: [{
             label: 'Payment Status',
             data: [paymentStatusCounts.accepted, paymentStatusCounts.pending, paymentStatusCounts.rejected],
-            backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56', '#FF9F40'],
-            hoverBackgroundColor: ['#36A2EB', '#FF6384', '#FFCE56', '#FF9F40']
+            backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56'],
+            hoverBackgroundColor: ['#36A2EB', '#FF6384', '#FFCE56']
         }]
     };
 
@@ -472,23 +460,30 @@ function DetailEventMyCircle() {
                                 <Card style={{ maxHeight: '400px', overflow: 'auto' }}>
                                     <Box display="flex" flexDirection="column" minHeight="100%" width="100%">
 
-                                        <Box display="flex" alignItems="center">
-                                            <Typography variant="h6" fontWeight="bold" ml={2} mt={2}>
-                                                {details.data && details.data.creator_event === localStorage.getItem('username') ? (
-                                                    <>
-                                                        Split Bill <PaymentIcon style={{ marginRight: 8 }} />
-                                                        <Pie data={data} options={options} />
-                                                        <Link to={`/Bill/${id_circle}/${id_event}`}>
-                                                            <SoftTypography variant="h6" fontWeight="medium" color="text" ml={2} mt={2} style={{ cursor: 'pointer', marginRight: 'auto' }}>
-                                                                View Payment <ArrowForwardIcon sx={{ fontWeight: "bold" }} />
-                                                            </SoftTypography>
-                                                        </Link>
-                                                    </>
-                                                ) : (
-                                                    "Split Bill"
-                                                )}
-                                            </Typography>
-                                        </Box>
+                                    <Box display="flex" alignItems="center">
+    <Typography variant="h6" fontWeight="bold" ml={2} mt={2}>
+        {details.data && details.data.creator_event === localStorage.getItem('username') ? (
+            <>
+              Split Bill <PaymentIcon style={{ marginRight: 8 }} />
+                        {(paymentStatusCounts.accepted === 0 && paymentStatusCounts.pending === 0 && paymentStatusCounts.rejected === 0) ? (
+                            <Typography variant="h6" fontWeight="medium" color="text" ml={2} mt={2}>
+                                Chart Found
+                            </Typography>
+                        ) : (
+                            <Pie data={data} options={options} />
+                        )}
+                        <Link to={`/Bill/${id_circle}/${id_event}`}>
+                            <SoftTypography variant="h6" fontWeight="medium" color="text" ml={2} mt={2} style={{ cursor: 'pointer', marginRight: 'auto' }}>
+                                View Payment <ArrowForwardIcon sx={{ fontWeight: "bold" }} />
+                            </SoftTypography>
+                        </Link>
+                    </>
+        ) : (
+            "Split Bill"
+        )}
+    </Typography>
+</Box>
+
 
                                         <Box display="flex" flexDirection="column" ml={2} mt={2} mb={2} pr={2}>
                                             {isLoading && <Typography style={{ paddingLeft: '20px' }}>Loading...</Typography>}
