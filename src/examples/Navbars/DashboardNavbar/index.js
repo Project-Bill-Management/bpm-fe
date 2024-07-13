@@ -12,6 +12,8 @@ import Avatar from '@mui/material/Avatar'; // Import Avatar
 import SoftBox from "components/SoftBox";
 import Breadcrumbs from "examples/Breadcrumbs";
 import ItemNotif from "layouts/tables/notificationn/item";
+import { Link } from "react-router-dom";
+
 import {
   useSoftUIController,
   setTransparentNavbar,
@@ -130,11 +132,13 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 </Icon>
               </IconButton>
               <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Link to={`/profile`}>
                 <Avatar 
                   alt={username} 
                   src="/path/to/default/avatar.png" 
-                  sx={{ width: 35, height: 35 }} // Mengatur ukuran avatar menjadi lebih kecil
+                  sx={{ width: 35, height: 35 }}
                 />
+                </Link>
                 <span style={{ marginLeft: '5px', color: light ? 'white' : 'inherit', fontSize: '0.875rem' }}>Hi, {username}</span>
                 <IconButton
                   size="small"

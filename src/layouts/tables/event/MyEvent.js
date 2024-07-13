@@ -16,6 +16,7 @@ import Icon from '@mui/material/Icon';
 import time from "assets/images/time.png";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Grid } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import {
     Dialog,
     DialogTitle,
@@ -41,6 +42,7 @@ function EventMyCircle() {
     const [events, setEvents] = useState([]);
     const [circle, setCircle] = useState(null);
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleStartDateChange = (e) => {
         const date = new Date(e.target.value);
@@ -206,6 +208,7 @@ function EventMyCircle() {
                 <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
                     <div>
                         <SoftTypography variant="h6" fontWeight="bold">
+                            <ArrowBackIcon onClick={() => navigate(-1)}/>
                             Circle {circle_name}
                         </SoftTypography>
                     </div>

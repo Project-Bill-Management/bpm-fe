@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Card, Grid } from '@mui/material';
+import { useParams,useNavigate, Link } from 'react-router-dom';
+import { Card, Grid, Box } from '@mui/material';
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -10,8 +10,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import time from "assets/images/time.png";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import Button from 'react-bootstrap/Button';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function EventJoin() {
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const { id_circle, circle_name } = useParams();
     const [events, setEvents] = useState([]);
@@ -126,15 +128,21 @@ function EventJoin() {
         <DashboardLayout>
             <ToastContainer />
             <Card>
-                <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
-                    <div>
-                        <SoftTypography variant="h6" fontWeight="bold">
-                            Circle {circle_name}
-                        </SoftTypography>
-                    </div>
-                </SoftBox>
-                <SoftBox pb={3} />
-            </Card>
+            <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
+                <Box>
+                
+                <SoftTypography variant="h6" fontWeight="bold">
+                        <ArrowBackIcon
+                            style={{ top: '40px', left: '40px', cursor: 'pointer' }}
+                            onClick={() => navigate(-1)}
+                        />    
+                        Circle {circle_name}
+                    </SoftTypography>
+        
+                </Box>
+            </SoftBox>
+            <SoftBox pb={3} />
+        </Card>
             <SoftBox pb={2} />
             {isLoading ? (
                 <Grid display="flex" justifyContent="center" alignItems="center" height="100px">

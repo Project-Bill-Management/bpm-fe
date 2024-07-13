@@ -61,6 +61,8 @@ import FaQ from "layouts/tables/faq/faq";
 import Notification from "layouts/tables/notificationn/notif";
 import Bill from "layouts/tables/bill/bill";
 import Chat from "layouts/tables/forum/forum";
+import icon from "assets/theme/components/icon";
+import Websocket from "layouts/tables/forum/websocket";
 
 const routes = [
   {
@@ -185,6 +187,15 @@ const routes = [
     component: <SignUp />,
     noCollapse: true,
   },
+  // {
+  //    type: "collapse",
+  //   name: "Websocket",
+  //   key : "Websocket",
+  //   route: "/websocket",
+  //   icon: <SpaceShip size="12px" />,
+  //   component: <Websocket/>,
+  //   noCollapse: true,
+  // }
   
 ];
 

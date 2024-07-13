@@ -289,32 +289,32 @@ function DetailEventMyCircle() {
         setIsFormValid(transaction_name.trim() !== '' && price.trim() !== '' && selected_users.length > 0);
     }, [transaction_name, price, selected_users]);
 
-    // const fetchUserSplit = async () => {
-    //     const token = localStorage.getItem('jwtToken');
-    //     if (!token) {
-    //         setError("Token not found. Please login again.");
-    //         setIsLoading(false);
-    //         return;
-    //     }
-    //     const headers = { 'Authorization': `Bearer ${token}` };
-    //     try {
-    //         const response = await axios.get(`http://152.42.188.210:8080/api/auth/user_split/${id_event}`, { headers });
-    //         console.log("User split data:", response.data.data);
-    //         setUserSplit(response.data.data);
-    //     } catch (error) {
-    //         if (error.response && error.response.data && error.response.data.message) {
-    //             setError(error.response.data.message);
-    //         } else {
-    //             setError("Failed to fetch user split data. Please try again.");
-    //         }
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // };
+    const fetchUserSplit = async () => {
+        const token = localStorage.getItem('jwtToken');
+        if (!token) {
+            setError("Token not found. Please login again.");
+            setIsLoading(false);
+            return;
+        }
+        const headers = { 'Authorization': `Bearer ${token}` };
+        try {
+            const response = await axios.get(`http://152.42.188.210:8080/api/auth/user_split/${id_event}`, { headers });
+            console.log("User split data:", response.data.data);
+            setUserSplit(response.data.data);
+        } catch (error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                setError(error.response.data.message);
+            } else {
+                setError("Failed to fetch user split data. Please try again.");
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-    // useEffect(() => {
-    //     fetchUserSplit();
-    // }, [id_event]);
+    useEffect(() => {
+        fetchUserSplit();
+    }, [id_event]);
 
     const handleFileUpload = async () => {
         if (!file) {
@@ -367,7 +367,6 @@ function DetailEventMyCircle() {
                 }
                 return acc;
             }, { accepted: 0, pending: 0, rejected: 0 });
-
             console.log("statusCounts:", statusCounts);
             setPaymentStatusCounts(statusCounts);
         } catch (error) {
@@ -474,7 +473,7 @@ function DetailEventMyCircle() {
                         )}
                         <Link to={`/Bill/${id_circle}/${id_event}`}>
                             <SoftTypography variant="h6" fontWeight="medium" color="text" ml={2} mt={2} style={{ cursor: 'pointer', marginRight: 'auto' }}>
-                                View Payment <ArrowForwardIcon sx={{ fontWeight: "bold" }} />
+                                View Payment Detail <ArrowForwardIcon sx={{ fontWeight: "bold" }} />
                             </SoftTypography>
                         </Link>
                     </>

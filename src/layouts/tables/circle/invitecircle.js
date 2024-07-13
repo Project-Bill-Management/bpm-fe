@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Box, Button, Card } from "@mui/material";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
@@ -33,9 +33,11 @@ import {
 } from '@mui/material';
 import SearchIcon from '@material-ui/icons/Search';
 import { InputAdornment } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 
 function InviteCircle() {
+  const navigate = useNavigate();
   const { id_circle, circle_name } = useParams();
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [username, setUsername] = useState("");
@@ -205,12 +207,16 @@ function InviteCircle() {
   return (
     <DashboardLayout>
       <ToastContainer />
-      <Box display="flex" flexDirection="column" minHeight="100vh" width="80%">
+      <Box display="flex" flexDirection="column" minHeight="100vh" width="100%">
         <Card>
           <Box py={3} px={3}>
             <Box
-              display="flex" flexDirection="column" width="100%" height="80%">
+              display="flex" flexDirection="column" width="100%" height="100%">
               <Box display="flex" textAlign="center" mb={1}>
+                <ArrowBackIcon
+                  style={{ top: '40px', left: '40px', cursor: 'pointer' }}
+                  onClick={() => navigate(-1)}
+                />
                 <SoftTypography variant="h6" fontWeight="bold">
                   Pay attention to your inviters. When you invite another user, that user will enter your circle automatically.
                 </SoftTypography>
@@ -250,7 +256,7 @@ function InviteCircle() {
               flexDirection="column"
               alignItems="center"
               width="100%"
-              height="80%"
+              height="100%"
             >
               <Box display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
                 <div>
@@ -287,7 +293,7 @@ function InviteCircle() {
                   rows={members.map((member) => ({
                     image: <SoftAvatar src={cat} sx={{ width: '32px', height: '32px' }} />,
                     status: (
-                            <p>{member.status || 'unknown'}</p>
+                      <p>{member.status || 'unknown'}</p>
                     ),
                     name: member.username_invite,
                   }))}

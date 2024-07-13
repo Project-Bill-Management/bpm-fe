@@ -5,11 +5,13 @@ import SoftBox from 'components/SoftBox';
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import axios from 'axios';
 import { Button as BootstrapButton } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import AvatarGroup from 'assets/images/avatar-animal/avatarGroup.png';
 import Pusher from "pusher-js";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function Chat() {
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const [messages, setMessages] = useState([]);
     const { circleId, circle_name } = useParams();
@@ -147,8 +149,10 @@ function Chat() {
             <Card>
                 <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={3}>
                     <SoftBox display="flex" alignItems="center">
+                    <ArrowBackIcon style={{top:'40px', left:'40px', cursor:'pointer'}} onClick={() => navigate(-1)}/>
                         <img src={AvatarGroup} alt="time" style={{ marginLeft: '5px', marginRight: '5px', width: '30px', height: '30px' }} />
-                        <SoftTypography variant="h6" fontWeight="bold" ml={2}>
+                        <SoftTypography variant="h6" fontWeight="bold" >
+                           
                             Forum {circle_name}
                         </SoftTypography>
                     </SoftBox>
