@@ -38,6 +38,14 @@
  * Released under the MIT License
  */
 
+/*!
+ * Pusher JavaScript Library v8.4.0-rc2
+ * https://pusher.com/
+ *
+ * Copyright 2020, Pusher
+ * Released under the MIT licence.
+ */
+
 /**
  * @license React
  * react-dom.production.min.js

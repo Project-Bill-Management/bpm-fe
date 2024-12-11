@@ -92,7 +92,7 @@ function Header() {
           <Grid item>
             <SoftBox height="100%" mt={0.5} lineHeight={1}>
               <SoftTypography variant="h5" fontWeight="medium">
-               {username}
+               Hello, {username}!
               </SoftTypography>
             </SoftBox>
           </Grid>
